@@ -1,0 +1,197 @@
+/* --------------------------------------------Start: Main Desktop View---------------------------------------------*/
+main {
+    min-height: 100vh;
+  }
+  .container-cycle{
+    margin-left: 60px;
+    margin-right: 60px;
+  }
+  .cycle-page {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 70vh;
+  }
+  .content-wrapper {
+    flex-grow: .5;
+  }
+  .cycle-highlight{
+      display: inline;
+      background-color: #FEF9D9;
+      padding: 0 5px;
+      border-radius: 7px;
+  }
+  
+  .table-responsive {
+      overflow-x: auto;
+      overflow-y: auto;
+  }
+  .cycle-table {
+      width: 100%;
+      border-radius: 11px;
+      overflow: hidden;
+  }
+  
+  td, th{
+      font-size: .8rem;
+  }
+    .save-button{
+      background-color: #FCF4B9;
+      text-transform: uppercase;
+      border-radius: 20px;
+      font-size: 13px;
+      width: 100%;
+      max-width: 100px;
+      padding: 7px;
+      transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+    }
+    .save-button:hover{
+      background-color: #FAEF9B;
+      box-shadow: 0 5px #2B2B2B;
+    }
+  
+     #cycleNumber, #cycleStart, #cycleEnd{
+      background-color: #F3F8FF;
+    }
+  
+    .status_pending {
+      position: relative;
+      border-radius: 50%;
+      width: 20px; /* Adjust width as needed */
+      height: 20px; /* Adjust height as needed */
+      display: flex;
+      margin-left: 25px;
+      align-items: center;
+      justify-content: center;
+  }
+  
+  .progress-circle {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+  }
+  .status-icon{
+    color: whitesmoke;
+    position: relative;
+    margin-top:-20px;
+    margin-right:4px;
+  }
+  
+  .legend {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    justify-content: center;
+    align-items: center;
+  }
+  .complete{
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+  }
+  .pending{
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    position: relative;
+      border-radius: 50%;
+      width: 20px; /* Adjust width as needed */
+      height: 20px; /* Adjust height as needed */
+    margin-right: 30px;
+    margin-top:10px;
+  }
+  .complete i{
+    background-color: #F9E37F;
+    border-radius: 100%;
+    color: whitesmoke;
+    padding-top: 2px;
+    margin-top:10px;
+    margin-right: 10px;
+    width: 20px;
+    height: 20px;
+  }
+  .text_legend1{
+    margin-top:13px;
+    font-size: 14px;
+    color: #2B2B2B;
+  }
+  .text_legend2{
+    margin-top:13px;
+    font-size: 14px;
+    color: #2B2B2B;
+    margin-left: -40px;
+  }
+  .circle{
+    position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background: conic-gradient(
+        #4caf50,
+        #f3f3f3);
+  }
+  /* --------------------------------------------End: Main Desktop View---------------------------------------------*/
+  
+  
+  
+  
+  /* --------------------------------------------Start: Main Responsive View---------------------------------------------*/
+  
+  @media (min-width: 768px) {
+    main {
+      transition: padding-left .2s;
+      padding-left: 22rem;
+      padding-top: 2rem;
+      padding-right: 4rem;
+        
+    }
+    .cycle-page{
+      box-shadow: 0 6px #2B2B2B;
+    }
+    .sidebar.collapsed ~ main {
+      padding-left: 4.75rem;
+  }
+  }
+  @media (max-width: 767.98px) {
+    .cycle-page {
+      height: 100%;
+        min-height: 74vh;
+        padding: 10px;
+        margin: 10px; 
+        box-shadow: 7px 7px rgba(0, 0, 0, 0.25);
+    }
+    .container-cycle{
+      margin-left: 0px;
+      margin-right: 0px;
+    }
+    .scrollable-table {
+      max-width: 100%;
+      overflow-x: auto;
+  }
+    td, th{
+      font-size: .7rem;
+    }
+    nav{
+      padding: 10px;
+      margin: 10px;
+      box-shadow: 7px 7px rgba(0, 0, 0, 0.25);
+    }
+    .navbar-link {
+      box-shadow: 3px 3px rgba(0, 0, 0, 0.4);
+    }
+    .navbar-link:hover {
+      border-radius: 50%;
+    }
+    .yellow {
+        min-height: 5vh;
+        background-color: #FAEF9B;
+        overflow-y:auto;
+    }
+  }
+
+  /* --------------------------------------------End: Main Responsive View---------------------------------------------*/

@@ -1,0 +1,141 @@
+/* --------------------------------------------Start: Main Desktop View---------------------------------------------*/
+main {
+    min-height: 100vh;
+  }
+  .container-worker{
+    margin-left: 60px;
+    margin-right: 60px;
+  }
+  .worker-highlight{
+      display: inline;
+      background-color: #FEF9D9;
+      padding: 0 5px;
+      border-radius: 7px;
+  }
+  .worker-page {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 70vh;
+  }
+  .content-wrapper {
+    flex-grow: .5;
+  }
+  
+  .table-responsive {
+      overflow-x: auto;
+      overflow-y: auto;
+  }
+  .worker-table {
+      width: 100%;
+      border-radius: 11px;
+      overflow: hidden;
+  }
+  
+  td, th{
+      font-size: .8rem;
+  }
+  
+  .add-button{
+      background-color: #FCF4B9;
+      border-radius: 20px;
+      text-transform: uppercase;
+      width: 100%;
+      max-width: 170px;
+      font-size: 13px;
+      padding: 7px;
+      transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+    }
+    .add-button:hover{
+      background-color: #FAEF9B;
+      box-shadow: 0 5px #2B2B2B;
+    }
+    .save-button{
+      background-color: #FCF4B9;
+      text-transform: uppercase;
+      border-radius: 20px;
+      width: 100%;
+      font-size: 13px;
+      max-width: 150px;
+      padding: 7px;
+      transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+    }
+    .save-button:hover{
+      background-color: #FAEF9B;
+      box-shadow: 0 5px #2B2B2B;
+    }
+  
+    #FullName, #Email, #PhoneNumber, #Password{
+      background-color: #F3F8FF;
+    }
+    input.is-invalid,
+    select.is-invalid,
+    textarea.is-invalid {
+    border-color: #dc3545 !important;
+  }
+  
+  /* --------------------------------------------End: Main Desktop View---------------------------------------------*/
+  
+  
+  
+  
+  /* --------------------------------------------Start: Main Responsive View---------------------------------------------*/
+  
+  @media (min-width: 768px) {
+    main {
+      transition: padding-left .2s;
+      padding-left: 22rem;
+      padding-top: 2rem;
+      padding-right: 4rem;
+    }
+    .worker-page{
+      box-shadow: 0 6px #2B2B2B;
+    }
+  
+    .sidebar.collapsed ~ main {
+      padding-left: 4.75rem;
+  }
+  }
+  
+  @media (max-width: 767.98px) {
+    .worker-page {
+        min-height: 74vh;
+        padding: 10px;
+        margin: 10px;
+        box-shadow: 7px 7px rgba(0, 0, 0, 0.25);
+    }
+    .container-worker{
+      margin-left: 0px;
+      margin-right: 0px;
+    }
+  
+    .scrollable-table {
+      max-width: 100%;
+      overflow-x: auto;
+  }
+    td, th{
+      font-size: .7rem;
+    }
+    nav{
+      padding: 10px;
+      margin: 10px;
+      box-shadow: 7px 7px rgba(0, 0, 0, 0.25);
+      background-color: #FFFFFF;
+    }
+    .navbar-link {
+      background-color: #ffffff;
+      box-shadow: 3px 3px rgba(0, 0, 0, 0.4);
+    }
+    .navbar-link:hover {
+      background-color: #ffffff;
+      border-radius: 50%;
+    }
+    .yellow {
+        min-height: 5vh;
+        background-color: #FAEF9B;
+        overflow-y:auto;
+    }
+  }
+  
+  /* --------------------------------------------End: Main Responsive View---------------------------------------------*/
+  
