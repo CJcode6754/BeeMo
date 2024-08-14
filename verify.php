@@ -17,20 +17,20 @@ $emailHandler = new Mailer();
 if (isset($_POST['resend'])) {
     if (isset($_SESSION['email']) && isset($_SESSION['admin_name'])) {
         $email = $_SESSION['email'];
+        $otp = $otpHandler->generateOTPResend($email);
         $name = $_SESSION['admin_name'];
-        $otp = $otpHandler->generateOTP($email);
 
         if ($emailHandler->sendOTP($email, $otp['otp'], $name)) {
             $_SESSION['status'] = 'New OTP sent! Check your email.';
             header('Location: verify.php');
             exit;
         } else {
-            $_SESSION['error'] = 'Failed to resend OTP. Please try again later.';
+            $_SESSION['error'] = 'Resend OTP failed. Try again.';
             header('Location: verify.php');
             exit;
         }
     } else {
-        $_SESSION['error'] = 'Session expired. Please log in again.';
+        $_SESSION['error'] = 'Session expired. Register again.';
         header('Location: signup.php');
         exit;
     }
@@ -43,35 +43,16 @@ if (isset($_POST['submit'])) {
         $otp = $_POST['otp'];
 
         if ($otpHandler->verifyOTP($email, $otp)) {
+            $_SESSION['status'] = 'Account registered successfully.';
             header('Location: index.php');
             exit;
         } else {
-            $_SESSION['error'] = 'Invalid OTP or OTP has expired';
+            $_SESSION['error'] = 'OTP verification failed. Try again.';
             header('Location: verify.php');
             exit;
         }
     } else {
-        $_SESSION['error'] = 'Session expired. Please log in again.';
-        header('Location: signup.php');
-        exit;
-    }
-}
-
-if (!isset($_SESSION['otp_expiry'])) {
-    if (isset($_SESSION['email']) && isset($_SESSION['admin_name'])) {
-        $email = $_SESSION['email'];
-        $name = $_SESSION['admin_name'];
-        $otpData = $otpHandler->generateOTP($email);
-
-        if ($emailHandler->sendOTP($email, $otpData['otp'], $name)) {
-            $_SESSION['status'] = 'OTP sent! Check your email.';
-        } else {
-            $_SESSION['error'] = 'Failed to send OTP. Please try again later.';
-        }
-
-        $_SESSION['otp_expiry'] = $otpData['otp_expiry'];
-    } else {
-        $_SESSION['error'] = 'Session expired. Please log in again.';
+        $_SESSION['error'] = 'Session expired. Register again.';
         header('Location: signup.php');
         exit;
     }
@@ -85,6 +66,7 @@ if (!isset($_SESSION['otp_expiry'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="./css/verify.css">
+    <link rel="stylesheet" href="./css/reusable.css">
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
@@ -130,129 +112,68 @@ if (!isset($_SESSION['otp_expiry'])) {
             </div>
         </div>
     </div>
-
+    <div id="notification" class="notification"></div>
     <script>
-     function startCountdown(expiryTime, display) {
-            var endTime = new Date(expiryTime).getTime();
-            var now = new Date().getTime();
-            var duration = endTime - now;
+    document.addEventListener('DOMContentLoaded', function () {
+    const notification = document.getElementById('notification');
+    
+    // OTP Countdown function
+    function startCountdown(expiryTime, display) {
+        const endTime = new Date(expiryTime).getTime();
+        const intervalId = setInterval(function () {
+            const now = new Date().getTime();
+            const duration = endTime - now;
 
-            var intervalId = setInterval(function () {
-                duration -= 1000;
-                if (duration <= 0) {
-                    clearInterval(intervalId);
-                    display.textContent = "Expired";
-                    document.getElementById("btn").disabled = true;
-                    document.getElementsByName("resend")[0].disabled = false;
-                } else {
-                    var minutes = Math.floor((duration / (1000 * 60)) % 60);
-                    var seconds = Math.floor((duration / 1000) % 60);
+            if (duration <= 0) {
+                clearInterval(intervalId);
+                display.textContent = "Expired";
+                document.getElementById("btn").disabled = true;
+                document.getElementById("resendBtn").disabled = false;
 
-                    minutes = minutes < 10 ? "0" + minutes : minutes;
-                    seconds = seconds < 10 ? "0" + seconds : seconds;
-
-                    display.textContent = minutes + ":" + seconds;
-                }
-            }, 1000);
-        }
-
-        window.addEventListener('load', function () {
-            var otpExpiry = '<?php echo isset($_SESSION['otp_expiry']) ? $_SESSION['otp_expiry'] : ''; ?>';
-            var countdownDisplay = document.getElementById("countdownTimer");
-
-            if (otpExpiry) {
-                startCountdown(otpExpiry, countdownDisplay);
+                // Show OTP expired notification
+                showNotification('OTP expired. Please request a new one.');
             } else {
-                console.error('OTP expiry time not set or invalid.');
+                const minutes = Math.floor((duration / (1000 * 60)) % 60);
+                const seconds = Math.floor((duration / 1000) % 60);
+
+                display.textContent = `${minutes < 10 ? '0' + minutes : minutes}:${seconds < 10 ? '0' + seconds : seconds}`;
             }
-        });
-        function checkOTP() {
-        var otpInput = document.getElementById("otp").value.trim();
-        document.getElementById("btn").disabled = otpInput === "";
+        }, 1000);
     }
-    // Start countdown when page fully loads
-    // window.addEventListener('load', function () {
-    //     var otpExpiry = '<?php echo isset($_SESSION['otp_expiry']) ? $_SESSION['otp_expiry'] : ''; ?>';
-    //     var countdownDisplay = document.getElementById("countdownTimer");
-    //     var resendBtn = document.getElementById("resendBtn");
 
-    //     if (otpExpiry) {
-    //         startCountdown(otpExpiry, countdownDisplay);
-    //     } else {
-    //         console.error('OTP expiry time not set or invalid.');
-    //     }
+    // Show notification function
+    function showNotification(message) {
+        notification.textContent = message;
+        notification.classList.add('show');
+        setTimeout(function () {
+            notification.classList.remove('show');
+        }, 6000);
+    }
 
-    //     // // Request notification permission
-    //     // requestNotificationPermission();
+    // Handle the notifications for status and error in the session
+    <?php if (isset($_SESSION['status'])): ?>
+        showNotification('<?php echo $_SESSION['status']; ?>');
+        <?php unset($_SESSION['status']); ?>
+    <?php elseif (isset($_SESSION['error'])): ?>
+        showNotification('<?php echo $_SESSION['error']; ?>');
+        <?php unset($_SESSION['error']); ?>
+    <?php endif; ?>
 
-    //     // // Check and show notification if needed
-    //     // checkNotification();
-    // });
+    // Start the OTP countdown if expiry is set
+    const otpExpiry = '<?php echo isset($_SESSION['otp_expiry']) ? $_SESSION['otp_expiry'] : ''; ?>';
+    if (otpExpiry) {
+        const countdownDisplay = document.getElementById('countdownTimer');
+        startCountdown(otpExpiry, countdownDisplay);
+    } else {
+        console.error('OTP expiry time not set or invalid.');
+    }
 
-    // // Function to start countdown timer
-    // function startCountdown(expiryTime, display) {
-    //     var endTime = new Date(expiryTime).getTime(); // Get end time in milliseconds
-    //     var now = new Date().getTime(); // Get current time in milliseconds
-    //     var duration = endTime - now; // Calculate duration in milliseconds
-
-    //     var intervalId = setInterval(function () {
-    //         duration -= 1000; // Subtract 1 second
-    //         if (duration <= 0) {
-    //             clearInterval(intervalId);
-    //             display.textContent = "Expired";
-    //             document.getElementById("btn").disabled = true; // Disable verify button after expiry
-    //             var resendBtn = document.getElementById("resendBtn");
-    //             resendBtn.style.backgroundColor = "red"; // Change resend button color to red
-
-    //             // // Send notification about OTP expiry
-    //             // showNotification('OTP Expired', 'The OTP has expired. You can request a new one.');
-    //         } else {
-    //             var minutes = Math.floor((duration / (1000 * 60)) % 60); // Calculate remaining minutes
-    //             var seconds = Math.floor((duration / 1000) % 60); // Calculate remaining seconds
-
-    //             minutes = minutes < 10 ? "0" + minutes : minutes;
-    //             seconds = seconds < 10 ? "0" + seconds : seconds;
-
-    //             display.textContent = minutes + ":" + seconds;
-    //         }
-    //     }, 1000); // Update every 1 second
-    // }
-
-    // // // Request permission for notifications
-    // // function requestNotificationPermission() {
-    // //     if (Notification.permission === "default") {
-    // //         Notification.requestPermission().then(function (result) {
-    // //             console.log("Notification permission status:", result);
-    // //         });
-    // //     }
-    // // }
-
-    // // // Show a notification
-    // // function showNotification(title, body) {
-    // //     if (Notification.permission === "granted") {
-    // //         new Notification(title, {
-    // //             body: body,
-    // //             icon: 'path/to/your/icon.png' // Optional icon
-    // //         });
-    // //     }
-    // // }
-
-    // // // Check if email verification notification should be shown
-    // // function checkNotification() {
-    // //     var notificationFlag = '<?php echo isset($_SESSION['notification']) ? $_SESSION['notification'] : 'false'; ?>';
-
-    // //     if (notificationFlag === 'true') {
-    // //         showNotification('Verification Successful', 'Your email has been successfully verified.');
-    // //         <?php unset($_SESSION['notification']); ?> // Clear notification flag
-    // //     }
-    // // }
-
-    // // Enable/disable verify button based on OTP input
-    // function checkOTP() {
-    //     var otpInput = document.getElementById("otp").value.trim();
-    //     document.getElementById("btn").disabled = otpInput === "";
-    // }
-
+    // Check OTP input
+    document.getElementById('otp').addEventListener('input', function () {
+        const otpInput = this.value.trim();
+        document.getElementById("btn").disabled = otpInput === "";
+    });
+});
     </script>
 
 </body>

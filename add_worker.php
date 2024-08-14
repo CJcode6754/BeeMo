@@ -227,16 +227,13 @@ if (isset($_POST['edit_btn'])) {
                             <div class="dropdown-menu dropdown-menu-start border-dark border-2 rounded-3" style="width: 320px;">
                                 <div class="d-flex justify-content-between dropdown-header border-dark border-2">
                                     <div>
-                                        <p class="fs-5 text-dark text-uppercase">Notifications
+                                        <p class="fs-5 text-dark text-uppercase pt-3">Notifications
                                             <span class="badge text-dark bg-warning-subtle rounded-pill" id="nf-count-badge">0</span>
                                         </p>
-                                        <div id="notifications">
-                                            <!-- Notifications will be dynamically inserted here -->
-                                        </div>
                                     </div>
-                                    <div>
-                                        <i class="pt-1 px-1 fa-solid fa-ellipsis-vertical fs-5"></i>
-                                    </div>
+                                </div>
+                                <div id="notifications">
+                                    <!-- Notifications will be dynamically inserted here -->
                                 </div>
                             </div>
                         </div>
@@ -278,6 +275,9 @@ if (isset($_POST['edit_btn'])) {
                                 $worker_list = "SELECT userID, user_name, email, number, password FROM user_table WHERE adminID = '$adminID' AND is_verified = 1";
                                 $list_query = mysqli_query($conn, $worker_list);
                                 while($row = $list_query ->fetch_assoc()){
+                                    // Generate a unique modal ID for each row
+                                    $modalID = 'Edit_WorkerModal_' . $row['userID'];
+
                                     echo "
                                     <tr>
                                         <td>". $row['user_name'] ."</td>
@@ -285,46 +285,46 @@ if (isset($_POST['edit_btn'])) {
                                         <td>". $row['number'] ."</td>
                                         <td>". $row['password'] ." </td>
                                         <td>
-                                        <button name='btn_edit' class='btn edit-btn' data-bs-toggle='modal' type='button' data-bs-target='#Edit_WorkerModal'>
+                                            <button name='btn_edit' class='btn edit-btn' data-bs-toggle='modal' type='button' data-bs-target='#$modalID'>
                                                 <i class='fa-regular fa-pen-to-square'></i>
                                             </button>
                                             <div class='yellow mt-1 d-md-none fixed-bottom p-0 m-0'></div>
-                                            <div class='modal fade' id='Edit_WorkerModal' tabindex='-1' aria-labelledby='Edit_WorkerLabel' aria-hidden='true'>
+                                            <div class='modal fade' id='$modalID' tabindex='-1' aria-labelledby='Edit_WorkerLabel' aria-hidden='true'>
                                                 <div class='modal-dialog modal-lg modal-dialog-centered rounded-3'>
                                                     <div class='modal-content' style='border: 2px solid #2B2B2B;'>
                                                         <div class='modal-header border-dark border-2' style='background-color: #FCF4B9;'>
-                                                            <h5 class='modal-title fw-semibold mx-4' id='Edit_WorkerLabel'>Add Worker</h5>
-                                                            <button type='button' class='btn-close' data-bs-dismiss='modal' aria-label='Close'></button>
+                                                            <h5 class='modal-title fw-semibold mx-4' id='Edit_WorkerLabel'>Edit Worker</h5>
+                                                            <button name='closeBtn' type='button' class='btn-close' data-bs-dismiss='modal' aria-label='Close'></button>
                                                         </div>
                                                         <div class='modal-body m-5'>
                                                             <form action='add_worker.php' method='post' id='edit_workerForm' novalidate>
                                                                 <div class='d-grid d-sm-flex justify-content-sm-center gap-4 mb-1'>
                                                                     <div class='col-md-6'>
                                                                         <label for='FullName' class='form-label' style='font-size: 13px;'>Full Name</label>
-                                                                        <input name='edit_user_name' type='text' class='form-control rounded-3 py-2' style='border: 1.8px solid #2B2B2B; font-size: 13px;' id='Edit_FullName' value = '".$row['user_name']."' required>
+                                                                        <input name='edit_user_name' type='text' class='form-control rounded-3 py-2' style='border: 1.8px solid #2B2B2B; font-size: 13px;' id='Edit_FullName_$modalID' value='".htmlspecialchars($row['user_name'], ENT_QUOTES)."' required>
                                                                         <div class='invalid-feedback'>Please enter your full name.</div>
                                                                     </div>
                                                                     <div class='mb-3 col-md-6'>
                                                                         <label for='Email' class='form-label' style='font-size: 13px;'>Email</label>
-                                                                        <input name='edit_email' type='email' class='form-control rounded-3 py-2' style='border: 1.8px solid #2B2B2B; font-size: 13px;' id='Edit_Email' value = '".$row['email']."' required>
+                                                                        <input name='edit_email' type='email' class='form-control rounded-3 py-2' style='border: 1.8px solid #2B2B2B; font-size: 13px;' id='Edit_Email_$modalID' value='".htmlspecialchars($row['email'], ENT_QUOTES)."' required>
                                                                         <div class='invalid-feedback'>Please enter a valid email address.</div>
                                                                     </div>
                                                                 </div>
                                                                 <div class='d-grid mt-3 d-sm-flex justify-content-sm-center gap-4'>
                                                                     <div class='col-md-6'>
                                                                         <label for='PhoneNumber' class='form-label' style='font-size: 13px;'>Phone Number</label>
-                                                                        <input name='edit_number' type='text' class='form-control rounded-3 py-2' style='border: 1.8px solid #2B2B2B; font-size: 13px;' id='Edit_PhoneNumber' value = '".$row['number']."' required>
+                                                                        <input name='edit_number' type='text' class='form-control rounded-3 py-2' style='border: 1.8px solid #2B2B2B; font-size: 13px;' id='Edit_PhoneNumber_$modalID' value='".htmlspecialchars($row['number'], ENT_QUOTES)."' required>
                                                                         <div class='invalid-feedback'>Please enter a valid mobile number.</div>
                                                                     </div>
                                                                     <div class='col-md-6 mb-2'>
                                                                         <label for='Password' class='form-label' style='font-size: 13px;'>Password</label>
-                                                                        <input name='edit_password' type='password' class='form-control rounded-3 py-2' style='border: 1.8px solid #2B2B2B; font-size: 13px;' id='Edit_Password' value = '".$row['password']."' required>
+                                                                        <input name='edit_password' type='password' class='form-control rounded-3 py-2' style='border: 1.8px solid #2B2B2B; font-size: 13px;' id='Edit_Password_$modalID' value='".htmlspecialchars($row['password'], ENT_QUOTES)."' required>
                                                                         <div class='invalid-feedback'>Password must be 8-32 characters long.</div>
                                                                     </div>
                                                                 </div>
                                                                 <div class='mt-5 d-flex justify-content-center'>
                                                                     <input type='hidden' name='userID' value='". $row['userID'] ."'>
-                                                                    <button id='Edit_btn' name='edit_btn' type='submit' class='save-button px-4 border border-1 border-black fw-semibold'><span class='fw-bold'>+</span> Edit Info</button>
+                                                                    <button id='Edit_btn_$modalID' name='edit_btn' type='submit' class='save-button px-4 border border-1 border-black fw-semibold'><span class='fw-bold'>+</span> Edit Info</button>
                                                                 </div>
                                                             </form>
                                                         </div>
@@ -333,15 +333,15 @@ if (isset($_POST['edit_btn'])) {
                                             </div>
                                         </td>
                                         <td>
-                                        <form method='post' action='add_worker.php'>
-	                                        <input type='hidden' name='userID' value='". $row['userID'] ."'>
-                                            <button type='submit' name='btn_delete' class='btn delete-btn'><i class='fa-regular fa-trash-can' style='color: red;'></i></button>
-                                        </form>
+                                            <form method='post' action='add_worker.php'>
+                                                <input type='hidden' name='userID' value='". $row['userID'] ."'>
+                                                <button type='submit' name='btn_delete' class='btn delete-btn'><i class='fa-regular fa-trash-can' style='color: red;'></i></button>
+                                            </form>
                                         </td>
                                     </tr>
                                     ";
                                 }
-                            ?>
+                                ?>
                             </tbody>
                         </table>
                     </div>
@@ -454,7 +454,33 @@ if (isset($_POST['edit_btn'])) {
     </div>
     </div>
 
-    <script src="./js/script.js"></script>
+    <div id="notification" class="notification"></div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+    const notification = document.getElementById('notification');
+
+    // Show notification function
+    function showNotification(message) {
+        notification.textContent = message;
+        notification.classList.add('show');
+        setTimeout(function () {
+            notification.classList.remove('show');
+        }, 6000);
+    }
+
+    // Handle the notifications for status and error in the session
+    <?php if (isset($_SESSION['status'])): ?>
+        showNotification('<?php echo $_SESSION['status']; ?>');
+        <?php unset($_SESSION['status']); ?>
+    <?php elseif (isset($_SESSION['error'])): ?>
+        showNotification('<?php echo $_SESSION['error']; ?>');
+        <?php unset($_SESSION['error']); ?>
+    <?php endif; ?>
+});
+    </script>
+    <script src="./js/addWorker.js"></script>
+    <script src="./js/notification.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>

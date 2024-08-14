@@ -21,7 +21,18 @@ class OTP {
 
         return ['otp' => $otp, 'otp_expiry' => $otp_expiry];
     }
+    public function generateOTPResend($email)
+    {
+        $otp = rand(100000, 999999);
+        $otp_expiry = date('Y-m-d H:i:s', strtotime('+3 minutes'));
 
+        $query = "UPDATE admin_table SET otp='$otp', otp_expiry='$otp_expiry' WHERE email='$email'";
+        mysqli_query($this->conn, $query);
+
+        $_SESSION['otp_expiry'] = $otp_expiry;
+
+        return ['otp' => $otp, 'otp_expiry' => $otp_expiry];
+    }
     public function generateOTPUser($email)
     {
         $otp = rand(100000, 999999);

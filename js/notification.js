@@ -1,0 +1,147 @@
+//NOTIFICATION FETCHING DATA AND RESETING IF THE DATA IS SEEN OR UNSEEN
+document.addEventListener('DOMContentLoaded', function() {
+    const notificationsContainer = document.getElementById('notifications');
+    const nfCountElement = document.getElementById('nf-count');
+    const nfCountBadgeElement = document.getElementById('nf-count-badge');
+    const nfBtn = document.getElementById('nf-btn');
+
+    function showNotification() {
+        fetch('notification.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: new URLSearchParams({ action: 'fetch' })
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log("Fetched Data:", data); // Log the fetched data for debugging
+
+            // Clear previous notifications
+            notificationsContainer.innerHTML = '';
+
+            // Check if the data array is not empty
+            if (data.length > 0) {
+                // Set the notification count
+                nfCountElement.textContent = data[0].total;
+                nfCountBadgeElement.textContent = data[0].total;
+
+                // Iterate over notifications
+                for (let i = 1; i < data.length; i++) {
+                    const noti = data[i];
+                    const noti_date = new Date(noti.noti_date).toLocaleDateString(); // Format date
+                    const noti_seen = noti.noti_seen;
+                    const noti_type = noti.noti_type;
+                    const noti_uniqueid = noti.noti_uniqueid;
+                    const noti_url = noti.noti_url;
+
+                    // Update message based on type
+                    let noti_message = 'No notifications'; // Default message
+                    let noti_image = ''; // Default image URL
+                    switch (noti_type) {
+                        case 'add_user':
+                            noti_message = 'User was added successfully.';
+                            noti_image = 'img/beemo-ico.ico';
+                            break;
+                        case 'delete_user':
+                            noti_message = 'User was deleted successfully.';
+                            noti_image = 'img/beemo-ico.ico';
+                            break;
+                        case 'failed_to_delete_user':
+                            noti_message = 'Failed to delete user.';
+                            noti_image = 'img/beemo-ico.ico';
+                            break;
+                        case 'edit_user':
+                            noti_message = 'User was updated successfully.';
+                            noti_image = 'img/beemo-ico.ico';
+                            break;
+                        case 'new_cycle':
+                            noti_message = 'Successfully added new cycle.';
+                            noti_image = 'img/beemo-ico.ico';
+                            break;
+                        case 'failed_to_add_cycle':
+                            noti_message = 'Failed to add new cycle.';
+                            noti_image = 'img/beemo-ico.ico';
+                            break;
+                        case 'delete_cycle':
+                            noti_message = 'Cycle was deleted successfully.';
+                            noti_image = 'img/beemo-ico.ico';
+                            break;
+                        case 'failed_to_delete_cycle':
+                            noti_message = 'Failed to delete cycle.';
+                            noti_image = 'img/beemo-ico.ico';
+                            break;
+                        case 'edit_cycle_success':
+                            noti_message = 'Cycle info was edited successfully.';
+                            noti_image = 'img/beemo-ico.ico';
+                            break;
+                        case 'edit_cycle_failed':
+                            noti_message = 'Failed to edit cycle info.';
+                            noti_image = 'img/beemo-ico.ico';
+                            break;
+                        default:
+                            noti_message = 'Notification';
+                            noti_image = 'img/beemo-ico.ico';
+                            break;
+                    }
+
+                    // Set alert class based on notification status
+                    const alertClass = noti_seen === 'unseen' ? 'alert-success' : 'alert-dark';
+
+                    // Create and append notification
+                    const notificationItem = document.createElement('a');
+                    // notificationItem.href = `${noti_url}?notification=${noti_uniqueid}`;
+                    notificationItem.innerHTML = `
+                        <div class="notification-item alert ${alertClass}" role="alert" title="${noti_date}">
+                            <img src="${noti_image}" alt="Notification Icon" class="notification-icon">
+                            <div class="notification-content">
+                                <p class="notif_message">${noti_message}</p>
+                                <small class="notif_date">${noti_date}</small>
+                            </div>
+                        </div>
+                    `;
+                    notificationsContainer.appendChild(notificationItem);
+                }
+            } else {
+                notificationsContainer.innerHTML = "<p>No Notifications</p>";
+                nfCountElement.textContent = 0; // Set count to zero if no notifications
+                nfCountBadgeElement.textContent = 0; // Set badge count to zero
+            }
+        })
+        .catch(error => console.error("Fetch Error:", error)); // Log fetch errors
+    }
+
+    function seenNotification() {
+        fetch('notification.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: new URLSearchParams({ action: 'seen' })
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log("Marked as seen:", data); // Log response for debugging
+            nfCountElement.textContent = 0; // Reset notification count to zero
+            nfCountBadgeElement.textContent = 0; // Reset badge count to zero
+        })
+        .catch(error => console.error("Fetch Error:", error)); // Log fetch errors
+    }
+
+    showNotification();
+    setInterval(showNotification, 5000); // Fetch notifications every 5 seconds
+
+    nfBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        notificationsContainer.classList.toggle('show');
+        seenNotification(); // Mark notifications as seen when the button is clicked
+    });
+
+    document.addEventListener('click', function() {
+        notificationsContainer.classList.remove('show');
+    });
+
+    notificationsContainer.addEventListener('click', function(e) {
+        e.stopPropagation(); // Prevent hiding when clicking inside notifications
+    });
+});

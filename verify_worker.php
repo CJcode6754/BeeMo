@@ -27,12 +27,12 @@ if (isset($_POST['resend_otp'])) {
             header('Location: verify_worker.php');
             exit;
         } else {
-            $_SESSION['error'] = 'Failed to resend OTP. Please try again later.';
+            $_SESSION['error'] = 'Failed to resend OTP. Try again.';
             header('Location: verify_worker.php');
             exit;
         }
     } else {
-        $_SESSION['error'] = 'Session expired. Please log in again.';
+        $_SESSION['error'] = 'Session expired. Login again.';
         header('Location: index.php');
         exit;
     }
@@ -56,6 +56,7 @@ if (isset($_POST['submit'])) {
         if (mysqli_num_rows($result_user) > 0) {
             $update_user = "UPDATE user_table SET is_verified=1, otp='', otp_expiry=NULL WHERE email='$email'";
             if (mysqli_query($conn, $update_user)) {
+                $_SESSION['status'] = 'Worker registered successfully.';
                 header('Location: add_worker.php');
                 exit;
             } else {
@@ -69,7 +70,7 @@ if (isset($_POST['submit'])) {
             exit;
         }
     } else {
-        $_SESSION['error'] = 'Session expired. Please log in again.';
+        $_SESSION['error'] = 'Session expired. Login again.';
         header('Location: index.php');
         exit;
     }
@@ -114,7 +115,7 @@ if (isset($_POST['submit'])) {
                                         <input type="text" name="otp" id="otp" class="form-control oninput="checkOTP()">
                                         <div id="countdownTimer" style="color:red" class="position-absolute end-0 pe-2"><span id="countdownTimer"></span></div>
                                     </div>
-                                    <button name="resend_otp" class="mt-2 border-0 bg-white" type="submit">Resend Email</button>
+                                    <button id="resendBtn" name="resend_otp" class="mt-2 border-0 bg-white" type="submit">Resend Email</button>
                                     <button id="btn" name="submit" class="w-100 py-3" type="submit"><b>VERIFY</b></button>
                                 </div>
                             </form>
@@ -127,45 +128,68 @@ if (isset($_POST['submit'])) {
             </div>
         </div>
     </div>
+    <div id="notification" class="notification"></div>
     <script>
-        function startCountdown(expiryTime, display) {
-            var endTime = new Date(expiryTime).getTime();
-            var now = new Date().getTime();
-            var duration = endTime - now;
+        document.addEventListener('DOMContentLoaded', function () {
+    const notification = document.getElementById('notification');
 
-            var intervalId = setInterval(function () {
-                duration -= 1000;
-                if (duration <= 0) {
-                    clearInterval(intervalId);
-                    display.textContent = "Expired";
-                    document.getElementById("btn").disabled = true;
-                    document.getElementsByName("resend_otp")[0].disabled = false;
-                } else {
-                    var minutes = Math.floor((duration / (1000 * 60)) % 60);
-                    var seconds = Math.floor((duration / 1000) % 60);
+    // OTP Countdown function
+    function startCountdown(expiryTime, display) {
+        const endTime = new Date(expiryTime).getTime();
+        const intervalId = setInterval(function () {
+            const now = new Date().getTime();
+            const duration = endTime - now;
 
-                    minutes = minutes < 10 ? "0" + minutes : minutes;
-                    seconds = seconds < 10 ? "0" + seconds : seconds;
+            if (duration <= 0) {
+                clearInterval(intervalId);
+                display.textContent = "Expired";
+                document.getElementById("btn").disabled = true;
+                document.getElementById("resendBtn").disabled = false;
 
-                    display.textContent = minutes + ":" + seconds;
-                }
-            }, 1000);
-        }
-
-        window.addEventListener('load', function () {
-            var otpExpiry = '<?php echo isset($_SESSION['otp_expiry']) ? $_SESSION['otp_expiry'] : ''; ?>';
-            var countdownDisplay = document.getElementById("countdownTimer");
-
-            if (otpExpiry) {
-                startCountdown(otpExpiry, countdownDisplay);
+                // Show OTP expired notification
+                showNotification('OTP expired. Please request a new one.');
             } else {
-                console.error('OTP expiry time not set or invalid.');
+                const minutes = Math.floor((duration / (1000 * 60)) % 60);
+                const seconds = Math.floor((duration / 1000) % 60);
+
+                display.textContent = `${minutes < 10 ? '0' + minutes : minutes}:${seconds < 10 ? '0' + seconds : seconds}`;
             }
-        });
-        function checkOTP() {
-        var otpInput = document.getElementById("otp").value.trim();
-        document.getElementById("btn").disabled = otpInput === "";
+        }, 1000);
     }
+
+    // Show notification function
+    function showNotification(message) {
+        notification.textContent = message;
+        notification.classList.add('show');
+        setTimeout(function () {
+            notification.classList.remove('show');
+        }, 6000);
+    }
+
+    // Handle the notifications for status and error in the session
+    <?php if (isset($_SESSION['status'])): ?>
+        showNotification('<?php echo $_SESSION['status']; ?>');
+        <?php unset($_SESSION['status']); ?>
+    <?php elseif (isset($_SESSION['error'])): ?>
+        showNotification('<?php echo $_SESSION['error']; ?>');
+        <?php unset($_SESSION['error']); ?>
+    <?php endif; ?>
+
+    // Start the OTP countdown if expiry is set
+    const otpExpiry = '<?php echo isset($_SESSION['otp_expiry']) ? $_SESSION['otp_expiry'] : ''; ?>';
+    if (otpExpiry) {
+        const countdownDisplay = document.getElementById('countdownTimer');
+        startCountdown(otpExpiry, countdownDisplay);
+    } else {
+        console.error('OTP expiry time not set or invalid.');
+    }
+
+    // Check OTP input
+    document.getElementById('otp').addEventListener('input', function () {
+        const otpInput = this.value.trim();
+        document.getElementById("btn").disabled = otpInput === "";
+    });
+});
     </script>
 </body>
 </html>

@@ -37,10 +37,14 @@ if (isset($_POST['btn_delete'])) {
 }
 
 if (isset($_POST['btn_edit'])) {
-    $harvestCycle->editCycle($_POST['cycle_number'], $_POST['edit_start_date'], $_POST['edit_end_date'], $_SESSION['adminID']);
+    $current_cycle_num = $_POST['cycle_number'];
+    $new_cycle_num = $_POST['edit_cycle_num'];
+
+    $harvestCycle->editCycle($current_cycle_num, $new_cycle_num, $_POST['edit_start_date'], $_POST['edit_end_date'], $_SESSION['adminID']);
     header('Location: harvest_cycle.php');
     exit;
 }
+
 ?>
 
 
@@ -128,16 +132,13 @@ if (isset($_POST['btn_edit'])) {
                     <div class="dropdown-menu dropdown-menu-start border-dark border-2 rounded-3" style="width: 320px;">
                         <div class="d-flex justify-content-between dropdown-header border-dark border-2">
                             <div>
-                                <p class="fs-5 text-dark text-uppercase">Notifications
+                                <p class="fs-5 text-dark text-uppercase pt-3">Notifications
                                     <span class="badge text-dark bg-warning-subtle rounded-pill" id="nf-count-badge">0</span>
                                 </p>
-                                <div id="notifications">
-                                            <!-- Notifications will be dynamically inserted here -->
-                                </div>
+                            </div>
                         </div>
-                        <div>
-                            <i class="pt-1 px-1 fa-solid fa-ellipsis-vertical fs-5"></i>
-                        </div>
+                        <div id="notifications">
+                            <!-- Notifications will be dynamically inserted here -->
                         </div>
                     </div>
                 </div>
@@ -231,7 +232,13 @@ if (isset($_POST['btn_edit'])) {
                                         $progress_color = '#4caf50';
                                     }
 
+                                    if ($row['status'] != 1) {
+                                        $disable_btn = false;
+                                    } else {
+                                        $disable_btn = true;
+                                    }
                                     if ($row) {
+                                        $harvestModalID = 'Edit_HarvestModal_' . $row['cycle_number'];
                                         echo "
                                         <tr>
                                             <td>".$row['cycle_number']."</td>
@@ -246,42 +253,41 @@ if (isset($_POST['btn_edit'])) {
                                                     );'></div>
                                                 </div>
                                                 <div class='status-icon'>$icon</div>
-
                                             </td>
                                             <td>
-                                                <button name='btn_edit' class='btn edit-btn' data-bs-toggle='modal' type='button' data-bs-target='#Edit_CycleModal'>
+                                                <button echo $disable_btn ? 'disabled' : '' name='btn_edit' class='btn edit-btn' data-bs-toggle='modal' type='button' data-bs-target='#$harvestModalID'>
                                                     <i class='fa-regular fa-pen-to-square'></i>
                                                 </button>
-                                                <div class='modal fade' id='Edit_CycleModal' tabindex='-1' aria-labelledby='Edit_CycleLabel' aria-hidden='true'>
-                                                <div class='modal-dialog modal-lg modal-dialog-centered rounded-3'>
-                                                    <div class='modal-content' style='border: 2px solid #2B2B2B;'>
-                                                        <div class='modal-header border-dark border-2' style='background-color: #FCF4B9;'>
-                                                            <h5 class='modal-title fw-semibold mx-4' id='Edit_CycleLabel'>Edit Harvest Cycle</h5>
-                                                            <button name='close' type='button' class='btn-close' data-bs-dismiss='modal' aria-label='Close'></button>
-                                                        </div>
-                                                        <div class='modal-body m-5'>
-                                                            <form action='harvest_cycle.php' method='post' class='row mt-2 g-3'>
-                                                                <div class='col-md-4'>
-                                                                    <label for='cycleNumber' class='form-label d-flex justify-content-start' style='font-size: 13px;'>Cycle Number</label>
-                                                                    <input name='edit_cycle_num' type='text' class='form-control rounded-3 py-2' style='border: 1.8px solid #2B2B2B; font-size: 13px;' id='cycleNumber' >
-                                                                </div>
-                                                                <div class='col-md-4'>
-                                                                    <label for='cycleStart' class='form-label d-flex justify-content-start' style='font-size: 13px;'>Start of Cycle</label>
-                                                                    <input name='edit_start_date' type='date' class='form-control rounded-3 py-2' style='border: 1.8px solid #2B2B2B; font-size: 13px;' id='cycleStart'>
-                                                                </div>
-                                                                <div class='col-md-4'>
-                                                                    <label for='cycleEnd' class='form-label d-flex justify-content-start' style='font-size: 13px;'>End of Cycle</label>
-                                                                    <input name='edit_end_date' type='date' class='form-control rounded-3 py-2' style='border: 1.8px solid #2B2B2B; font-size: 13px;' id='cycleEnd'>
-                                                                </div>
-                                                                <div class='mt-4 d-flex justify-content-end'>
-                                                                    <input type='hidden' name='cycle_number' value='".$row['cycle_number']."'>
-                                                                    <button name='btn_edit' type='submit' class='save-button px-4 border border-1 border-black fw-semibold'>Save</button>
-                                                                </div>
-                                                            </form>
+                                                <div class='modal fade' id='$harvestModalID' tabindex='-1' aria-labelledby='Edit_CycleLabel_$harvestModalID' aria-hidden='true'>
+                                                    <div class='modal-dialog modal-lg modal-dialog-centered rounded-3'>
+                                                        <div class='modal-content' style='border: 2px solid #2B2B2B;'>
+                                                            <div class='modal-header border-dark border-2' style='background-color: #FCF4B9;'>
+                                                                <h5 class='modal-title fw-semibold mx-4' id='Edit_CycleLabel_$harvestModalID'>Edit Harvest Cycle</h5>
+                                                                <button name='close' type='button' class='btn-close' data-bs-dismiss='modal' aria-label='Close'></button>
+                                                            </div>
+                                                            <div class='modal-body m-5'>
+                                                                <form action='harvest_cycle.php' method='post' class='row mt-2 g-3'>
+                                                                    <div class='col-md-4'>
+                                                                        <label for='cycleNumber_$harvestModalID' class='form-label d-flex justify-content-start' style='font-size: 13px;'>Cycle Number</label>
+                                                                        <input name='edit_cycle_num' type='text' class='form-control rounded-3 py-2' style='border: 1.8px solid #2B2B2B; font-size: 13px;' id='cycleNumber_$harvestModalID' value='".htmlspecialchars($row['cycle_number'], ENT_QUOTES)."' required>
+                                                                    </div>
+                                                                    <div class='col-md-4'>
+                                                                        <label for='cycleStart_$harvestModalID' class='form-label d-flex justify-content-start' style='font-size: 13px;'>Start of Cycle</label>
+                                                                        <input name='edit_start_date' type='date' class='form-control rounded-3 py-2' style='border: 1.8px solid #2B2B2B; font-size: 13px;' id='cycleStart_$harvestModalID' value='".htmlspecialchars($row['start_of_cycle'], ENT_QUOTES)."' required>
+                                                                    </div>
+                                                                    <div class='col-md-4'>
+                                                                        <label for='cycleEnd_$harvestModalID' class='form-label d-flex justify-content-start' style='font-size: 13px;'>End of Cycle</label>
+                                                                        <input name='edit_end_date' type='date' class='form-control rounded-3 py-2' style='border: 1.8px solid #2B2B2B; font-size: 13px;' id='cycleEnd_$harvestModalID' value='".htmlspecialchars($row['end_of_harvest'], ENT_QUOTES)."' required>
+                                                                    </div>
+                                                                    <div class='mt-4 d-flex justify-content-end'>
+                                                                        <input type='hidden' name='cycle_number' value='".$row['cycle_number']."'>
+                                                                        <button name='btn_edit' type='submit' class='save-button px-4 border border-1 border-black fw-semibold'>Save</button>
+                                                                    </div>
+                                                                </form>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
-                                            </div>
                                             </td>
                                             <form method='post' action='harvest_cycle.php'>
                                                 <input type='hidden' name='cycle_number' value='". $row['cycle_number'] ."'>
@@ -289,7 +295,8 @@ if (isset($_POST['btn_edit'])) {
                                             </form>
                                         </tr>
                                         ";
-                                    } else {
+                                    }
+                                     else {
                                         // Default values if no result
                                         $progress_percentage = 0;
                                         $progress_color = '#4caf50';
@@ -370,6 +377,7 @@ if (isset($_POST['btn_edit'])) {
     </div>
 
     <script src="./js/script.js"></script>
+    <script src="./js/notification.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>

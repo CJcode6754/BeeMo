@@ -102,16 +102,13 @@
                     <div class="dropdown-menu dropdown-menu-start border-dark border-2 rounded-3" style="width: 320px;">
                         <div class="d-flex justify-content-between dropdown-header border-dark border-2">
                             <div>
-                                <p class="fs-5 text-dark text-uppercase">Notifications
+                                <p class="fs-5 text-dark text-uppercase pt-3">Notifications
                                     <span class="badge text-dark bg-warning-subtle rounded-pill" id="nf-count-badge">0</span>
                                 </p>
-                                <div id="notifications">
-                                            <!-- Notifications will be dynamically inserted here -->
-                                </div>
+                            </div>
                         </div>
-                        <div>
-                            <i class="pt-1 px-1 fa-solid fa-ellipsis-vertical fs-5"></i>
-                        </div>
+                        <div id="notifications">
+                            <!-- Notifications will be dynamically inserted here -->
                         </div>
                     </div>
                 </div>
@@ -208,6 +205,7 @@
     </div>
 
     <script src="./js/script.js"></script>
+    <script src="./js/notification.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 

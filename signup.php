@@ -1,4 +1,7 @@
 <?php
+//<-----TODO LIST------>
+// 1. ADD NOTIFICATION IN SIGNUP AND LOGIN
+
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
@@ -135,5 +138,5 @@ if (isset($_POST['submit'])) {
 </body>
 <!-- JQuery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script> 
-<script src="./js/script.js" type="text/javascript"></script>
+<script src="./js/signup.js" type="text/javascript"></script>
 </html>

@@ -40,13 +40,10 @@ class Mailer {
             $this->mail->isHTML(true);
             $this->mail->Subject = 'Verify your email';
             $this->mail->Body = "Hello, {$name}<br>Your account registration is successfully done! Now activate your account with OTP: {$otp}.";
-
-
             $this->mail->send();
 
             // Store a status message in the session
             $_SESSION['status'] = 'OTP sent to your email. Please check your inbox.';
-
             return true;
         } catch (Exception $e) {
             echo "Message could not be sent. Mailer Error: {$this->mail->ErrorInfo}";

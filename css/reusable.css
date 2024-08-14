@@ -240,3 +240,152 @@ nav {
   transform: scale(1.09);
 }
 /* --------------------------------------------End: Navbar Desktop View---------------------------------------------*/
+
+/* --------------------------------------------Start: Notifications---------------------------------------------*/
+/* Notifications Container */
+#notifications {
+  max-height: 350px; /* Adjust based on your preference */
+  overflow-y: auto;
+}
+
+/* Individual Notification Item */
+.notification-item {
+  height: 70px;
+  width: 290px;
+  padding-top: 10px;
+  margin: 0 5px;
+  border-radius: 5px;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  color: #333;
+  background-color: #fff;
+}
+.notification-icon {
+  width: 30px; /* Adjust size as needed */
+  height: 30px; /* Adjust size as needed */
+  margin-right: 10px;
+  border-radius: 50%;
+}
+.notification-content {
+  flex: 2;
+}
+.notif_message{
+  width: 100%;
+  font-size: 14px;
+  text-decoration: none;
+  padding-top: 12px;
+  font-weight: 800;
+}
+.notif_date{
+  font-size: 12px;
+}
+/* Success Notification */
+.alert-success {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+/* Dark Notification */
+.alert-dark {
+  background-color: #515253;
+  color: #fff;
+}
+
+/* Button to open dropdown */
+#nf-btn {
+  cursor: pointer;
+}
+
+/* Dropdown Styling */
+.dropdown-menu {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+}
+
+.dropdown-header {
+  padding: 10px;
+  background-color: #f8f9fa;
+}
+
+/* --------------------------------------------End: Notifications---------------------------------------------*/
+
+/* --------------------------------------------Start: Toast---------------------------------------------*/
+/* #toastBox{
+  position: absolute;
+  bottom: 30px;
+  right: 30px;
+  display: flex;
+  align-items: flex-end;
+  flex-direction: column;
+  overflow: hidden;
+  padding: 20px;
+}
+.toast{
+  width: 400px;
+  height: 80px;
+  background: #fff;
+  font-weight: 500;
+  margin: 15px 0;
+  box-shadow: 0 0 20px rgba(0,0,0,0.3);
+  align-content: center;
+  position:relative;
+  transform: translateX(100%);
+  animation: moveleft 0.5s linear forwards;
+}
+@keyframes moveleft{
+  100%{
+      transform: translateX(0);
+  }
+}
+.toast i{
+  margin: 0 20px;
+  font-size: 35px;
+  color: green;
+}
+.toast.error, .toast.expired i{
+  color: red;
+}
+.toast::after{
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 5px;
+  background: green;
+  animation: anim 5s linear forwards;
+}
+@keyframes anim{
+  100%{
+      width: 0;
+  }
+}
+.toast.error::after{
+  background: red;
+}
+.toast.expired::after{
+  background: red;
+} */
+
+.notification {
+  display: none;
+  position: fixed;
+  top: 20px;
+  left: 400px;
+  background-color: #333;
+  color: #fff;
+  padding: 15px;
+  border-radius: 5px;
+  opacity: 0;
+  transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+  transform: translateX(50%) translateY(0);
+  z-index: 1000;
+}
+
+.notification.show {
+  display: block;
+  opacity: 1;
+  transform: translateX(50%) translateY(0);
+}
+/* --------------------------------------------End: Toast---------------------------------------------*/

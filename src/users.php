@@ -33,11 +33,12 @@ class User {
         if ($insert_run) {
             $mailer = new Mailer();
             if ($mailer->sendOTP($email, $otp, $name)) {
-                $_SESSION['status'] = 'Registration Successful. Verify your Email Address with the OTP sent.';
+                $_SESSION['status'] = 'Registration successful. Verify your email with the OTP sent.';
                 $_SESSION['email'] = $email;
+                $_SESSION['admin_name'] = $name;
                 return true;
             } else {
-                $_SESSION['error'] = 'Failed to send OTP. Please try again later.';
+                $_SESSION['error'] = 'Failed to send OTP. Try again.';
                 return false;
             }
         } else {
