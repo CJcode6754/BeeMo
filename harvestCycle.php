@@ -1,7 +1,11 @@
 <?php
-// index.php
+function season_start() {
+    if (session_status() == PHP_SESSION_NONE) {
+        session_start();
+    }
+}
 
-session_start();
+season_start();
 require_once './src/db.php';
 require_once './src/harvest_function.php';
 
@@ -11,28 +15,32 @@ $harvestCycle = new HarvestCycle($db);
 
 // Check if the admin is logged in
 if (!isset($_SESSION['adminID'])) {
-    header('Location: index.php'); // Redirect to login page if not logged in
+    header('Location: /'); // Redirect to login page if not logged in
     exit;
 }
 
+if(isset($_POST['dashboard'])){
+    $_SESSION['adminID'] = $adminID;
+    exit;
+}
 // Handle logout
 if (isset($_POST['logout_btn'])) {
     $_SESSION = array();
     session_destroy();
-    header('Location: index.php');
+    header('Location: /');
     exit;
 }
 
 // Handle form submissions
 if (isset($_POST['submit'])) {
     $harvestCycle->insertCycle($_POST['cycle_num'], $_POST['start_date'], $_POST['end_date'], $_SESSION['adminID']);
-    header('Location: harvest_cycle.php');
+    header('Location: /harvestCycle');
     exit;
 }
 
 if (isset($_POST['btn_delete'])) {
     $harvestCycle->deleteCycle($_POST['cycle_number'], $_SESSION['adminID']);
-    header('Location: harvest_cycle.php');
+    header('Location: /harvestCycle');
     exit;
 }
 
@@ -41,7 +49,7 @@ if (isset($_POST['btn_edit'])) {
     $new_cycle_num = $_POST['edit_cycle_num'];
 
     $harvestCycle->editCycle($current_cycle_num, $new_cycle_num, $_POST['edit_start_date'], $_POST['edit_end_date'], $_SESSION['adminID']);
-    header('Location: harvest_cycle.php');
+    header('Location: /harvestCycle');
     exit;
 }
 
@@ -66,47 +74,47 @@ if (isset($_POST['btn_edit'])) {
     <div id="sidebar" class="sidebar position-fixed top-0 bottom-0 bg-white border-end offcanvass">
 
         <div class="d-flex align-items-center p-3 py-5">
-            <a href="dashboard.php" class="sidebar-logo fw-bold text-dark text-decoration-none fs-4"><img src="img/BeeMo Logo Side.png" width="173px" height="75px" alt="BeeMo Logo"></a>
+            <a href="/dashboard" class="sidebar-logo fw-bold text-dark text-decoration-none fs-4"><img src="img/BeeMo Logo Side.png" width="173px" height="75px" alt="BeeMo Logo"></a>
         </div>
         <ul class="sidebar-menu p-3 py-1 m-0 mb-0">
             <li class="sidebar-menu-item">
-                <a href="dashboard.php">
+                <a href="/dashboard" name="dashboard">
                     <i class="fa-solid fa-house sidebar-menu-item-icon"></i>
                     Home
                 </a>
             </li>
             <li class="sidebar-menu-item">
-                <a href="choose_hive.php">
+                <a href="/chooseHive">
                     <i class="fa-solid fa-temperature-three-quarters sidebar-menu-item-icon"></i>
                     Parameters Monitoring
                 </a>
             </li>
             <li class="sidebar-menu-item">
-                <a href="#">
+                <a href="/reports">
                     <i class="fa-solid fa-newspaper sidebar-menu-item-icon"></i>
                     Reports
                 </a>
             </li>
             <li class="sidebar-menu-item active">
-                <a href="harvest_cycle.php">
+                <a href="/harvestCycle">
                     <i class="fa-solid fa-arrows-spin sidebar-menu-item-icon"></i>
                     Harvest Cycle
                 </a>
             </li>
             <li class="sidebar-menu-item">
-                <a href="beeguide.php">
+                <a href="/beeGuide">
                     <i class="fa-solid fa-book-open sidebar-menu-item-icon"></i>
                     Bee Guide
                 </a>
             </li>
             <li class="sidebar-menu-item">
-                <a href="add_worker.php">
+                <a href="/addWorker">
                     <i class="fa-solid fa-user sidebar-menu-item-icon"></i>
                     Worker
                 </a>
             </li>
             <li class="sidebar-menu-item">
-                <a href="about.php">
+                <a href="/about">
                     <i class="fa-solid fa-circle-info sidebar-menu-item-icon"></i>
                     About
                 </a>
@@ -148,9 +156,9 @@ if (isset($_POST['btn_edit'])) {
                         <i class="fa-solid fa-user"></i>
                     </div>
                     <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                        <li><a class="dropdown-item" href="termsandconditions.php">Action</a></li>
+                        <li><a class="dropdown-item" href="/TermsAndConditions">Action</a></li>
                         <li><a class="dropdown-item" href="#">Another action</a></li>
-                        <form id="logoutForm" action="dashboard.php" method="post" style="display: none;">
+                        <form id="logoutForm" action="/harvestCycle" method="post" style="display: none;">
                         	<input type="hidden" name="logout_btn" value="true">
                         </form>
                         <li class="dropdown-item" onclick="document.getElementById('logoutForm').submit();">Logout</li>
@@ -162,10 +170,10 @@ if (isset($_POST['btn_edit'])) {
                 <div class="px-4 py-3 my-4 text-center content-wrapper">
                     <p class="fs-4 mb-5 fw-bold cycle-highlight">Harvest Cycle</p>
                     <div class="container-cycle">
-                    <form action="harvest_cycle.php" method="post" class="row mt-2 g-3">
+                    <form action="harvestCycle.php" method="post" class="row mt-2 g-3">
                         <div class="col-md-4">
                             <label for="cycleNumber" class="form-label d-flex justify-content-start" style="font-size: 13px;">Cycle Number</label>
-                            <input name="cycle_num" type="text" class="form-control rounded-3 py-2" style="border: 1.8px solid #2B2B2B; font-size: 13px;" id="cycleNumber" required="This is required">
+                            <input name="cycle_num" type="number" class="form-control rounded-3 py-2" style="border: 1.8px solid #2B2B2B; font-size: 13px;" id="cycleNumber" required="This is required">
                         </div>
                         <div class="col-md-4">
                             <label for="cycleStart" class="form-label d-flex justify-content-start" style="font-size: 13px;">Start of Cycle</label>
@@ -195,13 +203,13 @@ if (isset($_POST['btn_edit'])) {
                             <tbody id="cycleTableBody">
                             <?php
                                 $adminID = $_SESSION['adminID'];
-                                $select_cycle = "SELECT cycle_number, start_of_cycle, honey_kg, end_of_harvest, status FROM harvest_cycle WHERE adminID = '$adminID'";
+                                $select_cycle = "SELECT cycle_number, start_of_cycle, honey_kg, end_of_cycle, status FROM harvest_cycle WHERE adminID = '$adminID'";
                                 $query_select_cycle = mysqli_query($conn, $select_cycle);
 
                                 while ($row = $query_select_cycle->fetch_assoc()) {
                                     if ($row) {
                                         $start_date = new DateTime($row['start_of_cycle']);
-                                        $end_date = new DateTime($row['end_of_harvest']);
+                                        $end_date = new DateTime($row['end_of_cycle']);
                                         $now = new DateTime();
 
                                         // Calculate total duration and elapsed duration
@@ -231,12 +239,6 @@ if (isset($_POST['btn_edit'])) {
                                         $progress_percentage = 0;
                                         $progress_color = '#4caf50';
                                     }
-
-                                    if ($row['status'] != 1) {
-                                        $disable_btn = false;
-                                    } else {
-                                        $disable_btn = true;
-                                    }
                                     if ($row) {
                                         $harvestModalID = 'Edit_HarvestModal_' . $row['cycle_number'];
                                         echo "
@@ -244,7 +246,7 @@ if (isset($_POST['btn_edit'])) {
                                             <td>".$row['cycle_number']."</td>
                                             <td>".$row['start_of_cycle']."</td>
                                             <td>".$row['honey_kg']."</td>
-                                            <td>".$row['end_of_harvest']."</td>
+                                            <td>".$row['end_of_cycle']."</td>
                                             <td>
                                                 <div class='status_pending'>
                                                     <div class='progress-circle' style='background: conic-gradient(
@@ -255,7 +257,7 @@ if (isset($_POST['btn_edit'])) {
                                                 <div class='status-icon'>$icon</div>
                                             </td>
                                             <td>
-                                                <button echo $disable_btn ? 'disabled' : '' name='btn_edit' class='btn edit-btn' data-bs-toggle='modal' type='button' data-bs-target='#$harvestModalID'>
+                                                <button name='btn_edit' class='btn edit-btn' data-bs-toggle='modal' type='button' data-bs-target='#$harvestModalID'>
                                                     <i class='fa-regular fa-pen-to-square'></i>
                                                 </button>
                                                 <div class='modal fade' id='$harvestModalID' tabindex='-1' aria-labelledby='Edit_CycleLabel_$harvestModalID' aria-hidden='true'>
@@ -266,7 +268,7 @@ if (isset($_POST['btn_edit'])) {
                                                                 <button name='close' type='button' class='btn-close' data-bs-dismiss='modal' aria-label='Close'></button>
                                                             </div>
                                                             <div class='modal-body m-5'>
-                                                                <form action='harvest_cycle.php' method='post' class='row mt-2 g-3'>
+                                                                <form action='harvestCycle.php' method='post' class='row mt-2 g-3'>
                                                                     <div class='col-md-4'>
                                                                         <label for='cycleNumber_$harvestModalID' class='form-label d-flex justify-content-start' style='font-size: 13px;'>Cycle Number</label>
                                                                         <input name='edit_cycle_num' type='text' class='form-control rounded-3 py-2' style='border: 1.8px solid #2B2B2B; font-size: 13px;' id='cycleNumber_$harvestModalID' value='".htmlspecialchars($row['cycle_number'], ENT_QUOTES)."' required>
@@ -277,7 +279,7 @@ if (isset($_POST['btn_edit'])) {
                                                                     </div>
                                                                     <div class='col-md-4'>
                                                                         <label for='cycleEnd_$harvestModalID' class='form-label d-flex justify-content-start' style='font-size: 13px;'>End of Cycle</label>
-                                                                        <input name='edit_end_date' type='date' class='form-control rounded-3 py-2' style='border: 1.8px solid #2B2B2B; font-size: 13px;' id='cycleEnd_$harvestModalID' value='".htmlspecialchars($row['end_of_harvest'], ENT_QUOTES)."' required>
+                                                                        <input name='edit_end_date' type='date' class='form-control rounded-3 py-2' style='border: 1.8px solid #2B2B2B; font-size: 13px;' id='cycleEnd_$harvestModalID' value='".htmlspecialchars($row['end_of_cycle'], ENT_QUOTES)."' required>
                                                                     </div>
                                                                     <div class='mt-4 d-flex justify-content-end'>
                                                                         <input type='hidden' name='cycle_number' value='".$row['cycle_number']."'>
@@ -289,7 +291,7 @@ if (isset($_POST['btn_edit'])) {
                                                     </div>
                                                 </div>
                                             </td>
-                                            <form method='post' action='harvest_cycle.php'>
+                                            <form method='post' action='harvestCycle.php'>
                                                 <input type='hidden' name='cycle_number' value='". $row['cycle_number'] ."'>
                                                 <td><button name='btn_delete' type='submit' class='btn delete-btn'><i class='fa-regular fa-trash-can' style='color: red;'></i></button></td>
                                             </form>
@@ -324,50 +326,50 @@ if (isset($_POST['btn_edit'])) {
 
     <div class="offcanvas offcanvas-start sidebar2 overflow-x-hidden overflow-y-hidden" tabindex="-1" id="offcanvasNav-Menu" aria-labelledby="staticBackdropLabel">
         <div class="d-flex align-items-center p-3 py-5">
-            <a href="dashboard.php" class="sidebar-logo fw-bold text-dark text-decoration-none fs-4" data-bs-dismiss="offcanvas" aria-label="Close">
+            <a href="/dashboard" class="sidebar-logo fw-bold text-dark text-decoration-none fs-4" data-bs-dismiss="offcanvas" aria-label="Close">
                 <img src="img/BeeMo Logo Side.png" width="173px" height="75px" alt="BeeMo Logo">
             </a>
             <button type="button" class="btn-close ms-auto" data-bs-dismiss="offcanvas" aria-label="Close"></button>
         </div>
         <ul class="sidebar-menu p-2 py-2 m-0 mb-0">
             <li class="sidebar-menu-item2">
-                <a href="dashboard.php">
+                <a href="/dashboard">
                     <i class="fa-solid fa-house sidebar-menu-item-icon2"></i>
                     Home
                 </a>
             </li>
             <li class="sidebar-menu-item2 py-1">
-                <a href="choose_hive.php">
+                <a href="/chooseHive">
                     <i class="fa-solid fa-temperature-three-quarters sidebar-menu-item-icon2"></i>
                     Parameters Monitoring
                 </a>
             </li>
             <li class="sidebar-menu-item2">
-                <a href="#">
+                <a href="/reports">
                     <i class="fa-solid fa-newspaper sidebar-menu-item-icon2"></i>
                     Reports
                 </a>
             </li>
             <li class="sidebar-menu-item2 active">
-                <a href="harvest_cycle.php">
+                <a href="/harvestCycle">
                     <i class="fa-solid fa-arrows-spin sidebar-menu-item-icon2"></i>
                     Harvest Cycle
                 </a>
             </li>
             <li class="sidebar-menu-item2">
-                <a href="beeguide.php">
+                <a href="/beeGuide">
                     <i class="fa-solid fa-book-open sidebar-menu-item-icon2"></i>
                     Bee Guide
                 </a>
             </li>
             <li class="sidebar-menu-item2">
-                <a href="add_worker.php">
+                <a href="/addWorker">
                     <i class="fa-solid fa-user sidebar-menu-item-icon2"></i>
                     Worker
                 </a>
             </li>
             <li class="sidebar-menu-item2">
-                <a href="about.php">
+                <a href="/about">
                     <i class="fa-solid fa-circle-info sidebar-menu-item-icon2"></i>
                     About
                 </a>

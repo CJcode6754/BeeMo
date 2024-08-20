@@ -3,10 +3,13 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-session_start();
-require './src/db.php';
-require './src/otp.php';
-require './src/mailer.php';
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
+
+require_once './src/db.php';
+require_once './src/otp.php';
+require_once './src/mailer.php';
 
 $db = new Database();
 $conn = $db->getConnection();
@@ -22,16 +25,16 @@ if (isset($_POST['resend'])) {
 
         if ($emailHandler->sendOTP($email, $otp['otp'], $name)) {
             $_SESSION['status'] = 'New OTP sent! Check your email.';
-            header('Location: verify.php');
+            header('Location: /verify');
             exit;
         } else {
             $_SESSION['error'] = 'Resend OTP failed. Try again.';
-            header('Location: verify.php');
+            header('Location: /verify');
             exit;
         }
     } else {
         $_SESSION['error'] = 'Session expired. Register again.';
-        header('Location: signup.php');
+        header('Location: /signup');
         exit;
     }
 }
@@ -44,16 +47,16 @@ if (isset($_POST['submit'])) {
 
         if ($otpHandler->verifyOTP($email, $otp)) {
             $_SESSION['status'] = 'Account registered successfully.';
-            header('Location: index.php');
+            header('Location: /');
             exit;
         } else {
             $_SESSION['error'] = 'OTP verification failed. Try again.';
-            header('Location: verify.php');
+            header('Location: /verify');
             exit;
         }
     } else {
         $_SESSION['error'] = 'Session expired. Register again.';
-        header('Location: signup.php');
+        header('Location: /signup');
         exit;
     }
 }
@@ -87,7 +90,7 @@ if (isset($_POST['submit'])) {
                         <main class="form-signin w-auto m-auto px4">
                             <form action="verify.php" method="post">
                                 <div class="top px-2 pt-4">
-                                    <a href="index.php"><img id="loginLogo" src="img/LOGO2.png" alt="Logo"></a>
+                                    <a href="/signup"><img id="loginLogo" src="img/LOGO2.png" alt="Logo"></a>
                                     <p class="about pt-1">ABOUT&nbsp;US</p>
                                 </div>
                                 <hr class="d-block d-lg-none">
@@ -116,7 +119,7 @@ if (isset($_POST['submit'])) {
     <script>
     document.addEventListener('DOMContentLoaded', function () {
     const notification = document.getElementById('notification');
-    
+
     // OTP Countdown function
     function startCountdown(expiryTime, display) {
         const endTime = new Date(expiryTime).getTime();

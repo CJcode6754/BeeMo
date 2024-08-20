@@ -2,20 +2,25 @@
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
-session_start();
 
-require './src/db.php';
-require './src/mailer.php';
-require './src/otp.php';
-require './src/notification_handler.php';
+function season_start() {
+    if (session_status() == PHP_SESSION_NONE) {
+        session_start();
+    }
+
+    if (!isset($_SESSION['season_started'])) {
+        $_SESSION['season_started'] = true;
+    }
+}
+
+season_start();
+require_once './src/db.php';
+require_once './src/mailer.php';
+require_once './src/otp.php';
+require_once './src/notification_handler.php';
 
 $db = new Database();
 $conn = $db->getConnection();
-
-if (!isset($_SESSION['adminID'])) {
-    header('Location: index.php');
-    exit;
-}
 
 $mailer = new Mailer();
 $otpHandler = new OTP($conn);
@@ -33,7 +38,7 @@ if (isset($_POST['submit'])) {
 
     if (mysqli_num_rows($check_email_query) > 0) {
         $_SESSION['error'] = 'Email Address Already Exists';
-        header('Location: add_worker.php');
+        header('Location: /addWorker');
         exit;
     }
 
@@ -47,22 +52,22 @@ if (isset($_POST['submit'])) {
 
     if ($insert_user_run) {
         if ($mailer->sendOTP($email, $otp, $name)) {
-            $_SESSION['status'] = 'Registration Successful. Verify your Email Address with the OTP sent.';
+            $_SESSION['status'] = 'Verify your email with the OTP sent.';
             $_SESSION['email'] = $email;
             $_SESSION['user_name'] = $name;
             $_SESSION['adminID'] = $adminID;
 
-            $notificationHandler->insertNotification($adminID, 'active', 'User was added successfully.', 'add_user', 'add_worker.php', 'unseen');
-            header('Location: verify_worker.php');
+            $notificationHandler->insertNotification($adminID, 'active', 'User was added successfully.', 'add_user', '/addWorker', 'unseen');
+            header('Location: /verifyWorker');
             exit;
         } else {
-            $_SESSION['error'] = 'Failed to send OTP. Please try again later.';
-            header('Location: add_worker.php');
+            $_SESSION['error'] = 'Failed to send OTP. Try again.';
+            header('Location: /addWorker');
             exit;
         }
     } else {
         $_SESSION['error'] = 'Error: ' . mysqli_error($conn);
-        header('Location: add_worker.php');
+        header('Location: /addWorker');
         exit;
     }
 }
@@ -74,11 +79,11 @@ if (isset($_POST['btn_delete'])) {
     $delete_query = mysqli_query($conn, $delete_user);
 
     if ($delete_query) {
-        $notificationHandler->insertNotification($adminID, 'active', 'User was deleted successfully.', 'delete_user', 'add_worker.php', 'unseen');
+        $notificationHandler->insertNotification($adminID, 'active', 'User was deleted successfully.', 'delete_user', '/addWorker', 'unseen');
     } else {
-        $notificationHandler->insertNotification($adminID, 'active', 'Failed to delete user.', 'failed_to_delete_user', 'add_worker.php', 'unseen');
+        $notificationHandler->insertNotification($adminID, 'active', 'Failed to delete user.', 'failed_to_delete_user', '/addWorker', 'unseen');
     }
-    header('Location: add_worker.php');
+    header('Location: /addWorker');
     exit;
 }
 
@@ -133,13 +138,19 @@ if (isset($_POST['edit_btn'])) {
     }
 
     if ($update_success) {
-        $notificationHandler->insertNotification($adminID, 'active', 'User was edited successfully.', 'edit_user', 'add_worker.php', 'unseen');
+        $notificationHandler->insertNotification($adminID, 'active', 'User was edited successfully.', 'edit_user', '/addWorker', 'unseen');
     } else {
-        $notificationHandler->insertNotification($adminID, 'active', 'Failed to edit user.', 'failed_to_edit_user', 'add_worker.php', 'unseen');
+        $notificationHandler->insertNotification($adminID, 'active', 'Failed to edit user.', 'failed_to_edit_user', '/addWorker', 'unseen');
     }
 
-    header('Location: add_worker.php');
+    header('Location: /addWorker');
     exit;
+}
+
+if (isset($_POST['logout_btn'])) {
+    session_destroy();
+    header('Location: /');
+    exit();
 }
 ?>
 
@@ -161,47 +172,47 @@ if (isset($_POST['edit_btn'])) {
     <div id="sidebar" class="sidebar position-fixed top-0 bottom-0 bg-white border-end offcanvass">
 
         <div class="d-flex align-items-center p-3 py-5">
-            <a href="dashboard.php" class="sidebar-logo fw-bold text-dark text-decoration-none fs-4"><img src="img/BeeMo Logo Side.png" width="173px" height="75px" alt="BeeMo Logo"></a>
+            <a href="/dashboard" class="sidebar-logo fw-bold text-dark text-decoration-none fs-4"><img src="img/BeeMo Logo Side.png" width="173px" height="75px" alt="BeeMo Logo"></a>
         </div>
         <ul class="sidebar-menu p-3 py-1 m-0 mb-0">
             <li class="sidebar-menu-item">
-                <a href="dashboard.php">
+                <a href="/dashboard">
                     <i class="fa-solid fa-house sidebar-menu-item-icon"></i>
                     Home
                 </a>
             </li>
             <li class="sidebar-menu-item">
-                <a href="choose_hive.php">
+                <a href="/chooseHive">
                     <i class="fa-solid fa-temperature-three-quarters sidebar-menu-item-icon"></i>
                     Parameters Monitoring
                 </a>
             </li>
             <li class="sidebar-menu-item">
-                <a href="#">
+                <a href="/reports">
                     <i class="fa-solid fa-newspaper sidebar-menu-item-icon"></i>
                     Reports
                 </a>
             </li>
             <li class="sidebar-menu-item">
-                <a href="harvest_cycle.php">
+                <a href="/harvestCycle">
                     <i class="fa-solid fa-arrows-spin sidebar-menu-item-icon"></i>
                     Harvest Cycle
                 </a>
             </li>
             <li class="sidebar-menu-item">
-                <a href="beeguide.php">
+                <a href="/beeGuide">
                     <i class="fa-solid fa-book-open sidebar-menu-item-icon"></i>
                     Bee Guide
                 </a>
             </li>
             <li class="sidebar-menu-item active">
-                <a href="add_worker.php">
+                <a href="/addWorker">
                     <i class="fa-solid fa-user sidebar-menu-item-icon"></i>
                     Worker
                 </a>
             </li>
             <li class="sidebar-menu-item">
-                <a href="about.php">
+                <a href="/about">
                     <i class="fa-solid fa-circle-info sidebar-menu-item-icon"></i>
                     About
                 </a>
@@ -243,9 +254,9 @@ if (isset($_POST['edit_btn'])) {
                                 <i class="fa-solid fa-user"></i>
                             </div>
                             <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                                <li><a class="dropdown-item" href="termsandconditions.php">Action</a></li>
+                                <li><a class="dropdown-item" href="/TermsAndConditions">Action</a></li>
                                 <li><a class="dropdown-item" href="#">Another action</a></li>
-                                <form id="logoutForm" action="dashboard.php" method="post" style="display: none;">
+                                <form id="logoutForm" action="addWorker.php" method="post" style="display: none;">
                                 	<input type="hidden" name="logout_btn" value="true">
                                 </form>
                                 <li class="dropdown-item" onclick="document.getElementById('logoutForm').submit();">Logout</li>
@@ -297,7 +308,7 @@ if (isset($_POST['edit_btn'])) {
                                                             <button name='closeBtn' type='button' class='btn-close' data-bs-dismiss='modal' aria-label='Close'></button>
                                                         </div>
                                                         <div class='modal-body m-5'>
-                                                            <form action='add_worker.php' method='post' id='edit_workerForm' novalidate>
+                                                            <form action='addWorker.php' method='post' id='edit_workerForm' novalidate>
                                                                 <div class='d-grid d-sm-flex justify-content-sm-center gap-4 mb-1'>
                                                                     <div class='col-md-6'>
                                                                         <label for='FullName' class='form-label' style='font-size: 13px;'>Full Name</label>
@@ -313,7 +324,7 @@ if (isset($_POST['edit_btn'])) {
                                                                 <div class='d-grid mt-3 d-sm-flex justify-content-sm-center gap-4'>
                                                                     <div class='col-md-6'>
                                                                         <label for='PhoneNumber' class='form-label' style='font-size: 13px;'>Phone Number</label>
-                                                                        <input name='edit_number' type='text' class='form-control rounded-3 py-2' style='border: 1.8px solid #2B2B2B; font-size: 13px;' id='Edit_PhoneNumber_$modalID' value='".htmlspecialchars($row['number'], ENT_QUOTES)."' required>
+                                                                        <input name='edit_number' type='number' class='form-control rounded-3 py-2' style='border: 1.8px solid #2B2B2B; font-size: 13px;' id='Edit_PhoneNumber_$modalID' value='".htmlspecialchars($row['number'], ENT_QUOTES)."' required>
                                                                         <div class='invalid-feedback'>Please enter a valid mobile number.</div>
                                                                     </div>
                                                                     <div class='col-md-6 mb-2'>
@@ -333,7 +344,7 @@ if (isset($_POST['edit_btn'])) {
                                             </div>
                                         </td>
                                         <td>
-                                            <form method='post' action='add_worker.php'>
+                                            <form method='post' action='addWorker.php'>
                                                 <input type='hidden' name='userID' value='". $row['userID'] ."'>
                                                 <button type='submit' name='btn_delete' class='btn delete-btn'><i class='fa-regular fa-trash-can' style='color: red;'></i></button>
                                             </form>
@@ -363,7 +374,7 @@ if (isset($_POST['edit_btn'])) {
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body m-5">
-                            <form action="add_worker.php" method="post" id="workerForm" novalidate>
+                            <form action="addWorker.php" method="post" id="workerForm" novalidate>
                                 <div class="d-grid d-sm-flex justify-content-sm-center gap-4 mb-1">
                                     <div class="col-md-6">
                                         <label for="FullName" class="form-label" style="font-size: 13px;">Full Name</label>
@@ -379,7 +390,7 @@ if (isset($_POST['edit_btn'])) {
                                 <div class="d-grid mt-3 d-sm-flex justify-content-sm-center gap-4">
                                     <div class="col-md-6">
                                         <label for="PhoneNumber" class="form-label" style="font-size: 13px;">Phone Number</label>
-                                        <input name="number" type="text" class="form-control rounded-3 py-2" style="border: 1.8px solid #2B2B2B; font-size: 13px;" id="PhoneNumber" required>
+                                        <input name="number" type="number" class="form-control rounded-3 py-2" style="border: 1.8px solid #2B2B2B; font-size: 13px;" id="PhoneNumber" required>
                                         <div class="invalid-feedback">Please enter a valid mobile number.</div>
                                     </div>
                                     <div class="col-md-6 mb-2">
@@ -402,50 +413,50 @@ if (isset($_POST['edit_btn'])) {
 
     <div class="offcanvas offcanvas-start sidebar2 overflow-x-hidden overflow-y-hidden" tabindex="-1" id="offcanvasNav-Menu" aria-labelledby="staticBackdropLabel">
         <div class="d-flex align-items-center p-3 py-5">
-            <a href="dashboard.php" class="sidebar-logo fw-bold text-dark text-decoration-none fs-4" data-bs-dismiss="offcanvas" aria-label="Close">
+            <a href="/dashboard" class="sidebar-logo fw-bold text-dark text-decoration-none fs-4" data-bs-dismiss="offcanvas" aria-label="Close">
                 <img src="img/BeeMo Logo Side.png" width="173px" height="75px" alt="BeeMo Logo">
             </a>
             <button type="button" class="btn-close ms-auto" data-bs-dismiss="offcanvas" aria-label="Close"></button>
         </div>
         <ul class="sidebar-menu p-2 py-2 m-0 mb-0">
             <li class="sidebar-menu-item2">
-                <a href="dashboard.php">
+                <a href="/dashboard">
                     <i class="fa-solid fa-house sidebar-menu-item-icon2"></i>
                     Home
                 </a>
             </li>
             <li class="sidebar-menu-item2 py-1">
-                <a href="choose_hive.php">
+                <a href="/chooseHive">
                     <i class="fa-solid fa-temperature-three-quarters sidebar-menu-item-icon2"></i>
                     Parameters Monitoring
                 </a>
             </li>
             <li class="sidebar-menu-item2">
-                <a href="#">
+                <a href="/reports">
                     <i class="fa-solid fa-newspaper sidebar-menu-item-icon2"></i>
                     Reports
                 </a>
             </li>
             <li class="sidebar-menu-item2">
-                <a href="harvest_cycle.php">
+                <a href="/harvestCycle">
                     <i class="fa-solid fa-arrows-spin sidebar-menu-item-icon2"></i>
                     Harvest Cycle
                 </a>
             </li>
             <li class="sidebar-menu-item2">
-                <a href="beeguide.php">
+                <a href="/beeGuide">
                     <i class="fa-solid fa-book-open sidebar-menu-item-icon2"></i>
                     Bee Guide
                 </a>
             </li>
             <li class="sidebar-menu-item2 active">
-                <a href="add_worker.php">
+                <a href="/addWorker">
                     <i class="fa-solid fa-user sidebar-menu-item-icon2"></i>
                     Worker
                 </a>
             </li>
             <li class="sidebar-menu-item2">
-                <a href="about.php">
+                <a href="/about">
                     <i class="fa-solid fa-circle-info sidebar-menu-item-icon2"></i>
                     About
                 </a>

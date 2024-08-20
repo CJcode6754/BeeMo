@@ -47,7 +47,7 @@
                             </p>
                         </div>
                             <div class="mt-4">
-                                <a href="signup_form.php"><button name="back" class="terms-button px-4 py-1 rounded-5" type="button"><i class="fa-solid fa-chevron-left"></i></button></a>
+                                <a href="/signup"><button name="back" class="terms-button px-4 py-1 rounded-5" type="button"><i class="fa-solid fa-chevron-left"></i></button></a>
                             </div>
                         </div>
                     </div>

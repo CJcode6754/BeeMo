@@ -3,19 +3,22 @@
     ini_set('display_errors', 1);
     ini_set('display_startup_errors', 1);
     error_reporting(E_ALL);
+    function season_start() {
+        if (session_status() == PHP_SESSION_NONE) {
+            session_start();
+        }
 
-    session_start(); // Start the session
+        if (!isset($_SESSION['season_started'])) {
+            $_SESSION['season_started'] = true;
+        }
+    }
 
+    season_start();
     if (isset($_POST['logout_btn'])) {
-    // Unset all session variables
-    $_SESSION = array();
-
-    // Destroy the session
-    session_destroy();
-
-    header('Location: index.php');
-    exit;
-}
+        session_destroy();
+        header('Location: /');
+        exit();
+    }
 ?>
 
 
@@ -36,47 +39,47 @@
   <!-- Sidebar -->
     <div id="sidebar" class="sidebar position-fixed top-0 bottom-0 bg-white border-end offcanvass">
         <div class="d-flex align-items-center p-3 py-5">
-            <a href="dashboard.php" class="sidebar-logo fw-bold text-dark text-decoration-none fs-4"><img src="img/BeeMo Logo Side.png" width="173px" height="75px" alt="BeeMo Logo"></a>
+            <a href="/dashboard" class="sidebar-logo fw-bold text-dark text-decoration-none fs-4"><img src="img/BeeMo Logo Side.png" width="173px" height="75px" alt="BeeMo Logo"></a>
         </div>
         <ul class="sidebar-menu p-3 py-1 m-0 mb-0">
-            <li class="sidebar-menu-item ">
-                <a href="dashboard.php">
+            <li class="sidebar-menu-item">
+                <a href="/dashboard">
                     <i class="fa-solid fa-house sidebar-menu-item-icon"></i>
                     Home
                 </a>
             </li>
-            <li class="sidebar-menu-item py-1">
-                <a href="choose_hive.php">
+            <li class="sidebar-menu-item">
+                <a href="/chooseHive">
                     <i class="fa-solid fa-temperature-three-quarters sidebar-menu-item-icon"></i>
                     Parameters Monitoring
                 </a>
             </li>
             <li class="sidebar-menu-item">
-                <a href="#">
+                <a href="/reports">
                     <i class="fa-solid fa-newspaper sidebar-menu-item-icon"></i>
                     Reports
                 </a>
             </li>
             <li class="sidebar-menu-item">
-                <a href="harvest_cycle.php">
+                <a href="/harvestCycle">
                     <i class="fa-solid fa-arrows-spin sidebar-menu-item-icon"></i>
                     Harvest Cycle
                 </a>
             </li>
             <li class="sidebar-menu-item active">
-                <a href="beeguide.php">
+                <a href="/beeGuide">
                     <i class="fa-solid fa-book-open sidebar-menu-item-icon"></i>
                     Bee Guide
                 </a>
             </li>
             <li class="sidebar-menu-item">
-                <a href="add_worker.php">
+                <a href="/addWorker">
                     <i class="fa-solid fa-user sidebar-menu-item-icon"></i>
                     Worker
                 </a>
             </li>
             <li class="sidebar-menu-item">
-                <a href="about.php">
+                <a href="/about">
                     <i class="fa-solid fa-circle-info sidebar-menu-item-icon"></i>
                     About
                 </a>
@@ -118,9 +121,9 @@
                         <i class="fa-solid fa-user"></i>
                     </div>
                     <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                        <li><a class="dropdown-item" href="termsandconditions.php">Action</a></li>
+                        <li><a class="dropdown-item" href="/TermsAndConditions">Action</a></li>
                         <li><a class="dropdown-item" href="#">Another action</a></li>
-                        <form id="logoutForm" action="beeguide.php" method="post" style="display: none;">
+                        <form id="logoutForm" action="/beeGuide" method="post" style="display: none;">
                         	<input type="hidden" name="logout_btn" value="true">
                         </form>
                         <li class="dropdown-item" onclick="document.getElementById('logoutForm').submit();">Logout</li>
@@ -152,50 +155,50 @@
 
     <div class="offcanvas offcanvas-start sidebar2 overflow-x-hidden overflow-y-hidden" tabindex="-1" id="offcanvasNav-Menu" aria-labelledby="staticBackdropLabel">
         <div class="d-flex align-items-center p-3 py-5">
-            <a href="dashboard.php" class="sidebar-logo fw-bold text-dark text-decoration-none fs-4" data-bs-dismiss="offcanvas" aria-label="Close">
+            <a href="/dashboard" class="sidebar-logo fw-bold text-dark text-decoration-none fs-4" data-bs-dismiss="offcanvas" aria-label="Close">
                 <img src="img/BeeMo Logo Side.png" width="173px" height="75px" alt="">
             </a>
             <button type="button" class="btn-close ms-auto" data-bs-dismiss="offcanvas" aria-label="Close"></button>
         </div>
         <ul class="sidebar-menu p-2 py-2 m-0 mb-0">
             <li class="sidebar-menu-item2">
-                <a href="dashboard.php">
+                <a href="/dashboard">
                     <i class="fa-solid fa-house sidebar-menu-item-icon2"></i>
                     Home
                 </a>
             </li>
             <li class="sidebar-menu-item2 py-1">
-                <a href="choose_hive.php">
+                <a href="/chooseHive">
                     <i class="fa-solid fa-temperature-three-quarters sidebar-menu-item-icon2"></i>
                     Parameters Monitoring
                 </a>
             </li>
             <li class="sidebar-menu-item2">
-                <a href="#">
+                <a href="/reports">
                     <i class="fa-solid fa-newspaper sidebar-menu-item-icon2"></i>
                     Reports
                 </a>
             </li>
             <li class="sidebar-menu-item2">
-                <a href="harvest_cycle.php">
+                <a href="/harvestCycle">
                     <i class="fa-solid fa-arrows-spin sidebar-menu-item-icon2"></i>
                     Harvest Cycle
                 </a>
             </li>
-            <li class="sidebar-menu-item2 active">
-                <a href="beeguide.php">
+            <li class="sidebar-menu-item2">
+                <a href="/beeGuide">
                     <i class="fa-solid fa-book-open sidebar-menu-item-icon2"></i>
                     Bee Guide
                 </a>
             </li>
-            <li class="sidebar-menu-item2">
-                <a href="add_worker.php">
+            <li class="sidebar-menu-item2 active">
+                <a href="/addWorker">
                     <i class="fa-solid fa-user sidebar-menu-item-icon2"></i>
                     Worker
                 </a>
             </li>
             <li class="sidebar-menu-item2">
-                <a href="about.php">
+                <a href="/about">
                     <i class="fa-solid fa-circle-info sidebar-menu-item-icon2"></i>
                     About
                 </a>

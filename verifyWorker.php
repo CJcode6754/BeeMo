@@ -2,12 +2,15 @@
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
-session_start();
 
-require './src/db.php';
-require './src/mailer.php';
-require './src/otp.php';
-require './src/notification_handler.php';
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
+
+require_once './src/db.php';
+require_once './src/mailer.php';
+require_once './src/otp.php';
+require_once './src/notification_handler.php';
 
 $db = new Database();
 $conn = $db->getConnection();
@@ -24,16 +27,16 @@ if (isset($_POST['resend_otp'])) {
 
         if ($mailer->sendOTP($email, $otp['otp'], $name)) {
             $_SESSION['status'] = 'New OTP sent! Check your email.';
-            header('Location: verify_worker.php');
+            header('Location: /verifyWorker');
             exit;
         } else {
             $_SESSION['error'] = 'Failed to resend OTP. Try again.';
-            header('Location: verify_worker.php');
+            header('Location: /verifyWorker');
             exit;
         }
     } else {
         $_SESSION['error'] = 'Session expired. Login again.';
-        header('Location: index.php');
+        header('Location: /index');
         exit;
     }
 }
@@ -49,7 +52,7 @@ if (isset($_POST['submit'])) {
 
         if (empty($otp)) {
             $_SESSION['error'] = 'Please enter the OTP.';
-            header('Location: verify_worker.php');
+            header('Location: /verifyWorker');
             exit;
         }
 
@@ -57,21 +60,21 @@ if (isset($_POST['submit'])) {
             $update_user = "UPDATE user_table SET is_verified=1, otp='', otp_expiry=NULL WHERE email='$email'";
             if (mysqli_query($conn, $update_user)) {
                 $_SESSION['status'] = 'Worker registered successfully.';
-                header('Location: add_worker.php');
+                header('Location: /addWorker');
                 exit;
             } else {
                 $_SESSION['error'] = 'Error updating verification status.';
-                header('Location: verify_worker.php');
+                header('Location: /verifyWorker');
                 exit;
             }
         } else {
             $_SESSION['error'] = 'Invalid OTP or OTP has expired';
-            header('Location: verify_worker.php');
+            header('Location: /verifyWorker');
             exit;
         }
     } else {
         $_SESSION['error'] = 'Session expired. Login again.';
-        header('Location: index.php');
+        header('Location: /index');
         exit;
     }
 }
@@ -101,9 +104,9 @@ if (isset($_POST['submit'])) {
                 <div class="col-lg-4 bg1">
                     <div id="LoginLogo" class="container-fluid">
                         <main class="form-signin w-auto m-auto px4">
-                            <form action="verify_worker.php" method="post">
+                            <form action="verifyWorker.php" method="post">
                                 <div class="top px-2 pt-4">
-                                    <a href="index.php"><img id="loginLogo" src="img/LOGO2.png" alt="Logo"></a>
+                                    <a href="/"><img id="loginLogo" src="img/LOGO2.png" alt="Logo"></a>
                                     <p class="about pt-1">ABOUT&nbsp;US</p>
                                 </div>
                                 <hr class="d-block d-lg-none">

@@ -1,0 +1,29 @@
+RewriteEngine On
+
+# Remove .php extension from URLs
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME}\.php -f
+RewriteRule ^(.*)$ $1.php [L]
+
+# Handle specific routes
+RewriteRule ^dashboard$ dashboard.php [L]
+RewriteRule ^chooseHive$ chooseHive.php [L]
+RewriteRule ^parameterMonitoring$ parameterMonitoring.php [L]
+RewriteRule ^reports$ reports.php [L]
+RewriteRule ^harvestCycle$ harvestCycle.php [L]
+RewriteRule ^beeGuide$ beeGuide.php [L]
+RewriteRule ^addWorker$ addWorker.php [L]
+RewriteRule ^about$ about.php [L]
+RewriteRule ^TermsAndConditions$ TermsAndConditions.php [L]
+RewriteRule ^signup$ signup.php [L]
+RewriteRule ^forgotPassword$ forgotPassword.php [L]
+RewriteRule ^resendEmail$ resendEmail.php [L]
+RewriteRule ^resetPassword$ resetPassword.php [L]
+RewriteRule ^verify$ verify.php [L]
+RewriteRule ^verifyWorker$ verifyWorker.php [L]
+
+# Redirect to index.php for non-existing routes
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ index.php [L]

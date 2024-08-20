@@ -1,9 +1,15 @@
 <?php
 class Database {
+    // private $host = 'localhost';
+    // private $username = 'u497761604_BeeMo';
+    // private $password = 'BeeMo_IoT7612';
+    // private $dbname = 'u497761604_BeeMo_db';
+
     private $host = 'localhost';
     private $username = 'root';
     private $password = 'appleslice_pass789432';
     private $dbname = 'BeeMo_db';
+
     private $conn;
 
     public function __construct() {

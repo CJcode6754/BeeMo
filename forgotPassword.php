@@ -1,8 +1,10 @@
 <?php
-session_start();
-require './src/db.php';
-require './src/otp.php';
-require './src/mailer.php';
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
+require_once './src/db.php';
+require_once './src/otp.php';
+require_once './src/mailer.php';
 
 $db = new Database();
 $conn = $db->getConnection();
@@ -14,7 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['email'])) {
     $email = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $_SESSION['error'] = 'Invalid email address.';
-        header('Location: forgot_password.php');
+        header('Location: /forgotPassword');
         exit;
     }
 
@@ -25,20 +27,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['email'])) {
         $row = mysqli_fetch_array($result);
         $name = $row['admin_name'];
 
-        $otpData = $otpHandler->generateOTP($email);
-        if ($emailHandler->sendOTPFP($email, $name, $otpData['otp'])) {
+        if ($emailHandler->sendOTPFP($email, $name)) {
             $_SESSION['admin_name'] = $name;
             $_SESSION['email'] = $email;
-            header('Location: email_link.php');
+            header('Location: /resendEmail');
             exit;
         } else {
-            $_SESSION['error'] = 'Failed to send OTP. Please try again later.';
-            header('Location: forgot_password.php');
+            $_SESSION['error'] = 'Failed to send OTP. Try again.';
+            header('Location: /forgotPassword');
             exit;
         }
     } else {
         $_SESSION['error'] = 'Email not found.';
-        header('Location: forgot_password.php');
+        header('Location: /forgotPassword');
         exit;
     }
 }
@@ -51,6 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['email'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="./css/forgot_password.css">
+    <link rel="stylesheet" href="/css/reusable.css">
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
@@ -69,9 +71,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['email'])) {
                 <div class="col-lg-4 bg1">
                     <div id="LoginLogo" class="container-fluid">
                       <main class="form-signin w-auto m-auto px4">
-                            <form action="forgot_password.php" method="post" id="forgotForm" novalidate>
+                            <form action="forgotPassword.php" method="post" id="forgotForm" novalidate>
                             <div class="top px-2 pt-4">
-                                <a href="index.php"><img id="loginLogo"  src="img/LOGO2.png" alt="Logo"></a>
+                                <a href="/"><img id="loginLogo"  src="img/LOGO2.png" alt="Logo"></a>
                                 <p class="about pt-1">ABOUT&nbsp;US</p>
                               </div>
                               <hr class="d-block d-lg-none">
@@ -97,6 +99,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['email'])) {
             </div>
         </div>
     </div>
+    <div id="notification" class="notification"></div>
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+    const notification = document.getElementById('notification');
+
+    // Show notification function
+    function showNotification(message) {
+        notification.textContent = message;
+        notification.classList.add('show');
+        setTimeout(function () {
+            notification.classList.remove('show');
+        }, 6000);
+    }
+
+    // Handle the notifications for status and error in the session
+    <?php if (isset($_SESSION['status'])): ?>
+        showNotification('<?php echo $_SESSION['status']; ?>');
+        <?php unset($_SESSION['status']); ?>
+    <?php elseif (isset($_SESSION['error'])): ?>
+        showNotification('<?php echo $_SESSION['error']; ?>');
+        <?php unset($_SESSION['error']); ?>
+    <?php endif; ?>
+});
+    </script>
 </body>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script> 

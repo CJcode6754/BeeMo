@@ -19,10 +19,11 @@ class PasswordReset {
         $stmt->bind_param('ss', $hashedPassword, $email);
 
         if ($stmt->execute()) {
-            header('Location: index.php');
+            $_SESSION['status'] = 'Password Updated Successfully.';
+            header('Location: /');
             exit;
         } else {
-            $_SESSION['error'] = 'Failed to update password. Please try again later.';
+            $_SESSION['error'] = 'Failed to update password. Try again.';
             return false;
         }
     }

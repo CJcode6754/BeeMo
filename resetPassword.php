@@ -3,9 +3,12 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-session_start();
-require './src/password_reset.php';
-require './src/db.php';
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
+
+require_once './src/password_reset.php';
+require_once './src/db.php';
 
 $db = new Database();
 $conn = $db->getConnection();
@@ -20,7 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit'])) {
     $passwordReset = new PasswordReset($conn);
 
     if (!$passwordReset->resetPassword($password, $confirm_password, $email)) {
-        header('Location: reset_password.php');
+        header('Location: /resetPassword');
         exit;
     }
 }
@@ -53,9 +56,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit'])) {
               <div class="col-lg-4 bg1">
                   <div id="LoginLogo" class="container-fluid">
                       <main class="form-signin w-auto m-auto px4">
-                          <form action="reset_password.php" method="post" id="ResetpwForm" novalidate>
+                          <form action="resetPassword.php" method="post" id="ResetpwForm" novalidate>
                             <div class="top px-2 pt-4">
-                              <a href="index.php"><img id="loginLogo"  src="img/LOGO2.png" alt="Logo"></a>
+                              <a href="/"><img id="loginLogo"  src="img/LOGO2.png" alt="Logo"></a>
                               <p class="about pt-1">ABOUT&nbsp;US</p>
                             </div>
                             <hr class="d-block d-lg-none">
@@ -95,6 +98,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit'])) {
             </div>
         </div>
     </div>
+    <div id="notification" class="notification"></div>
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+    const notification = document.getElementById('notification');
+
+    // Show notification function
+    function showNotification(message) {
+        notification.textContent = message;
+        notification.classList.add('show');
+        setTimeout(function () {
+            notification.classList.remove('show');
+        }, 6000);
+    }
+
+    // Handle the notifications for status and error in the session
+    <?php if (isset($_SESSION['status'])): ?>
+        showNotification('<?php echo $_SESSION['status']; ?>');
+        <?php unset($_SESSION['status']); ?>
+    <?php elseif (isset($_SESSION['error'])): ?>
+        showNotification('<?php echo $_SESSION['error']; ?>');
+        <?php unset($_SESSION['error']); ?>
+    <?php endif; ?>
+});
+    </script>
 </body>
 <!-- JQuery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script> 

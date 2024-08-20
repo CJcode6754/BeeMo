@@ -3,11 +3,13 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-session_start();
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
 
-require './src/db.php';
-require './src/otp.php';
-require './src/mailer.php';
+require_once './src/db.php';
+require_once './src/otp.php';
+require_once './src/mailer.php';
 
 $db = new Database();
 $conn = $db->getConnection();
@@ -24,16 +26,16 @@ if (isset($_POST['submit'])) {
         $otp = $otpHandler->generateOTP($email);
 
         if ($emailHandler->sendOTP2($email, $name)) {
-            header('Location: email_link.php');
+            header('Location: /resendEmail');
             exit;
         } else {
-            $_SESSION['error'] = 'Failed to resend OTP. Please try again later.';
-            header('Location: email_link.php');
+            $_SESSION['error'] = 'Failed to send OTP. Try again.';
+            header('Location: /resendEmail');
             exit;
         }
     } else {
         $_SESSION['error'] = 'Email or name not set in session.';
-        header('Location: forgot_password.php');
+        header('Location: /forgotPassword');
         exit;
     }
 }
@@ -63,9 +65,9 @@ if (isset($_POST['submit'])) {
                 <div class="col-lg-4 bg1">
                     <div id="LoginLogo" class="container-fluid">
                         <main class="form-signin ww-auto m-auto px4">
-                            <form action="email_link.php" method="post">
+                            <form action="resendEmail.php" method="post">
                               <div class="top px-2 pt-4">
-                                <a href="index.php"><img id="loginLogo"  src="img/LOGO2.png" alt="Logo"></a>
+                                <a href="/"><img id="loginLogo"  src="img/LOGO2.png" alt="Logo"></a>
                                 <p class="about pt-1">ABOUT&nbsp;US</p>
                               </div>
                               <hr class="d-block d-lg-none">
@@ -75,7 +77,7 @@ if (isset($_POST['submit'])) {
                                 <p>Please check your inbox to see your password reset instructions</p>
                                 <div class="yellow">
                                     <p id="confirmationMessage">You will receive an email with the reset link if an account exists. <span id="userEmail"></span> 
-                                        Make sure to check your junk or spam folder as well.</p>
+                                        Make sure to check your spam folder as well. Click Resend Email when timer reach to 0.</p>
                                 </div>
 
                                 <button id="btn" class="w-100 py-3" name="submit" type="submit" disabled><b>RESEND EMAIL</b></button>

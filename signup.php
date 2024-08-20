@@ -1,16 +1,24 @@
 <?php
-//<-----TODO LIST------>
-// 1. ADD NOTIFICATION IN SIGNUP AND LOGIN
-
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
-session_start();
 
-require './src/db.php';
-require './src/mailer.php';
-require './src/otp.php';
-require './src/users.php';
+function season_start() {
+  if (session_status() == PHP_SESSION_NONE) {
+      session_start();
+  }
+
+  if (!isset($_SESSION['season_started'])) {
+      $_SESSION['season_started'] = true;
+  }
+}
+
+season_start();
+
+require_once './src/db.php';
+require_once './src/mailer.php';
+require_once './src/otp.php';
+require_once './src/users.php';
 
 $db = new Database();
 $conn = $db->getConnection();
@@ -26,15 +34,15 @@ if (isset($_POST['submit'])) {
         $user = new User($conn);
         if ($user->register($name, $email, $M_number, $password)) {
             $_SESSION['email'] = $email;
-            header('Location: verify.php');
+            header('Location: /verify');
             exit;
         } else {
-            header('Location: signup.php');
+            header('Location: /signup');
             exit;
         }
     } else {
         $_SESSION['error'] = 'Passwords do not match';
-        header('Location: signup.php');
+        header('Location: /signup');
         exit;
     }
 }
@@ -69,7 +77,7 @@ if (isset($_POST['submit'])) {
                       <main class="form-signin px4">
                         <form action="signup.php" method="post" id="registerForm" novalidate>
                           <div class="top px-2 pt-4">
-                            <a href="signup.php"><img id="loginLogo" src="img/LOGO2.png" alt="Logo"></a>
+                            <a href="/signup"><img id="loginLogo" src="img/LOGO2.png" alt="Logo"></a>
                             <p class="about pt-1">ABOUT&nbsp;US</p>
                           </div>
                           <hr class="d-block d-lg-none w-100">
@@ -78,7 +86,7 @@ if (isset($_POST['submit'])) {
                             <h1 class="text">Sign Up.</h1>
                             <div class="log pb-3">
                               <p><b>Already have an account?</p>
-                              <a href="index.php" class="text-dark"><u>Login?</u></a></b>
+                              <a href="/" class="text-dark"><u>Login?</u></a></b>
                             </div>
 
                             <div class="form-floating pb-3">
@@ -94,7 +102,7 @@ if (isset($_POST['submit'])) {
                             </div>
 
                             <div class="form-floating pb-3">
-                              <input name="number" type="text" class="form-control" id="mobileNumber" placeholder="Mobile Number" required>
+                              <input name="number" type="number" class="form-control" id="mobileNumber" placeholder="Mobile Number" required>
                               <label for="mobileNumber"><i class="fa-solid fa-mobile"></i> Mobile Number</label>
                               <div class="invalid-feedback">Please enter a valid mobile number.</div>
                             </div>
@@ -116,7 +124,7 @@ if (isset($_POST['submit'])) {
                             <div class="terms form-check text-start my-3">
                               <input name="check" class="form-check-input" style="background-color: #6DA4AA;" type="checkbox" value="remember-me" id="termsCheckbox" required>
                               <label class="form-check-label" for="termsCheckbox">
-                                <p>I have read & accept the <a href="terms and conditions.php" class="text-decoration-none text-dark">Terms and Conditions</a></p>
+                                <p>I have read & accept the <a href="/TermsAndConditions" class="text-decoration-none text-dark">Terms and Conditions</a></p>
                               </label>
                               <div class="invalid-feedback">You must accept the terms and conditions</div>
                             </div>
@@ -135,6 +143,31 @@ if (isset($_POST['submit'])) {
             </div>
         </div>
     </div>
+
+    <div id="notification" class="notification"></div>
+    <script>
+          document.addEventListener('DOMContentLoaded', function () {
+        const notification = document.getElementById('notification');
+
+        // Show notification function
+        function showNotification(message) {
+            notification.textContent = message;
+            notification.classList.add('show');
+            setTimeout(function () {
+                notification.classList.remove('show');
+            }, 6000);
+        }
+
+        // Handle the notifications for status and error in the session
+        <?php if (isset($_SESSION['status'])): ?>
+            showNotification('<?php echo $_SESSION['status']; ?>');
+            <?php unset($_SESSION['status']); ?>
+        <?php elseif (isset($_SESSION['error'])): ?>
+            showNotification('<?php echo $_SESSION['error']; ?>');
+            <?php unset($_SESSION['error']); ?>
+        <?php endif; ?>
+    });
+    </script>
 </body>
 <!-- JQuery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script> 
