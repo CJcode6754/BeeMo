@@ -38,6 +38,11 @@
         header('Location: /');
         exit;
     }
+
+    if(isset($_POST['clearNotif'])){
+        $clearNotif = "DELETE FROM tblNotification WHERE adminID = '".$_SESSION['adminID']."'";
+        $clearNotifResult = mysqli_query($conn, $clearNotif);
+    }
 ?>
 
 
@@ -126,6 +131,11 @@
                                 <p class="fs-5 text-dark text-uppercase pt-3">Notifications
                                     <span class="badge text-dark bg-warning-subtle rounded-pill" id="nf-count-badge">0</span>
                                 </p>
+                            </div>
+                            <div>
+                                <form action="harvestCycle.php" method="post">
+                                            <button class="clearNotif" name="clearNotif">Clear all</button>
+                                </form>
                             </div>
                         </div>
                         <div id="notifications">

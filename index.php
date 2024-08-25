@@ -5,6 +5,8 @@ if (session_status() == PHP_SESSION_NONE) {
 require_once 'Router.php';
 require_once './src/db.php';
 require_once './src/users.php';
+require_once './src/harvest_function.php';
+require_once './src/notification_handler.php';
 
 // Initialize Router
 $router = new Router();
@@ -176,6 +178,60 @@ $router->post('/signup', function() {
         exit();
     }
 });
+
+$router->post('/harvestCycle', function() {
+    $db = new Database();
+    $conn = $db->getConnection();
+    $harvestCycle = new HarvestCycle($conn);
+
+    // Get the filter value from the POST request, default to 'all'
+    $filter = isset($_POST['filter_value']) ? $_POST['filter_value'] : 'all';
+    $adminID = $_SESSION['adminID'];
+
+    // Base query to select all cycles for the logged-in admin
+    $select_cycle = "SELECT cycle_number, start_of_cycle, honey_kg, end_of_cycle, status FROM harvest_cycle WHERE adminID = '$adminID'";
+
+    // Modify the query based on the selected filter
+    if ($filter == 'pending') {
+        $select_cycle .= " AND status = 0";
+    } elseif ($filter == 'complete') {
+        $select_cycle .= " AND status = 1";
+    }
+
+    // Execute the query and store the results in the session
+    $query_select_cycle = mysqli_query($conn, $select_cycle);
+    $_SESSION['filtered_cycles'] = mysqli_fetch_all($query_select_cycle, MYSQLI_ASSOC);
+
+    if (isset($_POST['btn_delete'])) {
+        // Delete the specified harvest cycle
+        $cycleNumber = $_POST['cycle_number'];
+        $harvestCycle->deleteCycle($cycleNumber, $adminID);
+
+        // Redirect back to the harvestCycle page
+        header('Location: /harvestCycle');
+        exit();
+    }
+
+    // Reload the harvestCycle page with the filtered results
+    require_once 'harvestCycle.php';
+});
+
+
+// // Define POST for clear notification
+// $router->post('/notif', function() {
+//     $db = new Database();
+//     $conn = $db->getConnection();
+
+//     // Clear all notifications for the current admin
+//     $adminID = $_SESSION['adminID'];
+//     $clearNotif = "DELETE FROM tblNotification WHERE adminID = '$adminID'";
+//     mysqli_query($conn, $clearNotif);
+
+//     // Redirect back to the notification page or reload the page
+//     header("Location: /notif");
+//     exit();
+// });
+
 
 // Dispatch the route
 $router->dispatch();

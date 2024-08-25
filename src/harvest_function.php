@@ -7,7 +7,7 @@ class HarvestCycle {
     private $notification;
 
     public function __construct($conn) {
-        $this->conn = $conn->getConnection();
+        $this->conn = $conn;  // Directly use the mysqli connection
         $this->notification = new NotificationHandler($this->conn);
     }
 
@@ -69,7 +69,7 @@ class HarvestCycle {
         if (mysqli_query($this->conn, $update_query)) {
             // Commit the transaction if successful
             mysqli_commit($this->conn);
-            $this->notification->insertNotification($adminID, 'active', 'Cycle info was edited successfully.', 'edit_cycle_success', 'harvestCycle.php', 'unseen');
+            $this->notification->insertNotification($adminID, 'active', 'Cycle was edited successfully.', 'edit_cycle_success', 'harvestCycle.php', 'unseen');
         } else {
             // Rollback the transaction if failed
             mysqli_rollback($this->conn);

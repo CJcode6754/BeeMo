@@ -86,18 +86,44 @@
         <?php endif; ?>
     });
 
+    // Prevent the back button from navigating back to the login page
+function preventBack() {
+    window.history.forward();
+}
+setTimeout(preventBack, 0); // Call preventBack immediately to minimize delay
+
+// Handle the pageshow event to detect back navigation
+window.onpageshow = function(event) {
+    if (event.persisted || (window.performance && window.performance.navigation.type === 2)) {
+        // Replace the current history entry with the dashboard URL
+        window.history.replaceState(null, '', '/dashboard');
+        // Immediately reload the dashboard to prevent showing the login page
+        window.location.href = '/dashboard';
+    }
+};
+
+// Handle the popstate event, which is triggered when the user navigates back
+window.addEventListener('popstate', function() {
+    // Redirect to the dashboard immediately when the back button is pressed
+    window.location.href = '/dashboard';
+});
+
+// Reload the page if it is unloaded (optional)
+window.onunload = function() {
+    window.location.href = '/dashboard';
+};
     // function preventBack() {window.history.forward()};
-    //     setTimeout("preventBack()",0);
+    //     setTimeout("preventBack()",200);
     //     // window.onload=function(){null;}
     //     // Add an event listener for the popstate event
-    //     window.onunload = function () {
-    //         // Reload the current page
-    //         window.location.reload();
-    //     };
+    //     window.onpageshow = function(event) {
+    //     if (event.persisted || (window.performance && window.performance.navigation.type === 2)) {
+    //     window.location.href = '/dashboard'; // Redirect to dashboard
+    //     }
+    // };
+
     </script>
 </body>
-
- JQuery 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script> 
 <script src="./js/login.js" type="text/javascript"></script>
 </html>

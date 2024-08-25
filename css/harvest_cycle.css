@@ -49,11 +49,26 @@ main {
       background-color: #FAEF9B;
       box-shadow: 0 5px #2B2B2B;
     }
-  
+
+    .view-button, .filter-button{
+      background-color: #FCF4B9;
+      text-transform: uppercase;
+      border-radius: 10px;
+      font-size: 13px;
+      width: 100%;
+      max-width: 110px;
+      height: 35px;
+      padding: 7px;
+      transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+    }
      #cycleNumber, #cycleStart, #cycleEnd{
       background-color: #F3F8FF;
     }
-  
+
+    .view-button, .filter-button:hover{
+      background-color: #FAEF9B;
+      box-shadow: 0 5px #2B2B2B;
+    }
     .status_pending {
       position: relative;
       border-radius: 50%;
