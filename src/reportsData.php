@@ -4,7 +4,7 @@ header('Content-Type: application/json');
 // Database connection
 $servername = "localhost";
 $username = "root";
-$password = "appleslice_pass789432";
+$password = "";
 $dbname = "BeeMo_db";
 
 // Create connection
@@ -26,7 +26,7 @@ $sql = "
         AVG(temperature) AS avg_temperature,
         AVG(humidity) AS avg_humidity,
         AVG(weight) AS avg_weight
-    FROM subData
+    FROM subdata
     WHERE DATE(timestamp) = ?
     GROUP BY hour
     ORDER BY hour
