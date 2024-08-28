@@ -161,7 +161,7 @@ $filtered_cycles = mysqli_fetch_all($query_select_cycle, MYSQLI_ASSOC);
                                 </p>
                             </div>
                             <div>
-                                <form action="" method="post">
+                                <form action="/harvestCycle" method="post">
                                     <button class="clearNotif" name="clearNotif">Clear all</button>
                                 </form>
                             </div>
