@@ -11,24 +11,49 @@ class HarvestCycle {
         $this->notification = new NotificationHandler($this->conn);
     }
 
-    public function insertCycle($cycle_num, $start_date, $end_date, $adminID) {
+    public function insertCycle($start_date, $end_date) {
+        $adminID = $_SESSION['adminID']; // Retrieve the session admin ID
+    
         $honey_kg = 0;
         $status = 0;
-
-        $start_of_cycle = DateTime::createFromFormat('Y-m-d', $start_date)->format('Y-m-d');
-        $end_of_cycle = DateTime::createFromFormat('Y-m-d', $end_date)->format('Y-m-d');
-
+    
+        // Fetch the next cycle number for this admin
+        $nextCycleNumber = 1; // Default to 1 if no cycles exist
+        $query_next_cycle = "SELECT MAX(cycle_number) AS max_cycle_num FROM harvest_cycle WHERE adminID = '$adminID'";
+        $result_next_cycle = mysqli_query($this->conn, $query_next_cycle);
+        if ($row = mysqli_fetch_assoc($result_next_cycle)) {
+            $nextCycleNumber = $row['max_cycle_num'] ? $row['max_cycle_num'] + 1 : 1;
+        }
+    
+        // Parse and validate the start and end dates
+        $start_of_cycle = DateTime::createFromFormat('Y-m-d', $start_date);
+        $end_of_cycle = DateTime::createFromFormat('Y-m-d', $end_date);
+    
+        // Check if the date parsing was successful
+        if (!$start_of_cycle || !$end_of_cycle) {
+            $this->notification->insertNotification($adminID, 'active', 'Invalid date format.', 'invalid_date_format', 'harvestCycle.php', 'unseen');
+            return; // Exit the function if date parsing fails
+        }
+    
+        // Format the dates for the database
+        $start_of_cycle = $start_of_cycle->format('Y-m-d');
+        $end_of_cycle = $end_of_cycle->format('Y-m-d');
+    
+        // Insert the new cycle into the database
         $add_cycle = "INSERT INTO harvest_cycle (cycle_number, start_of_cycle, honey_kg, end_of_cycle, adminID, status)
-                      VALUES ('$cycle_num', '$start_of_cycle', '$honey_kg', '$end_of_cycle', '$adminID', '$status')";
-
+                      VALUES ('$nextCycleNumber', '$start_of_cycle', '$honey_kg', '$end_of_cycle', '$adminID', '$status')";
+    
         $add_cycle_query = mysqli_query($this->conn, $add_cycle);
-
+    
+        // Notify the admin based on the result of the insert operation
         if ($add_cycle_query) {
             $this->notification->insertNotification($adminID, 'active', 'Successfully added new cycle.', 'new_cycle', 'harvestCycle.php', 'unseen');
         } else {
             $this->notification->insertNotification($adminID, 'active', 'Failed to add new cycle.', 'failed_to_add_cycle', 'harvestCycle.php', 'unseen');
         }
     }
+    
+
 
     public function deleteCycle($cycle_num, $adminID) {
         $delete_cycle = "DELETE FROM harvest_cycle WHERE cycle_number = '$cycle_num' AND adminID = '$adminID'";

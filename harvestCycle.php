@@ -33,10 +33,11 @@ if (isset($_POST['logout_btn'])) {
 
 // Handle form submissions
 if (isset($_POST['submit'])) {
-    $harvestCycle->insertCycle($_POST['cycle_num'], $_POST['start_date'], $_POST['end_date'], $_SESSION['adminID']);
+    $harvestCycle->insertCycle($_POST['start_date'], $_POST['end_date']);
     header('Location: /harvestCycle');
     exit;
 }
+
 
 if (isset($_POST['btn_edit'])) {
     $current_cycle_num = $_POST['cycle_number'];
