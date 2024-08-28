@@ -19,10 +19,8 @@ document.addEventListener('DOMContentLoaded', function() {
             maintainAspectRatio: false,
             scales: {
                 y: {
-                    // 
-                    min: 20,
+                    min: 20, // Default min value, will be updated dynamically
                     ticks: {
-                        stepSize: 1,
                         color: 'black',
                         font: {
                             size: 10
@@ -39,7 +37,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     type: 'time',
                     time: {
                         unit: 'hour', // Display hourly intervals
-                        tooltipFormat: 'MMM D, YYYY h:mm a'
+                        tooltipFormat: 'MMM d, YYYY h:mm a'
                     },
                 }
             },
@@ -112,31 +110,41 @@ document.addEventListener('DOMContentLoaded', function() {
     // Get today's date in YYYY-MM-DD format
     const today = new Date().toISOString().split('T')[0];
 
-    // Set the date picker to today's date
-    document.getElementById('start-date-picker').value = today;
+    // Set the date picker to today's date and disable future dates
+    const datePicker = document.getElementById('start-date-picker');
+    datePicker.value = today;
+    datePicker.max = today;
 
     function updateChart(dataType, fetchedData) {
         // Map fetched data to labels and data points
         const labels = fetchedData.data.map(item => new Date(item.hour));
         let data;
+        let yAxisMin;
+
         if (dataType === 'temperature') {
             data = fetchedData.data.map(item => item.avg_temperature);
+            yAxisMin = 20; // Set the min value for temperature
         } else if (dataType === 'humidity') {
             data = fetchedData.data.map(item => item.avg_humidity);
+            yAxisMin = 30; // Set the min value for humidity
         } else if (dataType === 'weight') {
             data = fetchedData.data.map(item => item.avg_weight);
+            yAxisMin = 1000; // Set the min value for weight
         }
 
         myChart.data.labels = labels;
         myChart.data.datasets[0].data = data;
-        myChart.data.datasets[0].label = dataType.charAt(0).toUpperCase() + dataType.slice(1); // Update label
+        myChart.data.datasets[0].label = dataType.charAt(0).toUpperCase() + dataType.slice(1);
+
+        // Update Y-axis min value
+        myChart.options.scales.y.min = yAxisMin;
+
         myChart.update();
 
         // Update descriptive analytics
         document.getElementById('average-value').textContent = fetchedData.stats[dataType].average.toFixed(2);
         document.getElementById('min-value').textContent = fetchedData.stats[dataType].min.toFixed(2);
         document.getElementById('max-value').textContent = fetchedData.stats[dataType].max.toFixed(2);
-        document.getElementById('data-type-label').textContent = dataType.charAt(0).toUpperCase() + dataType.slice(1);
     }
 
     function fetchData(date, dataType) {

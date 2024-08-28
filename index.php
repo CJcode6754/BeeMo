@@ -75,7 +75,7 @@ $router->get('/beeGuide', function() {
     require_once 'beeGuide.php';  // Load beeGuide page
 });
 
-$router->get('/addWorker', function() {
+$router->get('/Worker', function() {
     if (!isset($_SESSION['adminID'])) {
         session_destroy();
         header('Location: /');
@@ -100,6 +100,15 @@ $router->get('/TermsAndConditions', function() {
         exit();
     }
     require_once 'TermsAndConditions.php';  // Load Terms and Conditions page
+});
+
+$router->get('/profile', function() {
+    if (!isset($_SESSION['adminID'])) {
+        session_destroy();
+        header('Location: /');
+        exit();
+    }
+    require_once 'profile.php';  // Load Terms and Conditions page
 });
 
 $router->get('/parameterMonitoring', function() {
@@ -212,26 +221,106 @@ $router->post('/harvestCycle', function() {
         exit();
     }
 
+    if (isset($_POST['clearNotif'])) {
+        $clearNotif = "DELETE FROM tblNotification WHERE adminID = '" . $_SESSION['adminID'] . "'";
+        mysqli_query($conn, $clearNotif);
+
+        header("Location: /harvestCycle");
+        exit();
+    }
     // Reload the harvestCycle page with the filtered results
     require_once 'harvestCycle.php';
 });
 
+$router->post('/Worker', function() {
+    $db = new Database();
+    $conn = $db->getConnection();
 
-// // Define POST for clear notification
-// $router->post('/notif', function() {
-//     $db = new Database();
-//     $conn = $db->getConnection();
+    if (isset($_POST['clearNotif'])) {
+        $clearNotif = "DELETE FROM tblNotification WHERE adminID = '" . $_SESSION['adminID'] . "'";
+        mysqli_query($conn, $clearNotif);
 
-//     // Clear all notifications for the current admin
-//     $adminID = $_SESSION['adminID'];
-//     $clearNotif = "DELETE FROM tblNotification WHERE adminID = '$adminID'";
-//     mysqli_query($conn, $clearNotif);
+        header("Location: /Worker");
+        exit();
+    }
+    // Reload the addWorker page with the filtered results
+    require_once 'addWorker.php';
+});
 
-//     // Redirect back to the notification page or reload the page
-//     header("Location: /notif");
-//     exit();
-// });
+$router->post('/beeGuide', function() {
+    $db = new Database();
+    $conn = $db->getConnection();
 
+    if (isset($_POST['clearNotif'])) {
+        $clearNotif = "DELETE FROM tblNotification WHERE adminID = '" . $_SESSION['adminID'] . "'";
+        mysqli_query($conn, $clearNotif);
+
+        header("Location: /beeGuide");
+        exit();
+    }
+    // Reload the BeeGuide page with the filtered results
+    require_once 'beeguide.php';
+});
+
+$router->post('/chooseHive', function() {
+    $db = new Database();
+    $conn = $db->getConnection();
+
+    if (isset($_POST['clearNotif'])) {
+        $clearNotif = "DELETE FROM tblNotification WHERE adminID = '" . $_SESSION['adminID'] . "'";
+        mysqli_query($conn, $clearNotif);
+
+        header("Location: /chooseHive");
+        exit();
+    }
+    // Reload the Choose Hive page with the filtered results
+    require_once 'chooseHive.php';
+});
+
+$router->post('/dashboard', function() {
+    $db = new Database();
+    $conn = $db->getConnection();
+
+    if (isset($_POST['clearNotif'])) {
+        $clearNotif = "DELETE FROM tblNotification WHERE adminID = '" . $_SESSION['adminID'] . "'";
+        mysqli_query($conn, $clearNotif);
+
+        header("Location: /dashboard");
+        exit();
+    }
+    // Reload the Dashboard page with the filtered results
+    require_once 'dashboard.php';
+});
+
+$router->post('/parameterMonitoring', function() {
+    $db = new Database();
+    $conn = $db->getConnection();
+
+    if (isset($_POST['clearNotif'])) {
+        $clearNotif = "DELETE FROM tblNotification WHERE adminID = '" . $_SESSION['adminID'] . "'";
+        mysqli_query($conn, $clearNotif);
+
+        header("Location: /parameterMonitoring");
+        exit();
+    }
+    // Reload the Parameter Monitoring page with the filtered results
+    require_once 'parameterMonitoring.php';
+});
+
+$router->post('/reports', function() {
+    $db = new Database();
+    $conn = $db->getConnection();
+
+    if (isset($_POST['clearNotif'])) {
+        $clearNotif = "DELETE FROM tblNotification WHERE adminID = '" . $_SESSION['adminID'] . "'";
+        mysqli_query($conn, $clearNotif);
+
+        header("Location: /reports");
+        exit();
+    }
+    // Reload the reports page with the filtered results
+    require_once 'reports.php';
+});
 
 // Dispatch the route
 $router->dispatch();

@@ -124,7 +124,7 @@ $filtered_cycles = mysqli_fetch_all($query_select_cycle, MYSQLI_ASSOC);
                 </a>
             </li>
             <li class="sidebar-menu-item">
-                <a href="/addWorker">
+                <a href="/Worker">
                     <i class="fa-solid fa-user sidebar-menu-item-icon"></i>
                     Worker
                 </a>
@@ -172,17 +172,31 @@ $filtered_cycles = mysqli_fetch_all($query_select_cycle, MYSQLI_ASSOC);
                     </div>
                 </div>
 
-                <div class="dropdown me-3  d-sm-block">
-                    <div class="navbar-link  border border-1 border-black rounded-5"  data-bs-toggle="dropdown" aria-expanded="false">
+                <div class="dropdown me-3 d-sm-block">
+                    <div class="navbar-link border border-1 border-black rounded-5" data-bs-toggle="dropdown" aria-expanded="false">
                         <i class="fa-solid fa-user"></i>
                     </div>
                     <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                        <li><a class="dropdown-item" href="/TermsAndConditions">Action</a></li>
-                        <li><a class="dropdown-item" href="#">Another action</a></li>
+                        <li>
+                            <a class="dropdown-item" href="termsandconditions.html">
+                                <i class="fa-solid fa-user"></i>
+                                Profile
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="#">
+                                <i class="fa-solid fa-gear"></i>
+                                Settings
+                            </a>
+                        </li>
+                        <!-- Logout -->
                         <form id="logoutForm" action="/harvestCycle" method="post" style="display: none;">
-                        	<input type="hidden" name="logout_btn" value="true">
+                            <input type="hidden" name="logout_btn" value="true">
                         </form>
-                        <li class="dropdown-item" onclick="document.getElementById('logoutForm').submit();">Logout</li>
+                        <li class="dropdown-item" onclick="document.getElementById('logoutForm').submit();">
+                            <i class="fa-solid fa-right-from-bracket"></i>
+                            Logout
+                        </li>
                     </ul>
                 </div>
             </nav>
@@ -239,7 +253,8 @@ $filtered_cycles = mysqli_fetch_all($query_select_cycle, MYSQLI_ASSOC);
 
                                         $progress_color = $row['status'] == 1 ? '#F9E37F' : ($progress_percentage >= 100 ? '#F9E37F' : '#4caf50');
                                         $icon = $row['status'] == 1 ? "<i class='fa-solid fa-check'></i>" : "";
-                                        $harvestModalID = 'Edit_HarvestModal_' . $row['cycle_number'];
+                                        $editModalID = 'Edit_HarvestModal_' . $row['cycle_number'];
+                                        $deleteModalID = 'Delete_HarvestModal_' . $row['cycle_number'];
                                         ?>
                                         <tr>
                                             <td><?= htmlspecialchars($row['cycle_number']) ?></td>
@@ -256,30 +271,30 @@ $filtered_cycles = mysqli_fetch_all($query_select_cycle, MYSQLI_ASSOC);
                                                 <div class='status-icon'><?= $icon ?></div>
                                             </td>
                                             <td>
-                                                <button name='btn_edit' class='btn edit-btn' data-bs-toggle='modal' type='button' data-bs-target='#<?= $harvestModalID ?>'>
+                                                <button name='btn_edit' class='btn edit-btn' data-bs-toggle='modal' type='button' data-bs-target='#<?= $editModalID ?>'>
                                                     <i class='fa-regular fa-pen-to-square'></i>
                                                 </button>
                                                 <!-- Edit Modal -->
-                                                <div class='modal fade' id='<?= $harvestModalID ?>' tabindex='-1' aria-labelledby='Edit_CycleLabel_<?= $harvestModalID ?>' aria-hidden='true'>
+                                                <div class='modal fade' id='<?= $editModalID ?>' tabindex='-1' aria-labelledby='Edit_CycleLabel_<?= $editModalID ?>' aria-hidden='true'>
                                                     <div class='modal-dialog modal-lg modal-dialog-centered rounded-3'>
                                                         <div class='modal-content' style='border: 2px solid #2B2B2B;'>
                                                             <div class='modal-header border-dark border-2' style='background-color: #FCF4B9;'>
-                                                                <h5 class='modal-title fw-semibold mx-4' id='Edit_CycleLabel_<?= $harvestModalID ?>'>Edit Harvest Cycle</h5>
+                                                                <h5 class='modal-title fw-semibold mx-4' id='Edit_CycleLabel_<?= $editModalID ?>'>Edit Harvest Cycle</h5>
                                                                 <button name='close' type='button' class='btn-close' data-bs-dismiss='modal' aria-label='Close'></button>
                                                             </div>
                                                             <div class='modal-body m-5'>
                                                                 <form action='/harvestCycle' method='post' class='row mt-2 g-3'>
                                                                     <div class='col-md-4'>
-                                                                        <label for='cycleNumber_<?= $harvestModalID ?>' class='form-label d-flex justify-content-start' style='font-size: 13px;'>Cycle Number</label>
-                                                                        <input name='edit_cycle_num' type='text' class='form-control rounded-3 py-2' style='border: 1.8px solid #2B2B2B; font-size: 13px;' id='cycleNumber_<?= $harvestModalID ?>' value='<?= htmlspecialchars($row['cycle_number']) ?>' readonly>
+                                                                        <label for='cycleNumber_<?= $editModalID ?>' class='form-label d-flex justify-content-start' style='font-size: 13px;'>Cycle Number</label>
+                                                                        <input name='edit_cycle_num' type='text' class='form-control rounded-3 py-2' style='border: 1.8px solid #2B2B2B; font-size: 13px;' id='cycleNumber_<?= $editModalID ?>' value='<?= htmlspecialchars($row['cycle_number']) ?>' readonly>
                                                                     </div>
                                                                     <div class='col-md-4'>
-                                                                        <label for='cycleStart_<?= $harvestModalID ?>' class='form-label d-flex justify-content-start' style='font-size: 13px;'>Start of Cycle</label>
-                                                                        <input name='edit_start_date' type='date' class='form-control rounded-3 py-2' style='border: 1.8px solid #2B2B2B; font-size: 13px;' id='cycleStart_<?= $harvestModalID ?>' value='<?= htmlspecialchars($row['start_of_cycle']) ?>' required min='<?= $currentDate ?>'>
+                                                                        <label for='cycleStart_<?= $editModalID ?>' class='form-label d-flex justify-content-start' style='font-size: 13px;'>Start of Cycle</label>
+                                                                        <input name='edit_start_date' type='date' class='form-control rounded-3 py-2' style='border: 1.8px solid #2B2B2B; font-size: 13px;' id='cycleStart_<?= $editModalID ?>' value='<?= htmlspecialchars($row['start_of_cycle']) ?>' required min='<?= $currentDate ?>'>
                                                                     </div>
                                                                     <div class='col-md-4'>
-                                                                        <label for='cycleEnd_<?= $harvestModalID ?>' class='form-label d-flex justify-content-start' style='font-size: 13px;'>End of Cycle</label>
-                                                                        <input name='edit_end_date' type='date' class='form-control rounded-3 py-2' style='border: 1.8px solid #2B2B2B; font-size: 13px;' id='cycleEnd_<?= $harvestModalID ?>' value='<?= htmlspecialchars($row['end_of_cycle']) ?>' required>
+                                                                        <label for='cycleEnd_<?= $editModalID ?>' class='form-label d-flex justify-content-start' style='font-size: 13px;'>End of Cycle</label>
+                                                                        <input name='edit_end_date' type='date' class='form-control rounded-3 py-2' style='border: 1.8px solid #2B2B2B; font-size: 13px;' id='cycleEnd_<?= $editModalID ?>' value='<?= htmlspecialchars($row['end_of_cycle']) ?>' required>
                                                                     </div>
                                                                     <div class='mt-4 d-flex justify-content-end'>
                                                                         <input type='hidden' name='cycle_number' value='<?= $row['cycle_number'] ?>'>
@@ -291,17 +306,51 @@ $filtered_cycles = mysqli_fetch_all($query_select_cycle, MYSQLI_ASSOC);
                                                     </div>
                                                 </div>
                                             </td>
-                                            <form method='post' action='/harvestCycle'>
-                                                <input type='hidden' name='cycle_number' value='<?= $row['cycle_number'] ?>'>
-                                                <td><button name='btn_delete' type='submit' class='btn delete-btn'><i class='fa-regular fa-trash-can' style='color: red;'></i></button></td>
-                                            </form>
+                                            <td>
+                                                <button class='btn delete-btn'><i class='fa-regular fa-trash-can' style='color: red;' data-bs-toggle='modal' type='button' data-bs-target='#<?= $deleteModalID ?>'></i></button>
+                                                 <!-- Edit Modal -->
+                                                 <div class='modal fade' id='<?= $deleteModalID ?>' tabindex='-1' aria-labelledby='Delete_CycleLabel_<?= $deleteModalID ?>' aria-hidden='true'>
+                                                    <div class='modal-dialog modal-lg modal-dialog-centered rounded d-flex justify-content-center'>
+                                                        <div class='modal-content' style='border: 2px solid #2B2B2B; width: 450px; height: 180px;'>
+                                                            <div class='modal-header border-dark border-2' style='background-color: #FCF4B9;'>
+                                                                <h5 class='modal-title fw-semibold mx-4' id='Delete_CycleLabel_<?= $deleteModalID ?>'>Are you sure you want to delete this cycle? </h5>
+                                                            </div>
+                                                            <div class='modal-body m-2 d-flex justify-content-center'>
+                                                                <form action='/harvestCycle' method='post' class='row mt-2 g-1'>
+                                                                    <div class='col-md-4 me-5'>
+                                                                        <button type="button" class="btn btn-dark" data-bs-dismiss='modal' aria-label='Close'>No</button>
+                                                                    </div>
+                                                                    <div class='col-md-4'>
+                                                                        <button name='btn_delete' type="submit" class="btn btn-success" >Yes</button>
+                                                                        <input type='hidden' name='cycle_number' value='<?= $row['cycle_number'] ?>'>
+                                                                    </div>
+                                                                </form>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </td>
                                         </tr>
                                     <?php endforeach; ?>
                                 </tbody>
                             </table>
                         </div>
+                                        <!-- Filter -->
+                                        <div class="dropdown mb-0" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <button class="filter-button btn= dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                Filter
+                                            </button>
+                                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                                <li><a class="dropdown-item filter-option" data-value="all" href="#">All Harvest Cycle</a></li>
+                                                <li><a class="dropdown-item filter-option" data-value="pending" href="#">Pending</a></li>
+                                                <li><a class="dropdown-item filter-option" data-value="complete" href="#">Complete</a></li>
+                                            </ul>
+                                        </div>
+                                        <form id="filterForm" action="/harvestCycle" method="post" style="display: none;">
+                                            <input type="hidden" name="filter_value" value="">
+                                        </form>
 
-                        <!-- View All Modal -->
+                                        <!-- View All Modal -->
                                         <button type="button" class="view-button px-4 border border-1 border-black fw-semibold" data-bs-toggle='modal' data-bs-target='#viewAllModal'>View All</button>
                                         <div class='modal fade' id='viewAllModal' tabindex='-1' aria-labelledby='ViewAllLabel' aria-hidden='true'>
                                             <div class='modal-dialog modal-lg modal-dialog-centered rounded-3'>
@@ -368,20 +417,6 @@ $filtered_cycles = mysqli_fetch_all($query_select_cycle, MYSQLI_ASSOC);
                                             </div>
                                             <span class="text_legend2">Pending Cycle</span>
                                         </div>
-                                        <!-- Filter -->
-                                        <div class="dropdown mb-0" data-bs-toggle="dropdown" aria-expanded="false">
-                                            <button class="filter-button btn= dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                                Filter
-                                            </button>
-                                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                                                <li><a class="dropdown-item filter-option" data-value="all" href="#">All Harvest Cycle</a></li>
-                                                <li><a class="dropdown-item filter-option" data-value="pending" href="#">Pending</a></li>
-                                                <li><a class="dropdown-item filter-option" data-value="complete" href="#">Complete</a></li>
-                                            </ul>
-                                        </div>
-                                        <form id="filterForm" action="/harvestCycle" method="post" style="display: none;">
-                                            <input type="hidden" name="filter_value" value="">
-                                        </form>
                                     </div>
                                 </div>
                             </div>
@@ -431,7 +466,7 @@ $filtered_cycles = mysqli_fetch_all($query_select_cycle, MYSQLI_ASSOC);
                 </a>
             </li>
             <li class="sidebar-menu-item">
-                <a href="/addWorker">
+                <a href="/Worker">
                     <i class="fa-solid fa-user sidebar-menu-item-icon"></i>
                     Worker
                 </a>

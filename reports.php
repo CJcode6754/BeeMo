@@ -24,8 +24,6 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@latest"></script>
-
-
 </head>
 
 <body class="overflow-x-hidden">
@@ -68,7 +66,7 @@
                 </a>
             </li>
             <li class="sidebar-menu-item">
-                <a href="/addWorker">
+                <a href="/Worker">
                     <i class="fa-solid fa-user sidebar-menu-item-icon"></i>
                     Worker
                 </a>
@@ -107,7 +105,7 @@
                                 </p>
                             </div>
                             <div>
-                                <form action="harvestCycle.php" method="post">
+                                <form action="/reports" method="post">
                                     <button class="clearNotif" name="clearNotif">Clear all</button>
                                 </form>
                             </div>
@@ -118,9 +116,8 @@
                     </div>
                 </div>
 
-                <div class="dropdown me-3  d-sm-block">
-                    <div class="navbar-link  border border-1 border-black rounded-5" data-bs-toggle="dropdown"
-                        aria-expanded="false">
+                <div class="dropdown me-3 d-sm-block">
+                    <div class="navbar-link border border-1 border-black rounded-5" data-bs-toggle="dropdown" aria-expanded="false">
                         <i class="fa-solid fa-user"></i>
                     </div>
                     <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
@@ -136,53 +133,53 @@
                                 Settings
                             </a>
                         </li>
-                        <li>
-                            <a class="dropdown-item" href="index.html">
-                                <i class="fa-solid fa-right-from-bracket"></i>
-                                Logout
-                            </a>
+                        <!-- Logout -->
+                        <form id="logoutForm" action="/reports" method="post" style="display: none;">
+                            <input type="hidden" name="logout_btn" value="true">
+                        </form>
+                        <li class="dropdown-item" onclick="document.getElementById('logoutForm').submit();">
+                            <i class="fa-solid fa-right-from-bracket"></i>
+                            Logout
                         </li>
                     </ul>
                 </div>
             </nav>
 
-            <!-- Content -->
-            <div class="reports-page py-4 mt-4 border border-2 rounded-4 border-dark">
-                <div class="px-4 text-center content-wrapper">
-                    <div class="container-top">
-                    <div class="label-container btn-group rounded-3 d-flex justify-content-center mb-4">
-                        <a href="#" class="btn btn-label label-current" data-type="temperature">Temperature</a>
-                        <a href="#" class="btn btn-label" data-type="humidity">Humidity</a>
-                        <a href="#" class="btn btn-label" data-type="weight">Weight</a>
-                    </div>
-                        <div class="row">
-                            <div class="col-12 col-md-12">
-                                <div class="date-picker mb-2">
-                                    <input type="date" class="form-control rounded-2" id="start-date-picker" required>
+                <!-- Content -->
+                <div class="reports-page py-4 mt-4 border border-2 rounded-4 border-dark">
+                    <div class="px-4 text-center content-wrapper">
+                        <div class="container-top">
+                        <div class="label-container btn-group rounded-3 d-flex justify-content-center mb-4">
+                            <a href="#" class="btn btn-label label-current" data-type="temperature">Temperature</a>
+                            <a href="#" class="btn btn-label" data-type="humidity">Humidity</a>
+                            <a href="#" class="btn btn-label" data-type="weight">Weight</a>
+                        </div>
+                            <div class="row">
+                                <div class="col-12 col-md-12">
+                                    <div class="date-picker mb-2">
+                                        <input type="date" class="form-control rounded-2" id="start-date-picker" required>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="container-chart">
-                        <div class="chart-container">
-                            <canvas id="myChart"></canvas>
+                        <div class="container-chart">
+                            <div class="chart-container">
+                                <canvas id="myChart"></canvas>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="legends d-flex justify-content-center gap-3 mt-2">
-                    <span class="badge" style="background-color: rgba(0, 255, 0, 0.2); color: #2B2B2B;">Optimal Range</span>
-                    <span class="badge" style="background-color: rgba(255, 127, 127, 0.4); color: #2B2B2B;">Out of Optimal Range</span>
-                </div>
-            </div>
-        </div>
+                    <div class="legends d-flex justify-content-center gap-3 mt-4">
+                        <span class="badge" style="background-color: rgba(0, 255, 0, 0.2); color: #2B2B2B;">Optimal Range</span>
+                        <span class="badge" style="background-color: rgba(255, 127, 127, 0.4); color: #2B2B2B;">Out of Optimal Range</span>
+                    </div>
 
-        <div class="descriptive-analytics-container mt-4">
-            <h5>Descriptive Analytics</h5>
-            <p>Data Type: <span id="data-type-label">Temperature</span></p>
-            <p>Date Range: <span id="date-range-label">24 Hours</span></p>
-            <p>Average: <span id="average-value">-</span></p>
-            <p>Minimum: <span id="min-value">-</span></p>
-            <p>Maximum: <span id="max-value">-</span></p>
+                    <div class="descriptive-analytics-container mt-2">
+                        <p>Date Range: <span id="date-range-label">24 Hours</span></p>
+                        <p>Average: <span id="average-value">-</span></p>
+                        <p>Minimum: <span id="min-value">-</span></p>
+                        <p>Maximum: <span id="max-value">-</span></p>
+                    </div>
+                </div>
         </div>
     </main>
 
@@ -200,43 +197,43 @@
         </div>
         <ul class="sidebar-menu p-2 py-2 m-0 mb-0">
             <li class="sidebar-menu-item2 active">
-                <a href="home.html">
+                <a href="/dashboard">
                     <i class="fa-solid fa-house sidebar-menu-item-icon2"></i>
                     Home
                 </a>
             </li>
             <li class="sidebar-menu-item2 py-1">
-                <a href="choosehive.html">
+                <a href="/chooseHive">
                     <i class="fa-solid fa-temperature-three-quarters sidebar-menu-item-icon2"></i>
                     Parameters Monitoring
                 </a>
             </li>
             <li class="sidebar-menu-item2">
-                <a href="#">
+                <a href="/reports">
                     <i class="fa-solid fa-newspaper sidebar-menu-item-icon2"></i>
                     Reports
                 </a>
             </li>
             <li class="sidebar-menu-item2">
-                <a href="harvestcycle.html">
+                <a href="/harvestCycle">
                     <i class="fa-solid fa-arrows-spin sidebar-menu-item-icon2"></i>
                     Harvest Cycle
                 </a>
             </li>
             <li class="sidebar-menu-item2">
-                <a href="beeguide.html">
+                <a href="/beeGuide">
                     <i class="fa-solid fa-book-open sidebar-menu-item-icon2"></i>
                     Bee Guide
                 </a>
             </li>
             <li class="sidebar-menu-item2">
-                <a href="worker.html">
+                <a href="/Worker">
                     <i class="fa-solid fa-user sidebar-menu-item-icon2"></i>
                     Worker
                 </a>
             </li>
             <li class="sidebar-menu-item2">
-                <a href="#">
+                <a href="/about">
                     <i class="fa-solid fa-circle-info sidebar-menu-item-icon2"></i>
                     About
                 </a>

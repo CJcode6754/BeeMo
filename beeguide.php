@@ -78,7 +78,7 @@
                 </a>
             </li>
             <li class="sidebar-menu-item">
-                <a href="/addWorker">
+                <a href="/Worker">
                     <i class="fa-solid fa-user sidebar-menu-item-icon"></i>
                     Worker
                 </a>
@@ -115,8 +115,8 @@
                                 </p>
                             </div>
                             <div>
-                                <form action="harvestCycle.php" method="post">
-                                            <button class="clearNotif" name="clearNotif">Clear all</button>
+                                <form action="/beeGuide" method="post">
+                                    <button class="clearNotif" name="clearNotif">Clear all</button>
                                 </form>
                             </div>
                         </div>
@@ -126,17 +126,31 @@
                     </div>
                 </div>
 
-                <div class="dropdown me-3  d-sm-block">
-                    <div class="navbar-link  border border-1 border-black rounded-5"  data-bs-toggle="dropdown" aria-expanded="false">
+                <div class="dropdown me-3 d-sm-block">
+                    <div class="navbar-link border border-1 border-black rounded-5" data-bs-toggle="dropdown" aria-expanded="false">
                         <i class="fa-solid fa-user"></i>
                     </div>
                     <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                        <li><a class="dropdown-item" href="/TermsAndConditions">Action</a></li>
-                        <li><a class="dropdown-item" href="#">Another action</a></li>
+                        <li>
+                            <a class="dropdown-item" href="termsandconditions.html">
+                                <i class="fa-solid fa-user"></i>
+                                Profile
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="#">
+                                <i class="fa-solid fa-gear"></i>
+                                Settings
+                            </a>
+                        </li>
+                        <!-- Logout -->
                         <form id="logoutForm" action="/beeGuide" method="post" style="display: none;">
-                        	<input type="hidden" name="logout_btn" value="true">
+                            <input type="hidden" name="logout_btn" value="true">
                         </form>
-                        <li class="dropdown-item" onclick="document.getElementById('logoutForm').submit();">Logout</li>
+                        <li class="dropdown-item" onclick="document.getElementById('logoutForm').submit();">
+                            <i class="fa-solid fa-right-from-bracket"></i>
+                            Logout
+                        </li>
                     </ul>
                 </div>
             </nav>
@@ -202,7 +216,7 @@
                 </a>
             </li>
             <li class="sidebar-menu-item2 active">
-                <a href="/addWorker">
+                <a href="/Worker">
                     <i class="fa-solid fa-user sidebar-menu-item-icon2"></i>
                     Worker
                 </a>

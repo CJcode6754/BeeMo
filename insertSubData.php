@@ -1,7 +1,7 @@
 <?php
 $servername = "localhost";
 $username = "root";
-$password = "appleslice_pass789432";
+$password = "";
 $dbname = "BeeMo_db";
 
 // Create connection
@@ -39,7 +39,7 @@ foreach ($period as $dt) {
         $timestamp = $dt->format('Y-m-d H:i:s');
 
         // Prepare SQL statement
-        $sql = "INSERT INTO subData (temperature, humidity, weight, timestamp) VALUES ('$temperature', '$humidity', '$weight', '$timestamp')";
+        $sql = "INSERT INTO subdata (temperature, humidity, weight, timestamp) VALUES ('$temperature', '$humidity', '$weight', '$timestamp')";
 
         // Execute SQL statement
         if ($conn->query($sql) === TRUE) {

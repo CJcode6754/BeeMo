@@ -15,8 +15,6 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .then(response => response.json())
         .then(data => {
-            console.log("Fetched Data:", data); // Log the fetched data for debugging
-
             // Clear previous notifications
             notificationsContainer.innerHTML = '';
 

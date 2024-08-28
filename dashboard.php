@@ -37,6 +37,7 @@ if(isset($_POST['clearNotif'])){
     <title>BeeMo</title>
     <link rel="stylesheet" href="./css/dashboard.css">
     <link rel="stylesheet" href="./css/reusable.css">
+    <link rel="stylesheet" href="./css/profile.css">
     <link rel="icon" href="img/beemo-ico.ico">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <script src="https://kit.fontawesome.com/b4ce5ff90a.js" crossorigin="anonymous"></script>
@@ -81,7 +82,7 @@ if(isset($_POST['clearNotif'])){
                 </a>
             </li>
             <li class="sidebar-menu-item">
-                <a href="/addWorker">
+                <a href="/Worker">
                     <i class="fa-solid fa-user sidebar-menu-item-icon"></i>
                     Worker
                 </a>
@@ -118,8 +119,8 @@ if(isset($_POST['clearNotif'])){
                                 </p>
                             </div>
                             <div>
-                                <form action="harvestCycle.php" method="post">
-                                            <button class="clearNotif" name="clearNotif">Clear all</button>
+                                <form action="/dashboard" method="post">
+                                    <button class="clearNotif" name="clearNotif">Clear all</button>
                                 </form>
                             </div>
                         </div>
@@ -129,17 +130,31 @@ if(isset($_POST['clearNotif'])){
                     </div>
                 </div>
 
-                <div class="dropdown me-3  d-sm-block">
-                    <div class="navbar-link  border border-1 border-black rounded-5"  data-bs-toggle="dropdown" aria-expanded="false">
+                <div class="dropdown me-3 d-sm-block">
+                    <div class="navbar-link border border-1 border-black rounded-5" data-bs-toggle="dropdown" aria-expanded="false">
                         <i class="fa-solid fa-user"></i>
                     </div>
                     <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                        <li><a class="dropdown-item" href="/TermsAndConditions">Terms and Conditions</a></li>
-                        <li><a class="dropdown-item" href="#">Another action</a></li>
-                        <form id="logoutForm" action="dashboard.php" method="post" style="display: none;">
+                        <li>
+                            <a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#Profile-Modal">
+                                <i class="fa-solid fa-user"></i>
+                                Profile
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="#">
+                                <i class="fa-solid fa-gear"></i>
+                                Settings
+                            </a>
+                        </li>
+                        <!-- Logout -->
+                        <form id="logoutForm" action="/dashboard" method="post" style="display: none;">
                             <input type="hidden" name="logout_btn" value="true">
                         </form>
-                        <li class="dropdown-item" onclick="document.getElementById('logoutForm').submit();">Logout</li>
+                        <li class="dropdown-item" onclick="document.getElementById('logoutForm').submit();">
+                            <i class="fa-solid fa-right-from-bracket"></i>
+                            Logout
+                        </li>
                     </ul>
                 </div>
             </nav>
@@ -196,7 +211,7 @@ if(isset($_POST['clearNotif'])){
                 </a>
             </li>
             <li class="sidebar-menu-item2">
-                <a href="/addWorker">
+                <a href="/Worker">
                     <i class="fa-solid fa-user sidebar-menu-item-icon2"></i>
                     Worker
                 </a>
@@ -209,6 +224,189 @@ if(isset($_POST['clearNotif'])){
             </li>
         </ul>
     </div>
+
+    <!-- Profile Modal -->
+    <div class="modal fade " id="Profile-Modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable profile-dialog">
+
+            <div class="modal-content border-2 border-dark" style="border-radius: 20px; box-shadow: 0 7px #2B2B2B; max-width: 400px;">
+
+                <div class="modal-header profile-header">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <!-- Modal Contents -->
+                <div class="modal-body" style="color: #292929;">
+                    <div class="icon text-center my-3"><img src="img/Profile icon.png" alt="" width="80" height="80"></div>
+
+                    <div class="text-center">
+                    <h5>Dan Denver De Leon</h5>
+                    <h6 style="text-decoration: underline; font-weight: 350;"><small class="text-body-secondary">denverdeleon21@gmail.com</small></h6>
+                    <hr class="mx-auto" width = "80%">
+                    </div>
+
+                    <div class="Options mx-auto py-4">
+
+                        <button type="button" id="edit-profile-button" data-bs-toggle="modal" data-bs-target="#Edit-Profile-Modal" style="padding: 10px;">
+                            <p><i class="fa-solid fa-user"></i> <span>My Profile</span><i class="fa-solid fa-angle-right"></i></p>
+                        </button>
+
+                        <button type="button" id="edit-profile-button" data-bs-toggle="modal" data-bs-target="#Change-Pass-Modal" style="padding: 10px;" >
+                            <p><i class="fa-solid fa-lock"></i> <span>Change Password</span><i class="fa-solid fa-angle-right"></i></p>
+                        </button>
+
+                        <button style="padding: 10px;">
+                            <p><i class="fa-solid fa-bell"></i> <span>Notification</span>allow</p>
+                        </button>
+                    </div>
+
+                    <div class="logout text-center">
+                        <p><i class="fa-solid fa-right-from-bracket"></i> Log out</p>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- ----------------------------------------------------------------------------------------------------------- -->
+
+    <!-- Edit Profile -->
+
+        <div class="modal fade " id="Edit-Profile-Modal" tabindex="0" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable profile-dialog">
+
+                <div class="modal-content border-2 border-dark" style="border-radius: 20px; box-shadow: 0 7px #2B2B2B; max-width: 450px;">
+                    <div class="modal-header profile-header" style="padding: 5px;">
+
+                        <button type="button" class="btn" data-bs-dismiss="modal" aria-label="Close">
+                            <i class="fa-solid fa-angle-left fa-lg"></i>
+                        </button>
+
+                        <button type="button" class="btn" data-bs-toggle="modal" data-bs-target="#Profile-Modal" data-bs-dismiss="modal" aria-label="Back">
+                            <i class="fa-solid fa-xmark fa-lg"></i>
+                        </button>
+
+                    </div>
+
+                    <!-- Modal Contents -->
+                    <div class="modal-body" style="color: #292929;">
+                        <div class="icon text-center my-3"><img src="img/Profile icon.png" alt="" width="80" height="80"></div>
+                        <div class="text-center">
+                        <h5>Dan Denver De Leon</h5>
+                        <h6 style="text-decoration: underline; font-weight: 350;"><small class="text-body-secondary">denverdeleon21@gmail.com</small></h6>
+                        <hr class="mx-auto" width = "90%">
+                        </div>
+
+                        <div class="My-Profile text-center pb-4 pt-3">
+                            <h4 style="background-color: #FAEF9B; display: inline-block; border-radius: 5px;">
+                                My Profile
+                            </h4>
+                        </div>
+
+                        <div class="Field-inputs mx-4" style="font-size: small;">
+
+                            <div class="form-floating pb-4">
+                                <input type="text" class="form-control" id="fullName" placeholder="Full Name" value="Dan Denver De Leon">
+                                <label for="fullName"><i class="fa-solid fa-user"></i> Full Name</label>
+                            </div>
+
+                            <div class="form-floating pb-4">
+                                <input type="email" class="form-control" id="email" placeholder="name@example.com" value="denverdeleon21@gmail.com">
+                                <label for="email"><i class="fa-solid fa-envelope"></i> Email</label>
+                            </div>
+
+                            <div class="form-floating pb-4">
+                                <input type="text" class="form-control" id="mobileNumber" placeholder="Mobile Number" value="09982323125">
+                                <label for="mobileNumber"><i class="fa-solid fa-mobile"></i> Mobile Number</label>
+                            </div>
+
+                        </div>
+
+                        <div class="save-changes">
+                            <button type="button" class="mt-4 mb-5" id="save-btn">
+                                Save Change
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    <!-- ----------------------------------------------------------------------------------------------------------- -->
+
+    <!-- Change Pass -->
+
+    <div class="modal fade " id="Change-Pass-Modal" tabindex="0" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable profile-dialog">
+
+            <div class="modal-content border-2 border-dark" style="border-radius: 20px; box-shadow: 0 7px #2B2B2B; max-width: 450px;">
+                <div class="modal-header profile-header" style="padding: 5px;">
+
+                        <button type="button" class="btn" data-bs-dismiss="modal" aria-label="Close">
+                            <i class="fa-solid fa-angle-left fa-lg"></i>
+                        </button>
+                        <button type="button" class="btn" data-bs-toggle="modal" data-bs-target="#Profile-Modal" data-bs-dismiss="modal" aria-label="Back">
+                            <i class="fa-solid fa-xmark fa-lg"></i>
+                        </button>
+
+                </div>
+
+                <!-- Modal Contents -->
+                <div class="modal-body" style="color: #292929;">
+                    <div class="icon text-center my-3"><img src="img/Profile icon.png" alt="" width="80" height="80"></div>
+
+                    <div class="text-center">
+                    <h5>Dan Denver De Leon</h5>
+                    <h6 style="text-decoration: underline; font-weight: 350;"><small class="text-body-secondary">denverdeleon21@gmail.com</small></h6>
+                    <hr class="mx-auto" width = "90%" >
+                    </div>
+
+                    <div class="My-Profile text-center pb-4 pt-3">
+                        <h4 style="background-color: #FAEF9B; display: inline-block; border-radius: 5px;">
+                            Change Password
+                        </h4>
+                    </div>
+
+                    <div class="Field-inputs mx-4" style="font-size: small;">
+                        <div class="form-floating pb-4">
+                            <input type="password" class="form-control" id="password" placeholder="Password" required>
+                            <label for="password"><i class="fa-solid fa-lock"></i> Current Password</label>
+                            <div class="password-wrapper">
+                            <span id="togglePassword" class="toggle-password"><i class="fa-solid fa-eye-slash fa-lg"></i></span>
+                            </div>
+                        </div>
+
+                        <div class="form-floating pb-4">
+                            <input type="password" class="form-control" id="new-password" placeholder="Password" required>
+                            <label for="password"><i class="fa-solid fa-lock"></i> New Password</label>
+                            <div class="password-wrapper">
+                            <span id="togglePassword" class="toggle-password"><i class="fa-solid fa-eye-slash fa-lg"></i></span>
+                            </div>
+                        </div>
+
+                        <div class="form-floating pb-4">
+                            <input type="password" class="form-control" id="confirm-password" placeholder="Password" required>
+                            <label for="password"><i class="fa-solid fa-lock"></i> Confirm Password</label>
+                            <div class="password-wrapper">
+                            <span id="togglePassword" class="toggle-password"><i class="fa-solid fa-eye-slash fa-lg"></i></span>
+                            </div>
+                        </div>
+
+                    </div>
+
+                <div class="save-changes">
+                    <button type="button" class="mt-4 mb-5" id="save-btn">
+                        Save Change
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <script src="./js/reusable.js"></script>
     <script src="./js/notification.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>

@@ -7,7 +7,7 @@ class Database {
 
     private $host = 'localhost';
     private $username = 'root';
-    private $password = 'appleslice_pass789432';
+    private $password = '';
     private $dbname = 'BeeMo_db';
 
     private $conn;

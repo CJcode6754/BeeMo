@@ -39,7 +39,7 @@ if (isset($_POST['submit'])) {
 
     if (mysqli_num_rows($check_email_query) > 0) {
         $_SESSION['error'] = 'Email Address Already Exists';
-        header('Location: /addWorker');
+        header('Location: /Worker');
         exit;
     }
 
@@ -58,17 +58,17 @@ if (isset($_POST['submit'])) {
             $_SESSION['user_name'] = $name;
             $_SESSION['adminID'] = $adminID;
 
-            $notificationHandler->insertNotification($adminID, 'active', 'User was added successfully.', 'add_user', '/addWorker', 'unseen');
+            $notificationHandler->insertNotification($adminID, 'active', 'User was added successfully.', 'add_user', '/Worker', 'unseen');
             header('Location: /verifyWorker');
             exit;
         } else {
             $_SESSION['error'] = 'Failed to send OTP. Try again.';
-            header('Location: /addWorker');
+            header('Location: /Worker');
             exit;
         }
     } else {
         $_SESSION['error'] = 'Error: ' . mysqli_error($conn);
-        header('Location: /addWorker');
+        header('Location: /Worker');
         exit;
     }
 }
@@ -80,11 +80,11 @@ if (isset($_POST['btn_delete'])) {
     $delete_query = mysqli_query($conn, $delete_user);
 
     if ($delete_query) {
-        $notificationHandler->insertNotification($adminID, 'active', 'User was deleted successfully.', 'delete_user', '/addWorker', 'unseen');
+        $notificationHandler->insertNotification($adminID, 'active', 'User was deleted successfully.', 'delete_user', '/Worker', 'unseen');
     } else {
-        $notificationHandler->insertNotification($adminID, 'active', 'Failed to delete user.', 'failed_to_delete_user', '/addWorker', 'unseen');
+        $notificationHandler->insertNotification($adminID, 'active', 'Failed to delete user.', 'failed_to_delete_user', '/Worker', 'unseen');
     }
-    header('Location: /addWorker');
+    header('Location: /Worker');
     exit;
 }
 
@@ -139,12 +139,12 @@ if (isset($_POST['edit_btn'])) {
     }
 
     if ($update_success) {
-        $notificationHandler->insertNotification($adminID, 'active', 'User was edited successfully.', 'edit_user', '/addWorker', 'unseen');
+        $notificationHandler->insertNotification($adminID, 'active', 'User was edited successfully.', 'edit_user', '/Worker', 'unseen');
     } else {
-        $notificationHandler->insertNotification($adminID, 'active', 'Failed to edit user.', 'failed_to_edit_user', '/addWorker', 'unseen');
+        $notificationHandler->insertNotification($adminID, 'active', 'Failed to edit user.', 'failed_to_edit_user', '/Worker', 'unseen');
     }
 
-    header('Location: /addWorker');
+    header('Location: /Worker');
     exit;
 }
 
@@ -213,7 +213,7 @@ if (isset($_POST['clearNotif'])) {
                 </a>
             </li>
             <li class="sidebar-menu-item active">
-                <a href="/addWorker">
+                <a href="/Worker">
                     <i class="fa-solid fa-user sidebar-menu-item-icon"></i>
                     Worker
                 </a>
@@ -250,7 +250,7 @@ if (isset($_POST['clearNotif'])) {
                                 </p>
                             </div>
                             <div>
-                                <form action="/addWorker" method="post">
+                                <form action="/Worker" method="post">
                                     <button class="clearNotif" name="clearNotif">Clear all</button>
                                 </form>
                             </div>
@@ -261,17 +261,31 @@ if (isset($_POST['clearNotif'])) {
                     </div>
                 </div>
 
-                <div class="dropdown me-3  d-sm-block">
-                    <div class="navbar-link  border border-1 border-black rounded-5" data-bs-toggle="dropdown" aria-expanded="false">
+                <div class="dropdown me-3 d-sm-block">
+                    <div class="navbar-link border border-1 border-black rounded-5" data-bs-toggle="dropdown" aria-expanded="false">
                         <i class="fa-solid fa-user"></i>
                     </div>
                     <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                        <li><a class="dropdown-item" href="/TermsAndConditions">Action</a></li>
-                        <li><a class="dropdown-item" href="#">Another action</a></li>
-                        <form id="logoutForm" action="addWorker.php" method="post" style="display: none;">
+                        <li>
+                            <a class="dropdown-item" href="termsandconditions.html">
+                                <i class="fa-solid fa-user"></i>
+                                Profile
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="#">
+                                <i class="fa-solid fa-gear"></i>
+                                Settings
+                            </a>
+                        </li>
+                        <!-- Logout -->
+                        <form id="logoutForm" action="/Worker" method="post" style="display: none;">
                             <input type="hidden" name="logout_btn" value="true">
                         </form>
-                        <li class="dropdown-item" onclick="document.getElementById('logoutForm').submit();">Logout</li>
+                        <li class="dropdown-item" onclick="document.getElementById('logoutForm').submit();">
+                            <i class="fa-solid fa-right-from-bracket"></i>
+                            Logout
+                        </li>
                     </ul>
                 </div>
             </nav>
@@ -299,7 +313,8 @@ if (isset($_POST['clearNotif'])) {
                                     $list_query = mysqli_query($conn, $worker_list);
                                     while ($row = $list_query->fetch_assoc()) {
                                         // Generate a unique modal ID for each row
-                                        $modalID = 'Edit_WorkerModal_' . $row['userID'];
+                                        $editModalID = 'Edit_WorkerModal_' . $row['userID'];
+                                        $deleteModalID = 'Delete_WorkerModal_' . $row['userID'];
 
                                         echo "
                                     <tr>
@@ -308,11 +323,11 @@ if (isset($_POST['clearNotif'])) {
                                         <td>" . $row['number'] . "</td>
                                         <td>" . $row['password'] . " </td>
                                         <td>
-                                            <button name='btn_edit' class='btn edit-btn' data-bs-toggle='modal' type='button' data-bs-target='#$modalID'>
+                                            <button name='btn_edit' class='btn edit-btn' data-bs-toggle='modal' type='button' data-bs-target='#$editModalID'>
                                                 <i class='fa-regular fa-pen-to-square'></i>
                                             </button>
                                             <div class='yellow mt-1 d-md-none fixed-bottom p-0 m-0'></div>
-                                            <div class='modal fade' id='$modalID' tabindex='-1' aria-labelledby='Edit_WorkerLabel' aria-hidden='true'>
+                                            <div class='modal fade' id='$editModalID' tabindex='-1' aria-labelledby='Edit_WorkerLabel' aria-hidden='true'>
                                                 <div class='modal-dialog modal-lg modal-dialog-centered rounded-3'>
                                                     <div class='modal-content' style='border: 2px solid #2B2B2B;'>
                                                         <div class='modal-header border-dark border-2' style='background-color: #FCF4B9;'>
@@ -324,30 +339,30 @@ if (isset($_POST['clearNotif'])) {
                                                                 <div class='d-grid d-sm-flex justify-content-sm-center gap-4 mb-1'>
                                                                     <div class='col-md-6'>
                                                                         <label for='FullName' class='form-label' style='font-size: 13px;'>Full Name</label>
-                                                                        <input name='edit_user_name' type='text' class='form-control rounded-3 py-2' style='border: 1.8px solid #2B2B2B; font-size: 13px;' id='Edit_FullName_$modalID' value='" . htmlspecialchars($row['user_name'], ENT_QUOTES) . "' required>
+                                                                        <input name='edit_user_name' type='text' class='form-control rounded-3 py-2' style='border: 1.8px solid #2B2B2B; font-size: 13px;' id='Edit_FullName_$editModalID' value='" . htmlspecialchars($row['user_name'], ENT_QUOTES) . "' required>
                                                                         <div class='invalid-feedback'>Please enter your full name.</div>
                                                                     </div>
                                                                     <div class='mb-3 col-md-6'>
                                                                         <label for='Email' class='form-label' style='font-size: 13px;'>Email</label>
-                                                                        <input name='edit_email' type='email' class='form-control rounded-3 py-2' style='border: 1.8px solid #2B2B2B; font-size: 13px;' id='Edit_Email_$modalID' value='" . htmlspecialchars($row['email'], ENT_QUOTES) . "' required>
+                                                                        <input name='edit_email' type='email' class='form-control rounded-3 py-2' style='border: 1.8px solid #2B2B2B; font-size: 13px;' id='Edit_Email_$editModalID' value='" . htmlspecialchars($row['email'], ENT_QUOTES) . "' required>
                                                                         <div class='invalid-feedback'>Please enter a valid email address.</div>
                                                                     </div>
                                                                 </div>
                                                                 <div class='d-grid mt-3 d-sm-flex justify-content-sm-center gap-4'>
                                                                     <div class='col-md-6'>
                                                                         <label for='PhoneNumber' class='form-label' style='font-size: 13px;'>Phone Number</label>
-                                                                        <input name='edit_number' type='number' class='form-control rounded-3 py-2' style='border: 1.8px solid #2B2B2B; font-size: 13px;' id='Edit_PhoneNumber_$modalID' value='" . htmlspecialchars($row['number'], ENT_QUOTES) . "' required>
+                                                                        <input name='edit_number' type='number' class='form-control rounded-3 py-2' style='border: 1.8px solid #2B2B2B; font-size: 13px;' id='Edit_PhoneNumber_$editModalID' value='" . htmlspecialchars($row['number'], ENT_QUOTES) . "' required>
                                                                         <div class='invalid-feedback'>Please enter a valid mobile number.</div>
                                                                     </div>
                                                                     <div class='col-md-6 mb-2'>
                                                                         <label for='Password' class='form-label' style='font-size: 13px;'>Password</label>
-                                                                        <input name='edit_password' type='password' class='form-control rounded-3 py-2' style='border: 1.8px solid #2B2B2B; font-size: 13px;' id='Edit_Password_$modalID' value='" . htmlspecialchars($row['password'], ENT_QUOTES) . "' required>
+                                                                        <input name='edit_password' type='password' class='form-control rounded-3 py-2' style='border: 1.8px solid #2B2B2B; font-size: 13px;' id='Edit_Password_$editModalID' value='" . htmlspecialchars($row['password'], ENT_QUOTES) . "' required>
                                                                         <div class='invalid-feedback'>Password must be 8-32 characters long.</div>
                                                                     </div>
                                                                 </div>
                                                                 <div class='mt-5 d-flex justify-content-center'>
                                                                     <input type='hidden' name='userID' value='" . $row['userID'] . "'>
-                                                                    <button id='Edit_btn_$modalID' name='edit_btn' type='submit' class='save-button px-4 border border-1 border-black fw-semibold'><span class='fw-bold'>+</span> Edit Info</button>
+                                                                    <button id='Edit_btn_$editModalID' name='edit_btn' type='submit' class='save-button px-4 border border-1 border-black fw-semibold'><span class='fw-bold'>+</span> Edit Info</button>
                                                                 </div>
                                                             </form>
                                                         </div>
@@ -356,10 +371,28 @@ if (isset($_POST['clearNotif'])) {
                                             </div>
                                         </td>
                                         <td>
-                                            <form method='post' action='addWorker.php'>
-                                                <input type='hidden' name='userID' value='" . $row['userID'] . "'>
-                                                <button type='submit' name='btn_delete' class='btn delete-btn'><i class='fa-regular fa-trash-can' style='color: red;'></i></button>
-                                            </form>
+                                             <button class='btn delete-btn'><i class='fa-regular fa-trash-can' style='color: red;' data-bs-toggle='modal' type='button' data-bs-target='#$deleteModalID'></i></button>
+                                                 <!-- Edit Modal -->
+                                                 <div class='modal fade' id='$deleteModalID' tabindex='-1' aria-labelledby='Delete_WorkerModal' aria-hidden='true'>
+                                                    <div class='modal-dialog modal-lg modal-dialog-centered rounded d-flex justify-content-center'>
+                                                        <div class='modal-content' style='border: 2px solid #2B2B2B; width: 450px; height: 180px;'>
+                                                            <div class='modal-header border-dark border-2' style='background-color: #FCF4B9;'>
+                                                                <h5 class='modal-title fw-semibold mx-4' id='Delete_WorkerModal_'>Are you sure you want to delete this cycle? </h5>
+                                                            </div>
+                                                            <div class='modal-body m-2 d-flex justify-content-center'>
+                                                                <form action='addWorker.php' method='post' class='row mt-2 g-1'>
+                                                                    <div class='col-md-4 me-5'>
+                                                                        <button type='button' class='btn btn-dark' data-bs-dismiss='modal' aria-label='Close'>No</button>
+                                                                    </div>
+                                                                    <div class='col-md-4'>
+                                                                        <button name='btn_delete' type='submit' class='btn btn-success' >Yes</button>
+                                                                        <input type='hidden' name='userID' value='" . $row['userID'] . "'>
+                                                                    </div>
+                                                                </form>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                         </td>
                                     </tr>
                                     ";
@@ -462,7 +495,7 @@ if (isset($_POST['clearNotif'])) {
                 </a>
             </li>
             <li class="sidebar-menu-item2 active">
-                <a href="/addWorker">
+                <a href="/Worker">
                     <i class="fa-solid fa-user sidebar-menu-item-icon2"></i>
                     Worker
                 </a>
