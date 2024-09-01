@@ -249,14 +249,32 @@ $filtered_cycles = mysqli_fetch_all($query_select_cycle, MYSQLI_ASSOC);
                                         $total_duration = $end_date->getTimestamp() - $start_date->getTimestamp();
                                         $elapsed_duration = $now->getTimestamp() - $start_date->getTimestamp();
 
-                                        $progress_percentage = $total_duration > 0 ? ($elapsed_duration / $total_duration) * 100 : 0;
+                                        // Handle the case where start and end dates are the same
+                                        if ($total_duration == 0) {
+                                            $progress_percentage = 100;
+                                        } else {
+                                            $progress_percentage = ($elapsed_duration / $total_duration) * 100;
+                                        }
+
                                         $progress_percentage = min(max($progress_percentage, 0), 100);
+
+                                        // Check if progress has reached 100% and status is not updated
+                                        if ($progress_percentage == 100 && $row['status'] != 1) {
+                                            // Update the status in the database
+                                            $cycle_number = $row['cycle_number'];
+                                            $update_status_query = "UPDATE harvest_cycle SET status = 1 WHERE cycle_number = $cycle_number";
+                                            mysqli_query($conn, $update_status_query);
+
+                                            // Update the row status locally to reflect the change
+                                            $row['status'] = 1;
+                                        }
 
                                         $progress_color = $row['status'] == 1 ? '#F9E37F' : ($progress_percentage >= 100 ? '#F9E37F' : '#4caf50');
                                         $icon = $row['status'] == 1 ? "<i class='fa-solid fa-check'></i>" : "";
                                         $editModalID = 'Edit_HarvestModal_' . $row['cycle_number'];
                                         $deleteModalID = 'Delete_HarvestModal_' . $row['cycle_number'];
                                         ?>
+
                                         <tr>
                                             <td><?= htmlspecialchars($row['cycle_number']) ?></td>
                                             <td><?= htmlspecialchars($row['start_of_cycle']) ?></td>
@@ -382,8 +400,25 @@ $filtered_cycles = mysqli_fetch_all($query_select_cycle, MYSQLI_ASSOC);
                                                                         $total_duration = $end_date->getTimestamp() - $start_date->getTimestamp();
                                                                         $elapsed_duration = $now->getTimestamp() - $start_date->getTimestamp();
 
-                                                                        $progress_percentage = $total_duration > 0 ? ($elapsed_duration / $total_duration) * 100 : 0;
+                                                                        // Handle the case where start and end dates are the same
+                                                                        if ($total_duration == 0) {
+                                                                            $progress_percentage = 100;
+                                                                        } else {
+                                                                            $progress_percentage = ($elapsed_duration / $total_duration) * 100;
+                                                                        }
+
                                                                         $progress_percentage = min(max($progress_percentage, 0), 100);
+
+                                                                        // Check if progress has reached 100% and status is not updated
+                                                                        if ($progress_percentage == 100 && $row['status'] != 1) {
+                                                                            // Update the status in the database
+                                                                            $cycle_number = $row['cycle_number'];
+                                                                            $update_status_query = "UPDATE your_table_name SET status = 1 WHERE cycle_number = $cycle_number";
+                                                                            mysqli_query($conn, $update_status_query);
+
+                                                                            // Update the row status locally to reflect the change
+                                                                            $row['status'] = 1;
+                                                                        }
 
                                                                         $progress_color = $row['status'] == 1 ? '#F9E37F' : ($progress_percentage >= 100 ? '#F9E37F' : '#4caf50');
                                                                         $icon = $row['status'] == 1 ? "<i class='fa-solid fa-check'></i>" : "";
@@ -400,7 +435,7 @@ $filtered_cycles = mysqli_fetch_all($query_select_cycle, MYSQLI_ASSOC);
                                                                                         #f3f3f3 <?= $progress_percentage ?>%
                                                                                     )'></div>
                                                                                 </div>
-                                                                                <div class='status-icon'><?= $icon ?></div>
+                                                                                <div class='status-icon1'><?= $icon ?></div>
                                                                             </td>
                                                                         </tr>
                                                                     <?php endforeach; ?>
