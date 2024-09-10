@@ -92,7 +92,14 @@ main {
     color: whitesmoke;
     position: relative;
     margin-top:-20px;
-    margin-right:4px;
+    margin-left: -18px;
+  }
+
+  .status-icon1{
+    color: whitesmoke;
+    position: relative;
+    margin-top:-20px;
+    margin-left: -13px;
   }
   
   .legend {
