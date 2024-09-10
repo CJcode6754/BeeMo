@@ -154,3 +154,38 @@ input.is-invalid,
   textarea.is-invalid {
   border-color: #dc3545 !important;
 }
+
+.terms-highlight {
+    display: inline;
+    background-color: #FEF9D9;
+    padding: 0 5px;
+    border-radius: 7px;
+}
+
+.main-terms {
+    transition: .2s;
+    padding-left: 13rem;
+    padding-top: 2rem;
+    padding-right: 13rem;
+}
+
+.logo-terms {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+}
+
+.justify-text {
+    text-align: justify;
+}
+
+.scrollable-text {
+    font-size: 1rem;
+    font-weight: 400;
+}
+
+.terms-img {
+    max-width: 100%;
+    height: auto;
+}
