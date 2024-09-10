@@ -6,6 +6,12 @@
     }
 
     season_start();
+
+    if (isset($_POST['logout_btn'])) {
+        session_destroy();
+        header('Location: /');
+        exit();
+    }
 ?>
 
 <!DOCTYPE html>
@@ -24,6 +30,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@latest"></script>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 </head>
 
 <body class="overflow-x-hidden">
@@ -115,7 +122,6 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="dropdown me-3 d-sm-block">
                     <div class="navbar-link border border-1 border-black rounded-5" data-bs-toggle="dropdown" aria-expanded="false">
                         <i class="fa-solid fa-user"></i>
@@ -144,48 +150,49 @@
                     </ul>
                 </div>
             </nav>
-
-                <!-- Content -->
-                <div class="reports-page py-4 mt-4 border border-2 rounded-4 border-dark">
-                    <div class="px-4 text-center content-wrapper">
-                        <div class="container-top">
-                        <div class="label-container btn-group rounded-3 d-flex justify-content-center mb-4">
-                            <a href="#" class="btn btn-label label-current" data-type="temperature">Temperature</a>
-                            <a href="#" class="btn btn-label" data-type="humidity">Humidity</a>
-                            <a href="#" class="btn btn-label" data-type="weight">Weight</a>
-                        </div>
-                            <div class="row">
-                                <div class="col-12 col-md-12">
-                                    <div class="date-picker mb-2">
-                                        <input type="date" class="form-control rounded-2" id="start-date-picker" required>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="container-chart">
-                            <div class="chart-container">
-                                <canvas id="myChart"></canvas>
-                            </div>
+        <!-- Content -->
+        <div class="reports-page py-4 mt-4 border border-2 rounded-4 border-dark">
+            <div class="px-4 text-center content-wrapper">
+                <div class="container-top">
+                    <div class="label-container btn-group rounded-3 d-flex justify-content-center mb-4">
+                        <a href="#" class="btn btn-label label-current" data-type="temperature">Temperature</a>
+                        <a href="#" class="btn btn-label" data-type="humidity">Humidity</a>
+                        <a href="#" class="btn btn-label" data-type="weight">Weight</a>
+                    </div>
+                    <div class="col-12 col-md-12">
+                        <div class="dropdown">
+                            <button class="btn btn-primary dropdown-toggle" type="button" id="harvestCycleDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                Select Harvest Cycle
+                            </button>
+                            <ul class="dropdown-menu" id="harvestCycleList">
+                                <!-- Options will be populated via JavaScript -->
+                            </ul>
                         </div>
                     </div>
-                    <div class="legends d-flex justify-content-center gap-3 mt-4">
-                        <span class="badge" style="background-color: rgba(0, 255, 0, 0.2); color: #2B2B2B;">Optimal Range</span>
-                        <span class="badge" style="background-color: rgba(255, 127, 127, 0.4); color: #2B2B2B;">Out of Optimal Range</span>
+                    <div class="col-12 col-md-12 mt-3">
+                        <input type="date" id="start-date-picker" class="form-control">
                     </div>
-
-                    <div class="descriptive-analytics-container mt-2">
-                        <p>Date Range: <span id="date-range-label">24 Hours</span></p>
-                        <p>Average: <span id="average-value">-</span></p>
-                        <p>Minimum: <span id="min-value">-</span></p>
-                        <p>Maximum: <span id="max-value">-</span></p>
+                    <div class="container-chart">
+                        <div class="chart-container">
+                            <canvas id="myChart"></canvas>
+                        </div>
                     </div>
                 </div>
+                <div class="legends d-flex justify-content-center gap-3 mt-4">
+                    <span class="badge" style="background-color: rgba(0, 255, 0, 0.2); color: #2B2B2B;">Optimal Range</span>
+                    <span class="badge" style="background-color: rgba(255, 127, 127, 0.4); color: #2B2B2B;">Out of Optimal Range</span>
+                </div>
+                <div class="descriptive-analytics-container mt-2 row row-cols-2 row-cols-lg-5 g-2 g-lg-3">
+                    <p>Date Range: <span id="date-range-label">24 Hours</span></p>
+                    <p>Average: <span id="average-value">-</span></p>
+                    <p>Minimum: <span id="min-value">-</span></p>
+                    <p>Maximum: <span id="max-value">-</span></p>
+                </div>
+            </div>
         </div>
     </main>
 
-
     <!-- Side Bar Mobile View -->
-
     <div class="offcanvas offcanvas-start sidebar2 overflow-x-hidden overflow-y-hidden" tabindex="-1"
         id="offcanvasNav-Menu" aria-labelledby="staticBackdropLabel">
         <div class="d-flex align-items-center p-3 py-5">
@@ -249,7 +256,8 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
         crossorigin="anonymous"></script>
-
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
 </body>
 
 </html>

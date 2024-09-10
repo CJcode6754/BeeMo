@@ -53,19 +53,19 @@ while ($row = $result->fetch_assoc()) {
 // Calculate descriptive statistics
 $stats = [
     'temperature' => [
-        'average' => array_sum($temperature) / count($temperature),
-        'min' => min($temperature),
-        'max' => max($temperature)
+        'average' => count($temperature) ? array_sum($temperature) / count($temperature) : 0,
+        'min' => count($temperature) ? min($temperature) : 0,
+        'max' => count($temperature) ? max($temperature) : 0
     ],
     'humidity' => [
-        'average' => array_sum($humidity) / count($humidity),
-        'min' => min($humidity),
-        'max' => max($humidity)
+        'average' => count($humidity) ? array_sum($humidity) / count($humidity) : 0,
+        'min' => count($humidity) ? min($humidity) : 0,
+        'max' => count($humidity) ? max($humidity) : 0
     ],
     'weight' => [
-        'average' => array_sum($weight) / count($weight),
-        'min' => min($weight),
-        'max' => max($weight)
+        'average' => count($weight) ? array_sum($weight) / count($weight) : 0,
+        'min' => count($weight) ? min($weight) : 0,
+        'max' => count($weight) ? max($weight) : 0
     ]
 ];
 

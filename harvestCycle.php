@@ -535,27 +535,26 @@ $filtered_cycles = mysqli_fetch_all($query_select_cycle, MYSQLI_ASSOC);
         });
 
         document.addEventListener('DOMContentLoaded', function() {
-                            const filterSelect = document.getElementById('filterSelect');
-                            const viewAllTableBody = document.getElementById('viewAllTableBody');
+            const filterSelect = document.getElementById('filterSelect');
+            const viewAllTableBody = document.getElementById('viewAllTableBody');
 
-                            // Filter function
-                            filterSelect.addEventListener('change', function() {
-                                const filterValue = this.value;
-
-                                fetch('/harvestCycle', {
-                                    method: 'POST',
-                                    headers: {
-                                        'Content-Type': 'application/x-www-form-urlencoded',
-                                    },
-                                    body: `filter_value=${filterValue}`
-                                })
-                                .then(response => response.text())
-                                .then(data => {
-                                    viewAllTableBody.innerHTML = data; // Update the View All modal table body with new data
-                                })
-                                .catch(error => console.error('Error:', error));
-                            });
+            // Filter function
+            filterSelect.addEventListener('change', function() {
+            const filterValue = this.value;
+                fetch('/harvestCycle', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        },
+                        body: `filter_value=${filterValue}`
+                    })
+                        .then(response => response.text())
+                        .then(data => {
+                            viewAllTableBody.innerHTML = data; // Update the View All modal table body with new data
+                        })
+                            .catch(error => console.error('Error:', error));
                         });
+                });
     </script>
     <script src="./js/notification.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>

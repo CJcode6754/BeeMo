@@ -77,6 +77,22 @@ document.addEventListener('DOMContentLoaded', function() {
                             noti_message = 'Failed to edit cycle info.';
                             noti_image = 'img/beemo-ico.ico';
                             break;
+                        case 'notMatchPass':
+                            noti_message = 'Password does not match.';
+                            noti_image = 'img/beemo-ico.ico';
+                            break;
+                        case 'newPass':
+                            noti_message = 'Password changed successfully!';
+                            noti_image = 'img/beemo-ico.ico';
+                            break;
+                        case 'errorPass':
+                            noti_message = 'Error updating!';
+                            noti_image = 'img/beemo-ico.ico';
+                            break;
+                        case 'error':
+                            noti_message = 'Error fetching!';
+                            noti_image = 'img/beemo-ico.ico';
+                            break;
                         default:
                             noti_message = 'Notification';
                             noti_image = 'img/beemo-ico.ico';

@@ -94,11 +94,6 @@ $router->get('/about', function() {
 });
 
 $router->get('/TermsAndConditions', function() {
-    if (!isset($_SESSION['adminID'])) {
-        session_destroy();
-        header('Location: /');
-        exit();
-    }
     require_once 'TermsAndConditions.php';  // Load Terms and Conditions page
 });
 

@@ -10,12 +10,12 @@ function season_start() {
 }
 
 season_start();
+require_once './src/db.php';
+require_once './src/profileFunction.php';
 
-if (!isset($_SESSION['adminID'])) {
-    session_destroy();
-    header('Location: /');
-    exit();
-}
+$db = new Database();
+$conn = $db->getConnection();
+$notificationHandler = new NotificationHandler($conn);
 
 if (isset($_POST['logout_btn'])) {
     session_destroy();
@@ -23,11 +23,31 @@ if (isset($_POST['logout_btn'])) {
     exit();
 }
 
-if(isset($_POST['clearNotif'])){
-    $clearNotif = "DELETE FROM tblNotification WHERE adminID = '".$_SESSION['adminID']."'";
-    $clearNotifResult = mysqli_query($conn, $clearNotif);
+if (isset($_POST['clearNotif'])) {
+    $stmt = $conn->prepare("DELETE FROM tblNotification WHERE adminID = ?");
+    $stmt->bind_param('i', $_SESSION['adminID']);
+    $stmt->execute();
+}
+
+$profile = new Profile($conn, $_SESSION['adminID']);
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    if (isset($_POST['editProfile'])) {
+        $name = $_POST['editName'];
+        $email = $_POST['editEmail'];
+        $phoneNumber = $_POST['editNumber'];
+        $profile->updateProfile($name, $email, $phoneNumber);
+    }
+
+    if (isset($_POST['changePass'])) {
+        $oldPass = $_POST['OldPass'];
+        $newPass = $_POST['newPass'];
+        $conNewPass = $_POST['conNewPass'];
+        $profile->changePassword($oldPass, $newPass, $conNewPass);
+    }
 }
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -238,10 +258,22 @@ if(isset($_POST['clearNotif'])){
                 <!-- Modal Contents -->
                 <div class="modal-body" style="color: #292929;">
                     <div class="icon text-center my-3"><img src="img/Profile icon.png" alt="" width="80" height="80"></div>
-
                     <div class="text-center">
-                    <h5>Dan Denver De Leon</h5>
-                    <h6 style="text-decoration: underline; font-weight: 350;"><small class="text-body-secondary">denverdeleon21@gmail.com</small></h6>
+                    <?php
+                        require_once './src/db.php';
+                        $db = new Database();
+                        $conn = $db->getConnection();
+                        $adminID = $_SESSION['adminID'];
+                        $get = "SELECT admin_name, email FROM admin_table WHERE adminID = '$adminID'";
+                        $getQuery = mysqli_query($conn, $get);
+
+                        while($row = $getQuery->fetch_assoc()){
+                            echo"
+                            <h5>". $row['admin_name'] ."</h5>
+                            <h6 style='text-decoration: underline; font-weight: 350;'><small class='text-body-secondary'>". $row['email']."</small></h6>
+                            ";
+                        }
+                    ?>
                     <hr class="mx-auto" width = "80%">
                     </div>
 
@@ -259,11 +291,6 @@ if(isset($_POST['clearNotif'])){
                             <p><i class="fa-solid fa-bell"></i> <span>Notification</span>allow</p>
                         </button>
                     </div>
-
-                    <div class="logout text-center">
-                        <p><i class="fa-solid fa-right-from-bracket"></i> Log out</p>
-                    </div>
-
                 </div>
 
             </div>
@@ -294,42 +321,55 @@ if(isset($_POST['clearNotif'])){
                     <div class="modal-body" style="color: #292929;">
                         <div class="icon text-center my-3"><img src="img/Profile icon.png" alt="" width="80" height="80"></div>
                         <div class="text-center">
-                        <h5>Dan Denver De Leon</h5>
-                        <h6 style="text-decoration: underline; font-weight: 350;"><small class="text-body-secondary">denverdeleon21@gmail.com</small></h6>
-                        <hr class="mx-auto" width = "90%">
-                        </div>
+                        <?php
+                            require_once './src/db.php';
+                            $db = new Database();
+                            $conn = $db->getConnection();
+                            $adminID = $_SESSION['adminID'];
+                            $get = "SELECT admin_name, email, number FROM admin_table WHERE adminID = '$adminID'";
+                            $getQuery = mysqli_query($conn, $get);
 
-                        <div class="My-Profile text-center pb-4 pt-3">
-                            <h4 style="background-color: #FAEF9B; display: inline-block; border-radius: 5px;">
-                                My Profile
-                            </h4>
-                        </div>
+                            while($row = $getQuery->fetch_assoc()){
+                                echo"
+                                <h5>". $row['admin_name'] ."</h5>
+                                <h6 style='text-decoration: underline; font-weight: 350;'><small class='text-body-secondary'>". $row['email']."</small></h6>
+                                 <hr class='mx-auto' width = '90%''>
+                                </div>
 
-                        <div class="Field-inputs mx-4" style="font-size: small;">
+                                <div class='My-Profile text-center pb-4 pt-3'>
+                                    <h4 style='background-color: #FAEF9B; display: inline-block; border-radius: 5px;'>
+                                        My Profile
+                                    </h4>
+                                </div>
 
-                            <div class="form-floating pb-4">
-                                <input type="text" class="form-control" id="fullName" placeholder="Full Name" value="Dan Denver De Leon">
-                                <label for="fullName"><i class="fa-solid fa-user"></i> Full Name</label>
-                            </div>
+                                <div class='Field-inputs mx-4' style='font-size: small;'>
 
-                            <div class="form-floating pb-4">
-                                <input type="email" class="form-control" id="email" placeholder="name@example.com" value="denverdeleon21@gmail.com">
-                                <label for="email"><i class="fa-solid fa-envelope"></i> Email</label>
-                            </div>
+                                    <div class='form-floating pb-4'>
+                                        <input name='editName' type='text' class='form-control' id='fullName' placeholder='Full Name' value=". $row['admin_name'] .">
+                                        <label for='fullName'><i class='fa-solid fa-user'></i> Full Name</label>
+                                    </div>
 
-                            <div class="form-floating pb-4">
-                                <input type="text" class="form-control" id="mobileNumber" placeholder="Mobile Number" value="09982323125">
-                                <label for="mobileNumber"><i class="fa-solid fa-mobile"></i> Mobile Number</label>
-                            </div>
+                                    <div class='form-floating pb-4'>
+                                        <input name='editEmail' type='email' class='form-control' id='email' placeholder='name@example.com' value=". $row['email'] .">
+                                        <label for='email'><i class='fa-solid fa-envelope'></i> Email</label>
+                                    </div>
 
-                        </div>
+                                    <div class='form-floating pb-4'>
+                                        <input name='editNumber' type='number' class='form-control' id='mobileNumber' placeholder='Mobile Number' value=". $row['number'] .">
+                                        <label for='mobileNumber'><i class='fa-solid fa-mobile'></i> Mobile Number</label>
+                                    </div>
 
-                        <div class="save-changes">
-                            <button type="button" class="mt-4 mb-5" id="save-btn">
-                                Save Change
-                            </button>
-                        </div>
+                                </div>
 
+                                <div class='save-changes'>
+                                    <button name='Edit' type='submit' class='mt-4 mb-5' id='save-btn'>
+                                        Save Change
+                                    </button>
+                                </div>
+
+                                ";
+                            }
+                        ?>
                     </div>
                 </div>
             </div>
@@ -359,8 +399,21 @@ if(isset($_POST['clearNotif'])){
                     <div class="icon text-center my-3"><img src="img/Profile icon.png" alt="" width="80" height="80"></div>
 
                     <div class="text-center">
-                    <h5>Dan Denver De Leon</h5>
-                    <h6 style="text-decoration: underline; font-weight: 350;"><small class="text-body-secondary">denverdeleon21@gmail.com</small></h6>
+                    <?php
+                        require_once './src/db.php';
+                        $db = new Database();
+                        $conn = $db->getConnection();
+                        $adminID = $_SESSION['adminID'];
+                        $get = "SELECT admin_name, email FROM admin_table WHERE adminID = '$adminID'";
+                        $getQuery = mysqli_query($conn, $get);
+
+                        while($row = $getQuery->fetch_assoc()){
+                            echo"
+                            <h5>". $row['admin_name'] ."</h5>
+                            <h6 style='text-decoration: underline; font-weight: 350;'><small class='text-body-secondary'>". $row['email']."</small></h6>
+                            ";
+                        }
+                    ?>
                     <hr class="mx-auto" width = "90%" >
                     </div>
 
@@ -369,40 +422,39 @@ if(isset($_POST['clearNotif'])){
                             Change Password
                         </h4>
                     </div>
-
-                    <div class="Field-inputs mx-4" style="font-size: small;">
-                        <div class="form-floating pb-4">
-                            <input type="password" class="form-control" id="password" placeholder="Password" required>
-                            <label for="password"><i class="fa-solid fa-lock"></i> Current Password</label>
-                            <div class="password-wrapper">
-                            <span id="togglePassword" class="toggle-password"><i class="fa-solid fa-eye-slash fa-lg"></i></span>
+                    <form action="" method="post">
+                        <div class="Field-inputs mx-4" style="font-size: small;">
+                            <div class="form-floating pb-4">
+                                <input name="OldPass" type="password" class="form-control" id="password" placeholder="Password" required>
+                                <label for="password"><i class="fa-solid fa-lock"></i> Current Password</label>
+                                <div class="password-wrapper">
+                                <span id="togglePassword" class="toggle-password"><i class="fa-solid fa-eye-slash fa-lg"></i></span>
+                                </div>
                             </div>
-                        </div>
 
-                        <div class="form-floating pb-4">
-                            <input type="password" class="form-control" id="new-password" placeholder="Password" required>
-                            <label for="password"><i class="fa-solid fa-lock"></i> New Password</label>
-                            <div class="password-wrapper">
-                            <span id="togglePassword" class="toggle-password"><i class="fa-solid fa-eye-slash fa-lg"></i></span>
+                            <div class="form-floating pb-4">
+                                <input name="newPass" type="password" class="form-control" id="new-password" placeholder="Password" required>
+                                <label for="password"><i class="fa-solid fa-lock"></i> New Password</label>
+                                <div class="password-wrapper">
+                                <span id="togglePassword" class="toggle-password"><i class="fa-solid fa-eye-slash fa-lg"></i></span>
+                                </div>
                             </div>
-                        </div>
 
-                        <div class="form-floating pb-4">
-                            <input type="password" class="form-control" id="confirm-password" placeholder="Password" required>
-                            <label for="password"><i class="fa-solid fa-lock"></i> Confirm Password</label>
-                            <div class="password-wrapper">
-                            <span id="togglePassword" class="toggle-password"><i class="fa-solid fa-eye-slash fa-lg"></i></span>
+                            <div class="form-floating pb-4">
+                                <input name="conNewPass" type="password" class="form-control" id="confirm-password" placeholder="Password" required>
+                                <label for="password"><i class="fa-solid fa-lock"></i> Confirm Password</label>
+                                <div class="password-wrapper">
+                                <span id="togglePassword" class="toggle-password"><i class="fa-solid fa-eye-slash fa-lg"></i></span>
+                                </div>
                             </div>
+
                         </div>
-
-                    </div>
-
-                <div class="save-changes">
-                    <button type="button" class="mt-4 mb-5" id="save-btn">
-                        Save Change
-                    </button>
-                </div>
-
+                        <div class="save-changes">
+                            <button name="changePass" type="submit" class="mt-4 mb-5" id="save-btn">
+                                Save Change
+                            </button>
+                        </div>
+                    </form>
             </div>
         </div>
     </div>
