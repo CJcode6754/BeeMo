@@ -21,7 +21,9 @@ RewriteRule ^forgotPassword$ forgotPassword.php [L]
 RewriteRule ^resendEmail$ resendEmail.php [L]
 RewriteRule ^resetPassword$ resetPassword.php [L]
 RewriteRule ^verify$ verify.php [L]
-RewriteRule ^verifyWorker$ verifyWorker.php [L]
+RewriteRule ^Verify$ verifyWorker.php [L]
+RewriteRule ^Verify2$ verifyProfile.php [L]
+RewriteRule ^Verify3$ verifyEditWorker.php [L]
 
 # Redirect to index.php for non-existing routes
 RewriteCond %{REQUEST_FILENAME} !-f

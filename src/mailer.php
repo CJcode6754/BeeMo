@@ -50,6 +50,37 @@ class Mailer {
             return false;
         }
     }
+
+    public function sendOTPWorker($userName, $email, $otp) {
+        try {
+            $this->mail->addAddress($email, $userName);
+            $this->mail->isHTML(true);
+            $this->mail->Subject = 'Verify your email';
+            $this->mail->Body = "Hello, {$userName}<br>Your account registration is successfully done! Now activate your account with OTP: {$otp}.";
+            $this->mail->send();
+
+            return true;
+        } catch (Exception $e) {
+            error_log("Message could not be sent. Mailer Error: {$this->mail->ErrorInfo}");
+            return false;
+        }
+    }
+
+    public function sendOTPEmail($current_name, $edit_email, $otp) {
+        try {
+            $this->mail->addAddress($edit_email, $current_name);
+            $this->mail->isHTML(true);
+            $this->mail->Subject = 'Verify your email';
+            $this->mail->Body = "Hello, {$current_name}<br>Your account registration is successfully done! Now activate your account with OTP: {$otp}.";
+            $this->mail->send();
+
+            return true;
+        } catch (Exception $e) {
+            error_log("Message could not be sent. Mailer Error: {$this->mail->ErrorInfo}");
+            return false;
+        }
+    }
+
     public function sendOTPFP($email, $name) {
         try {
             $this->mail->addAddress($email, $name);

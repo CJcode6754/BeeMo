@@ -10,23 +10,23 @@ function season_start() {
 }
 
 season_start();
+
+// Prevent caching
+header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
+header("Cache-Control: post-check=0, pre-check=0", false);
+header("Pragma: no-cache");
+
+
 require_once './src/db.php';
 require_once './src/profileFunction.php';
 
 $db = new Database();
 $conn = $db->getConnection();
-$notificationHandler = new NotificationHandler($conn);
 
 if (isset($_POST['logout_btn'])) {
     session_destroy();
     header('Location: /');
     exit();
-}
-
-if (isset($_POST['clearNotif'])) {
-    $stmt = $conn->prepare("DELETE FROM tblNotification WHERE adminID = ?");
-    $stmt->bind_param('i', $_SESSION['adminID']);
-    $stmt->execute();
 }
 
 $profile = new Profile($conn, $_SESSION['adminID']);
@@ -36,6 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $name = $_POST['editName'];
         $email = $_POST['editEmail'];
         $phoneNumber = $_POST['editNumber'];
+
         $profile->updateProfile($name, $email, $phoneNumber);
     }
 
@@ -307,70 +308,64 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <div class="modal-content border-2 border-dark" style="border-radius: 20px; box-shadow: 0 7px #2B2B2B; max-width: 450px;">
                     <div class="modal-header profile-header" style="padding: 5px;">
 
-                        <button type="button" class="btn" data-bs-dismiss="modal" aria-label="Close">
+                        <button type="button" class="btn" data-bs-toggle="modal" data-bs-target="#Profile-Modal" data-bs-dismiss="modal" aria-label="Back">
                             <i class="fa-solid fa-angle-left fa-lg"></i>
                         </button>
 
-                        <button type="button" class="btn" data-bs-toggle="modal" data-bs-target="#Profile-Modal" data-bs-dismiss="modal" aria-label="Back">
-                            <i class="fa-solid fa-xmark fa-lg"></i>
+                        <button type="button" class="btn" data-bs-dismiss="modal" aria-label="Close">
+                            <i class="fa-solid fa-xmark fa-lg" style="margin-left: 360px;"></i>
                         </button>
 
                     </div>
 
                     <!-- Modal Contents -->
                     <div class="modal-body" style="color: #292929;">
-                        <div class="icon text-center my-3"><img src="img/Profile icon.png" alt="" width="80" height="80"></div>
-                        <div class="text-center">
-                        <?php
-                            require_once './src/db.php';
-                            $db = new Database();
-                            $conn = $db->getConnection();
-                            $adminID = $_SESSION['adminID'];
-                            $get = "SELECT admin_name, email, number FROM admin_table WHERE adminID = '$adminID'";
-                            $getQuery = mysqli_query($conn, $get);
+                    <div class="icon text-center my-3"><img src="img/Profile icon.png" alt="" width="80" height="80"></div>
+                    <div class="text-center">
+                    <?php
+                        require_once './src/db.php';
+                        $db = new Database();
+                        $conn = $db->getConnection();
+                        $adminID = $_SESSION['adminID'];
+                        $get = "SELECT admin_name, email, number FROM admin_table WHERE adminID = '$adminID'";
+                        $getQuery = mysqli_query($conn, $get);
 
-                            while($row = $getQuery->fetch_assoc()){
-                                echo"
-                                <h5>". $row['admin_name'] ."</h5>
-                                <h6 style='text-decoration: underline; font-weight: 350;'><small class='text-body-secondary'>". $row['email']."</small></h6>
-                                 <hr class='mx-auto' width = '90%''>
-                                </div>
-
-                                <div class='My-Profile text-center pb-4 pt-3'>
-                                    <h4 style='background-color: #FAEF9B; display: inline-block; border-radius: 5px;'>
-                                        My Profile
-                                    </h4>
-                                </div>
-
+                        while($row = $getQuery->fetch_assoc()){
+                            $currentName = $row['admin_name'];
+                            $currentEmail = $row['email'];
+                            $currentPhoneNumber = $row['number'];
+                            echo"
+                                <h5>$currentName</h5>
+                                <h6 style='text-decoration: underline; font-weight: 350;'><small class='text-body-secondary'>$currentEmail</small></h6>
                                 <div class='Field-inputs mx-4' style='font-size: small;'>
+                                <form method='POST' action=''>
 
-                                    <div class='form-floating pb-4'>
-                                        <input name='editName' type='text' class='form-control' id='fullName' placeholder='Full Name' value=". $row['admin_name'] .">
-                                        <label for='fullName'><i class='fa-solid fa-user'></i> Full Name</label>
-                                    </div>
+                                <div class='form-floating pb-4'>
+                                    <input name='editName' type='text' class='form-control' id='fullName' placeholder='Full Name' value='$currentName'>
+                                    <label for='fullName'><i class='fa-solid fa-user'></i> Full Name</label>
+                                </div>
 
-                                    <div class='form-floating pb-4'>
-                                        <input name='editEmail' type='email' class='form-control' id='email' placeholder='name@example.com' value=". $row['email'] .">
-                                        <label for='email'><i class='fa-solid fa-envelope'></i> Email</label>
-                                    </div>
+                                <div class='form-floating pb-4'>
+                                    <input name='editEmail' type='email' class='form-control' id='email' placeholder='name@example.com' value='$currentEmail'>
+                                    <label for='email'><i class='fa-solid fa-envelope'></i> Email</label>
+                                </div>
 
-                                    <div class='form-floating pb-4'>
-                                        <input name='editNumber' type='number' class='form-control' id='mobileNumber' placeholder='Mobile Number' value=". $row['number'] .">
-                                        <label for='mobileNumber'><i class='fa-solid fa-mobile'></i> Mobile Number</label>
-                                    </div>
-
+                                <div class='form-floating pb-4'>
+                                    <input name='editNumber' type='number' class='form-control' id='mobileNumber' placeholder='Mobile Number' value='$currentPhoneNumber'>
+                                    <label for='mobileNumber'><i class='fa-solid fa-mobile'></i> Mobile Number</label>
                                 </div>
 
                                 <div class='save-changes'>
-                                    <button name='Edit' type='submit' class='mt-4 mb-5' id='save-btn'>
-                                        Save Change
-                                    </button>
+                                    <button name='editProfile' type='submit' class='mt-4 mb-5' id='save-btn'>Save Changes</button>
                                 </div>
-
-                                ";
-                            }
-                        ?>
+                            </form>
+                        </div>
+                            ";
+                        }
+                    ?>
                     </div>
+                </div>
+
                 </div>
             </div>
         </div>
@@ -385,11 +380,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <div class="modal-content border-2 border-dark" style="border-radius: 20px; box-shadow: 0 7px #2B2B2B; max-width: 450px;">
                 <div class="modal-header profile-header" style="padding: 5px;">
 
-                        <button type="button" class="btn" data-bs-dismiss="modal" aria-label="Close">
+                        <button type="button" data-bs-toggle="modal" data-bs-target="#Profile-Modal" class="btn" data-bs-dismiss="modal" aria-label="Back">
                             <i class="fa-solid fa-angle-left fa-lg"></i>
                         </button>
-                        <button type="button" class="btn" data-bs-toggle="modal" data-bs-target="#Profile-Modal" data-bs-dismiss="modal" aria-label="Back">
-                            <i class="fa-solid fa-xmark fa-lg"></i>
+                        <button type="button" class="btn" data-bs-dismiss="modal" aria-label="Close">
+                            <i class="fa-solid fa-xmark fa-lg" style="margin-left: 360px;"></i>
                         </button>
 
                 </div>
@@ -458,6 +453,31 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             </div>
         </div>
     </div>
+
+    <script>
+    // Function to handle redirection if the user is on the login page
+    function checkLoginStatus() {
+        // For this example, we assume you set a session variable or similar
+        if (sessionStorage.getItem('loggedIn')) {
+            // Redirect to dashboard or main page
+            window.location.href = 'dashboard.php';
+        }
+    }
+
+    window.onload = function() {
+        checkLoginStatus();
+    };
+
+    // Optional: Handle the back button
+    window.onpopstate = function(event) {
+        // Redirect to dashboard if user navigates back
+        if (sessionStorage.getItem('loggedIn')) {
+            window.location.href = 'dashboard.php';
+        }
+    };
+    </script>
+
+
     <script src="./js/reusable.js"></script>
     <script src="./js/notification.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>

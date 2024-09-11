@@ -33,7 +33,7 @@ if (session_status() == PHP_SESSION_NONE) {
                 <div class="col-lg-4 bg1">
                     <div id="LoginLogo" class="container-fluid">
                         <main class="form-signin w-auto m-auto px4">
-                            <form action="/Verify" method="post">
+                            <form action="/verifyEmail" method="post">
                                 <div class="top px-2 pt-4">
                                     <a href="/"><img id="loginLogo" src="img/LOGO2.png" alt="Logo"></a>
                                     <p class="about pt-1">ABOUT&nbsp;US</p>

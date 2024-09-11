@@ -19,6 +19,8 @@ require_once './src/db.php';
 require_once './src/mailer.php';
 require_once './src/otp.php';
 require_once './src/notification_handler.php';
+require_once './src/profileFunction.php';
+require_once './src/workerFunction.php';
 
 $db = new Database();
 $conn = $db->getConnection();
@@ -26,52 +28,23 @@ $conn = $db->getConnection();
 $mailer = new Mailer();
 $otpHandler = new OTP($conn);
 $notificationHandler = new NotificationHandler($conn);
+$Worker = new Worker($conn, $_SESSION['adminID']);
 
-if (isset($_POST['submit'])) {
-    $name = filter_var($_POST['user_name'], FILTER_SANITIZE_SPECIAL_CHARS);
-    $email = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
-    $number = filter_var($_POST['number'], FILTER_SANITIZE_SPECIAL_CHARS);
-    $password = $_POST['password'];
-    $adminID = $_SESSION['adminID'];
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    if (isset($_POST['submit'])) {
+        // Sanitize user input
+        $userName = filter_var($_POST['user_name'], FILTER_SANITIZE_SPECIAL_CHARS);
+        $email = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
+        $number = filter_var($_POST['number'], FILTER_SANITIZE_SPECIAL_CHARS);
 
-    $check_email = "SELECT * FROM user_table WHERE email = '$email'";
-    $check_email_query = mysqli_query($conn, $check_email);
+        // Sanitize and hash the password before storing
+        $password = password_hash($_POST['password'], PASSWORD_BCRYPT);
 
-    if (mysqli_num_rows($check_email_query) > 0) {
-        $_SESSION['error'] = 'Email Address Already Exists';
-        header('Location: /Worker');
-        exit;
-    }
-
-    $otpData = $otpHandler->generateOTPUser($email);
-    $otp = $otpData['otp'];
-    $otp_expiry = $otpData['otp_expiry'];
-
-    $insert_user = "INSERT INTO user_table (user_name, email, number, password, adminID, otp, is_verified, otp_expiry) 
-                    VALUES ('$name', '$email', '$number', '$password', '$adminID', '$otp', 0, '$otp_expiry')";
-    $insert_user_run = mysqli_query($conn, $insert_user);
-
-    if ($insert_user_run) {
-        if ($mailer->sendOTP($email, $otp, $name)) {
-            $_SESSION['status'] = 'Verify your email with the OTP sent.';
-            $_SESSION['email'] = $email;
-            $_SESSION['user_name'] = $name;
-            $_SESSION['adminID'] = $adminID;
-
-            $notificationHandler->insertNotification($adminID, 'active', 'User was added successfully.', 'add_user', '/Worker', 'unseen');
-            header('Location: /verifyWorker');
-            exit;
-        } else {
-            $_SESSION['error'] = 'Failed to send OTP. Try again.';
-            header('Location: /Worker');
-            exit;
-        }
-    } else {
-        $_SESSION['error'] = 'Error: ' . mysqli_error($conn);
-        header('Location: /Worker');
-        exit;
+        // Create a new user with the sanitized input
+        $Worker->newUser($userName, $email, $number, $password);
     }
 }
+
 
 if (isset($_POST['btn_delete'])) {
     $user_ID = $_POST['userID'];
@@ -114,38 +87,70 @@ if (isset($_POST['edit_btn'])) {
         }
     }
 
-    if ($edit_email !== $current_email) {
-        $edit_email_query = "UPDATE user_table SET email = '$edit_email' WHERE userID = '$user_ID'";
-        $edit_email_result = mysqli_query($conn, $edit_email_query);
-        if ($edit_email_result) {
-            $update_success = true;
-        }
-    }
+    // Handle email change and OTP generation
+if ($edit_email !== $current_email) {
+    require_once './src/db.php'; // Ensure DB connection is available
+    $db = new Database();
+    $conn = $db->getConnection();
 
-    if ($edit_number !== $current_number) {
-        $edit_number_query = "UPDATE user_table SET number = '$edit_number' WHERE userID = '$user_ID'";
-        $edit_number_result = mysqli_query($conn, $edit_number_query);
-        if ($edit_number_result) {
-            $update_success = true;
-        }
-    }
+    // Generate OTP and get expiry time
+    $otpHandler = new OTP($conn); // Assuming you have an OTP class
+    $otpData = $otpHandler->generateOTPUser($edit_email); // Generate OTP
 
-    if ($edit_password !== $current_password) {
-        $edit_password_query = "UPDATE user_table SET password = '$edit_password' WHERE userID = '$user_ID'";
-        $edit_password_result = mysqli_query($conn, $edit_password_query);
-        if ($edit_password_result) {
-            $update_success = true;
-        }
-    }
+    if ($otpData) {
+        $otp = $otpData['otp'];
+        $otp_expiry = $otpData['otp_expiry'];
 
-    if ($update_success) {
-        $notificationHandler->insertNotification($adminID, 'active', 'User was edited successfully.', 'edit_user', '/Worker', 'unseen');
+        // Update the new email and OTP in the database
+        $stmt = $conn->prepare("UPDATE user_table SET email = ?, otp = ?, otp_expiry = ? WHERE userID = ?");
+        $stmt->bind_param('sssi', $edit_email, $otp, $otp_expiry, $user_ID);
+        $stmt->execute();
+
+        // Send OTP email
+        $mailer = new Mailer(); // Ensure Mailer class is instantiated
+        $mailer->sendOTPEmail($current_name, $edit_email, $otp);
+
+        // Notify user
+        $notificationHandler = new NotificationHandler($conn); // Ensure correct instantiation
+        $notificationHandler->insertNotification($adminID, 'active', 'Verify your email with the OTP sent.', 'email_verification', '/verifyEmail', 'unseen');
+        
+        $_SESSION['email'] = $edit_email; // Save email and userID for verification
+        $_SESSION['userID'] = $user_ID;
+        // Redirect to OTP verification page
+        header('Location: /verifyEmail');
+        exit();
     } else {
-        $notificationHandler->insertNotification($adminID, 'active', 'Failed to edit user.', 'failed_to_edit_user', '/Worker', 'unseen');
+        $_SESSION['error'] = 'Failed to generate OTP. Please try again.';
+        header('Location: /Worker');
+        exit();
     }
+    } else {
+        // If the email hasn't changed, update other fields
+        if ($edit_number !== $current_number) {
+            $edit_number_query = "UPDATE user_table SET number = '$edit_number' WHERE userID = '$user_ID'";
+            $edit_number_result = mysqli_query($conn, $edit_number_query);
+            if ($edit_number_result) {
+                $update_success = true;
+            }
+        }
 
-    header('Location: /Worker');
-    exit;
+        if ($edit_password !== $current_password) {
+            $edit_password_query = "UPDATE user_table SET password = '$edit_password' WHERE userID = '$user_ID'";
+            $edit_password_result = mysqli_query($conn, $edit_password_query);
+            if ($edit_password_result) {
+                $update_success = true;
+            }
+        }
+
+        if ($update_success) {
+            $notificationHandler->insertNotification($adminID, 'active', 'User was edited successfully.', 'edit_user', '/Worker', 'unseen');
+        } else {
+            $notificationHandler->insertNotification($adminID, 'active', 'Failed to edit user.', 'failed_to_edit_user', '/Worker', 'unseen');
+        }
+
+        header('Location: /Worker');
+        exit;
+    }
 }
 
 if (isset($_POST['logout_btn'])) {
@@ -154,9 +159,23 @@ if (isset($_POST['logout_btn'])) {
     exit();
 }
 
-if (isset($_POST['clearNotif'])) {
-    $clearNotif = "DELETE FROM tblNotification WHERE adminID = '" . $_SESSION['adminID'] . "'";
-    $clearNotifResult = mysqli_query($conn, $clearNotif);
+$profile = new Profile($conn, $_SESSION['adminID']);
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    if (isset($_POST['editProfile'])) {
+        $name = $_POST['editName'];
+        $email = $_POST['editEmail'];
+        $phoneNumber = $_POST['editNumber'];
+
+        $profile->updateProfile($name, $email, $phoneNumber);
+    }
+
+    if (isset($_POST['changePass'])) {
+        $oldPass = $_POST['OldPass'];
+        $newPass = $_POST['newPass'];
+        $conNewPass = $_POST['conNewPass'];
+        $profile->changePassword($oldPass, $newPass, $conNewPass);
+    }
 }
 ?>
 
@@ -169,6 +188,7 @@ if (isset($_POST['clearNotif'])) {
     <title>BeeMo</title>
     <link rel="stylesheet" href="./css/add_worker.css">
     <link rel="stylesheet" href="./css/reusable.css">
+    <link rel="stylesheet" href="./css/profile.css">
     <link rel="icon" href="img/beemo-ico.ico">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <script src="https://kit.fontawesome.com/b4ce5ff90a.js" crossorigin="anonymous"></script>
@@ -267,7 +287,7 @@ if (isset($_POST['clearNotif'])) {
                     </div>
                     <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
                         <li>
-                            <a class="dropdown-item" href="termsandconditions.html">
+                            <a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#Profile-Modal">
                                 <i class="fa-solid fa-user"></i>
                                 Profile
                             </a>
@@ -454,6 +474,213 @@ if (isset($_POST['clearNotif'])) {
         </div>
     </main>
 
+        <!-- Profile Modal -->
+        <div class="modal fade " id="Profile-Modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable profile-dialog">
+
+            <div class="modal-content border-2 border-dark" style="border-radius: 20px; box-shadow: 0 7px #2B2B2B; max-width: 400px;">
+
+                <div class="modal-header profile-header">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <!-- Modal Contents -->
+                <div class="modal-body" style="color: #292929;">
+                    <div class="icon text-center my-3"><img src="img/Profile icon.png" alt="" width="80" height="80"></div>
+                    <div class="text-center">
+                    <?php
+                        require_once './src/db.php';
+                        $db = new Database();
+                        $conn = $db->getConnection();
+                        $adminID = $_SESSION['adminID'];
+                        $get = "SELECT admin_name, email FROM admin_table WHERE adminID = '$adminID'";
+                        $getQuery = mysqli_query($conn, $get);
+
+                        while($row = $getQuery->fetch_assoc()){
+                            echo"
+                            <h5>". $row['admin_name'] ."</h5>
+                            <h6 style='text-decoration: underline; font-weight: 350;'><small class='text-body-secondary'>". $row['email']."</small></h6>
+                            ";
+                        }
+                    ?>
+                    <hr class="mx-auto" width = "80%">
+                    </div>
+
+                    <div class="Options mx-auto py-4">
+
+                        <button type="button" id="edit-profile-button" data-bs-toggle="modal" data-bs-target="#Edit-Profile-Modal" style="padding: 10px;">
+                            <p><i class="fa-solid fa-user"></i> <span>My Profile</span><i class="fa-solid fa-angle-right"></i></p>
+                        </button>
+
+                        <button type="button" id="edit-profile-button" data-bs-toggle="modal" data-bs-target="#Change-Pass-Modal" style="padding: 10px;" >
+                            <p><i class="fa-solid fa-lock"></i> <span>Change Password</span><i class="fa-solid fa-angle-right"></i></p>
+                        </button>
+
+                        <button style="padding: 10px;">
+                            <p><i class="fa-solid fa-bell"></i> <span>Notification</span>allow</p>
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- ----------------------------------------------------------------------------------------------------------- -->
+
+    <!-- Edit Profile -->
+
+        <div class="modal fade " id="Edit-Profile-Modal" tabindex="0" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable profile-dialog">
+
+                <div class="modal-content border-2 border-dark" style="border-radius: 20px; box-shadow: 0 7px #2B2B2B; max-width: 450px;">
+                    <div class="modal-header profile-header" style="padding: 5px;">
+
+                        <button type="button" class="btn" data-bs-toggle="modal" data-bs-target="#Profile-Modal" data-bs-dismiss="modal" aria-label="Back">
+                            <i class="fa-solid fa-angle-left fa-lg"></i>
+                        </button>
+
+                        <button type="button" class="btn" data-bs-dismiss="modal" aria-label="Close">
+                            <i class="fa-solid fa-xmark fa-lg" style="margin-left: 360px;"></i>
+                        </button>
+
+                    </div>
+
+                    <!-- Modal Contents -->
+                    <div class="modal-body" style="color: #292929;">
+                    <div class="icon text-center my-3"><img src="img/Profile icon.png" alt="" width="80" height="80"></div>
+                    <div class="text-center">
+                    <?php
+                        require_once './src/db.php';
+                        $db = new Database();
+                        $conn = $db->getConnection();
+                        $adminID = $_SESSION['adminID'];
+                        $get = "SELECT admin_name, email, number FROM admin_table WHERE adminID = '$adminID'";
+                        $getQuery = mysqli_query($conn, $get);
+
+                        while($row = $getQuery->fetch_assoc()){
+                            $currentName = $row['admin_name'];
+                            $currentEmail = $row['email'];
+                            $currentPhoneNumber = $row['number'];
+                            echo"
+                                <h5>$currentName</h5>
+                                <h6 style='text-decoration: underline; font-weight: 350;'><small class='text-body-secondary'>$currentEmail</small></h6>
+                                <div class='Field-inputs mx-4' style='font-size: small;'>
+                                <form method='POST' action=''>
+
+                                <div class='form-floating pb-4'>
+                                    <input name='editName' type='text' class='form-control' id='fullName' placeholder='Full Name' value='$currentName'>
+                                    <label for='fullName'><i class='fa-solid fa-user'></i> Full Name</label>
+                                </div>
+
+                                <div class='form-floating pb-4'>
+                                    <input name='editEmail' type='email' class='form-control' id='email' placeholder='name@example.com' value='$currentEmail'>
+                                    <label for='email'><i class='fa-solid fa-envelope'></i> Email</label>
+                                </div>
+
+                                <div class='form-floating pb-4'>
+                                    <input name='editNumber' type='number' class='form-control' id='mobileNumber' placeholder='Mobile Number' value='$currentPhoneNumber'>
+                                    <label for='mobileNumber'><i class='fa-solid fa-mobile'></i> Mobile Number</label>
+                                </div>
+
+                                <div class='save-changes'>
+                                    <button name='editProfile' type='submit' class='mt-4 mb-5' id='save-btn'>Save Changes</button>
+                                </div>
+                            </form>
+                        </div>
+                            ";
+                        }
+                    ?>
+                    </div>
+                </div>
+
+                </div>
+            </div>
+        </div>
+
+    <!-- ----------------------------------------------------------------------------------------------------------- -->
+
+    <!-- Change Pass -->
+
+    <div class="modal fade " id="Change-Pass-Modal" tabindex="0" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable profile-dialog">
+
+            <div class="modal-content border-2 border-dark" style="border-radius: 20px; box-shadow: 0 7px #2B2B2B; max-width: 450px;">
+                <div class="modal-header profile-header" style="padding: 5px;">
+
+                        <button type="button" data-bs-toggle="modal" data-bs-target="#Profile-Modal" class="btn" data-bs-dismiss="modal" aria-label="Back">
+                            <i class="fa-solid fa-angle-left fa-lg"></i>
+                        </button>
+                        <button type="button" class="btn" data-bs-dismiss="modal" aria-label="Close">
+                            <i class="fa-solid fa-xmark fa-lg" style="margin-left: 360px;"></i>
+                        </button>
+
+                </div>
+
+                <!-- Modal Contents -->
+                <div class="modal-body" style="color: #292929;">
+                    <div class="icon text-center my-3"><img src="img/Profile icon.png" alt="" width="80" height="80"></div>
+
+                    <div class="text-center">
+                    <?php
+                        require_once './src/db.php';
+                        $db = new Database();
+                        $conn = $db->getConnection();
+                        $adminID = $_SESSION['adminID'];
+                        $get = "SELECT admin_name, email FROM admin_table WHERE adminID = '$adminID'";
+                        $getQuery = mysqli_query($conn, $get);
+
+                        while($row = $getQuery->fetch_assoc()){
+                            echo"
+                            <h5>". $row['admin_name'] ."</h5>
+                            <h6 style='text-decoration: underline; font-weight: 350;'><small class='text-body-secondary'>". $row['email']."</small></h6>
+                            ";
+                        }
+                    ?>
+                    <hr class="mx-auto" width = "90%" >
+                    </div>
+
+                    <div class="My-Profile text-center pb-4 pt-3">
+                        <h4 style="background-color: #FAEF9B; display: inline-block; border-radius: 5px;">
+                            Change Password
+                        </h4>
+                    </div>
+                    <form action="" method="post">
+                        <div class="Field-inputs mx-4" style="font-size: small;">
+                            <div class="form-floating pb-4">
+                                <input name="OldPass" type="password" class="form-control" id="password" placeholder="Password" required>
+                                <label for="password"><i class="fa-solid fa-lock"></i> Current Password</label>
+                                <div class="password-wrapper">
+                                <span id="togglePassword" class="toggle-password"><i class="fa-solid fa-eye-slash fa-lg"></i></span>
+                                </div>
+                            </div>
+
+                            <div class="form-floating pb-4">
+                                <input name="newPass" type="password" class="form-control" id="new-password" placeholder="Password" required>
+                                <label for="password"><i class="fa-solid fa-lock"></i> New Password</label>
+                                <div class="password-wrapper">
+                                <span id="togglePassword" class="toggle-password"><i class="fa-solid fa-eye-slash fa-lg"></i></span>
+                                </div>
+                            </div>
+
+                            <div class="form-floating pb-4">
+                                <input name="conNewPass" type="password" class="form-control" id="confirm-password" placeholder="Password" required>
+                                <label for="password"><i class="fa-solid fa-lock"></i> Confirm Password</label>
+                                <div class="password-wrapper">
+                                <span id="togglePassword" class="toggle-password"><i class="fa-solid fa-eye-slash fa-lg"></i></span>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="save-changes">
+                            <button name="changePass" type="submit" class="mt-4 mb-5" id="save-btn">
+                                Save Change
+                            </button>
+                        </div>
+                    </form>
+            </div>
+        </div>
+    </div>
     <!-- Side Bar Mobile View -->
 
     <div class="offcanvas offcanvas-start sidebar2 overflow-x-hidden overflow-y-hidden" tabindex="-1" id="offcanvasNav-Menu" aria-labelledby="staticBackdropLabel">

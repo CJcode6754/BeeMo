@@ -93,6 +93,38 @@ document.addEventListener('DOMContentLoaded', function() {
                             noti_message = 'Error fetching!';
                             noti_image = 'img/beemo-ico.ico';
                             break;
+                        case 'profileUpdate':
+                            noti_message = 'Profile updated successfully!';
+                            noti_image = 'img/beemo-ico.ico';
+                            break;
+                        case 'errorProfile':
+                            noti_message = 'Error updating profile!';
+                            noti_image = 'img/beemo-ico.ico';
+                            break;
+                        case 'emailVerification':
+                            noti_message = 'Email verified successfully!';
+                            noti_image = 'img/beemo-ico.ico';
+                            break;
+                        case 'Failed_to_add_user':
+                            noti_message = 'Failed to send Otp.';
+                            noti_image = 'img/beemo-ico.ico';
+                            break;
+                        case 'addUser':
+                            noti_message = 'New User Added!';
+                            noti_image = 'img/beemo-ico.ico';
+                            break;
+                        case 'emailExist':
+                            noti_message = 'Email Already Exist!';
+                            noti_image = 'img/beemo-ico.ico';
+                            break;
+                        case 'email_verification':
+                            noti_message = 'Verify email with OTP sent.';
+                            noti_image = 'img/beemo-ico.ico';
+                            break;
+                        case 'email_verified':
+                            noti_message = 'Email verified successfully!';
+                            noti_image = 'img/beemo-ico.ico';
+                            break;
                         default:
                             noti_message = 'Notification';
                             noti_image = 'img/beemo-ico.ico';

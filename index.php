@@ -131,7 +131,7 @@ $router->get('/verify', function() {
     require_once 'verify.php';  // Load Forgot Password page
 });
 
-$router->get('/verifyWorker', function() {
+$router->get('/Verify', function() {
     if (!isset($_SESSION['adminID'])) {
         session_destroy();
         header('Location: /');
@@ -140,12 +140,259 @@ $router->get('/verifyWorker', function() {
     require_once 'verifyWorker.php';  // Load Forgot Password page
 });
 
+$router->post('/Verify', function() {
+    if (!isset($_SESSION['adminID'])) {
+        session_destroy();
+        header('Location: /');
+        exit();
+    }
+
+    // Handle OTP submission for worker
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $otp = $_POST['otp'] ?? '';
+        $userID = $_SESSION['userID']; // Use userID from session
+        $adminID = $_SESSION['adminID'];
+        // Database connection
+        require_once './src/db.php'; // Adjust the path as necessary
+        require_once './src/notification_handler.php'; // Ensure this is included
+
+        $db = new Database();
+        $conn = $db->getConnection();
+        $notificationHandler = new NotificationHandler($conn);
+
+        // Fetch the stored OTP and expiry from the database
+        $stmt = $conn->prepare("SELECT otp, otp_expiry, is_verified FROM user_table WHERE userID = ?");
+        $stmt->bind_param('i', $userID);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $userData = $result->fetch_assoc();
+
+        if ($userData) {
+            // Check if the entered OTP matches the stored OTP
+            if ($otp === $userData['otp']) {
+                // Check if OTP is still valid
+                if (strtotime($userData['otp_expiry']) > time()) {
+                    if ($userData['is_verified']) {
+                        // Send notification for already verified email
+                        $notificationHandler->insertNotification($adminID, 'active', 'Email already verified!', 'emailVerification', '/dashboard', 'unseen');
+                        $_SESSION['status'] = 'Email already verified!';
+                    } else {
+                        // Mark email as verified
+                        $stmt = $conn->prepare("UPDATE user_table SET is_verified = 1, otp = NULL, otp_expiry = NULL WHERE userID = ?");
+                        $stmt->bind_param('i', $userID);
+                        $stmt->execute();
+
+                        // Send notification for successful email verification
+                        $notificationHandler->insertNotification($adminID, 'active', 'Email verified successfully!', 'emailVerification', '/dashboard', 'unseen');
+                        header('Location: /Worker');
+                        exit();
+                    }
+                } else {
+                    $_SESSION['error'] = 'OTP expired. Please request a new one.';
+                }
+            } else {
+                $_SESSION['error'] = 'Invalid OTP. Please try again.';
+            }
+        } else {
+            $_SESSION['error'] = 'Please enter the OTP.';
+        }
+
+        // Redirect back to the verify page with error message
+        header('Location: /Verify');
+        exit();
+    }
+
+
+    if (isset($_POST['resend_otp'])) {
+        if (isset($_SESSION['email']) && isset($_SESSION['user_name'])) {
+            $email = $_SESSION['email'];
+            $name = $_SESSION['user_name'];
+            $otpHandler = new OTP($conn);  // Assuming $conn is available in this scope
+            $mailer = new Mailer();
+
+            // Generate and send new OTP
+            $otp = $otpHandler->generateOTPUser($email);
+
+            if ($mailer->sendOTPWorker($name, $email, $otp['otp'])) {
+                $_SESSION['status'] = 'New OTP sent! Check your email.';
+                header('Location: /Verify');
+                exit();
+            } else {
+                $_SESSION['error'] = 'Failed to resend OTP. Try again.';
+                header('Location: /Verify');
+                exit();
+            }
+        } else {
+            $_SESSION['error'] = 'Session expired. Login again.';
+            header('Location: /');
+            exit();
+        }
+    }
+});
+
+$router->get('/verifyProfile', function() {
+    if (!isset($_SESSION['adminID'])) {
+        session_destroy();
+        header('Location: /');
+        exit();
+    }
+    require_once 'verifyProfile.php';  // Load Forgot Password page
+});
+
 $router->get('/signup', function() {
     require_once 'signup.php';  // Load signup page
 });
 
+$router->post('/verifyProfile', function() {
+    if (!isset($_SESSION['adminID'])) {
+        session_destroy();
+        header('Location: /');
+        exit();
+    }
 
-// Define POST routes
+    // Handle the OTP submission for profile
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $otp = $_POST['otp'] ?? '';
+        $adminID = $_SESSION['adminID'];
+
+        // Database connection
+        require_once './src/db.php'; // Adjust the path as necessary
+        require_once './src/notification_handler.php'; // Ensure this is included
+
+        $db = new Database();
+        $conn = $db->getConnection();
+        $notificationHandler = new NotificationHandler($conn);
+
+        // Fetch the stored OTP and expiry from the database
+        $stmt = $conn->prepare("SELECT otp, otp_expiry, is_verified FROM admin_table WHERE adminID = ?");
+        $stmt->bind_param('i', $adminID);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $adminData = $result->fetch_assoc();
+
+        if ($adminData) {
+            // Check if the entered OTP matches the stored OTP
+            if ($otp === $adminData['otp']) {
+                // Check if OTP is still valid
+                if (strtotime($adminData['otp_expiry']) > time()) {
+                    if ($adminData['is_verified']) {
+                        // Send notification for already verified email
+                        $notificationHandler->insertNotification($adminID, 'active', 'Email already verified!', 'emailVerification', '/dashboard', 'unseen');
+                        $_SESSION['status'] = 'Email already verified!';
+                    } else {
+                        // Mark email as verified
+                        $stmt = $conn->prepare("UPDATE admin_table SET is_verified = 1, otp = NULL, otp_expiry = NULL WHERE adminID = ?");
+                        $stmt->bind_param('i', $adminID);
+                        $stmt->execute();
+
+                        // Send notification for successful email verification
+                        $notificationHandler->insertNotification($adminID, 'active', 'Email verified successfully!', 'emailVerification', '/dashboard', 'unseen');
+                        header('Location: /dashboard');
+                        exit();
+                    }
+                } else {
+                    $_SESSION['error'] = 'OTP expired. Please request a new one.';
+                }
+            } else {
+                $_SESSION['error'] = 'Invalid OTP. Please try again.';
+            }
+        } else {
+            $_SESSION['error'] = 'Please enter the OTP.';
+        }
+
+        // Redirect back to the verify page with error message
+        header('Location: /Verify');
+        exit();
+    }
+});
+
+
+$router->get('/verifyEmail', function() {
+    if (!isset($_SESSION['adminID'])) {
+        session_destroy();
+        header('Location: /');
+        exit();
+    }
+    require_once 'verifyEditWorker.php';  // Load Forgot Password page
+});
+
+$router->post('/verifyEmail', function() {
+    require_once './src/db.php';
+    require_once './src/notification_handler.php';
+    $db = new Database();
+    $conn = $db->getConnection();
+
+    if (isset($_POST['submit'])) { // Handle OTP verification
+        $user_ID = $_SESSION['userID'] ?? $_POST['userID']; // Get userID from session or POST
+        $otp = $_POST['otp'] ?? '';
+
+        // Fetch the stored OTP and expiry from the database
+        $stmt = $conn->prepare("SELECT otp, otp_expiry FROM user_table WHERE userID = ?");
+        $stmt->bind_param('i', $user_ID);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $userData = $result->fetch_assoc();
+        $adminID = $_SESSION['adminID'];
+        if ($userData) {
+            // Check if the entered OTP matches the stored OTP
+            if ($otp === $userData['otp']) {
+                // Check if OTP is still valid
+                if (strtotime($userData['otp_expiry']) > time()) {
+                    // Mark email as verified
+                    $stmt = $conn->prepare("UPDATE user_table SET otp = NULL, otp_expiry = NULL WHERE userID = ?");
+                    $stmt->bind_param('i', $user_ID);
+                    $stmt->execute();
+
+                    // Send notification for successful email verification
+                    $notificationHandler = new NotificationHandler($conn);
+                    $notificationHandler->insertNotification($adminID, 'active', 'Email verified successfully!', 'email_verified', '/Worker', 'unseen');
+
+                    header('Location: /Worker');
+                    exit();
+                } else {
+                    $_SESSION['error'] = 'OTP expired. Please request a new one.';
+                }
+            } else {
+                $_SESSION['error'] = 'Invalid OTP. Please try again.';
+            }
+        } else {
+            $_SESSION['error'] = 'No OTP found. Please request a new one.';
+        }
+
+        // Redirect back to the verify page with error message
+        header('Location: /verifyEmail');
+        exit();
+    }
+
+    if (isset($_POST['resend_otp'])) { // Handle OTP resend
+        if (isset($_SESSION['email']) && isset($_SESSION['user_ID'])) {
+            $email = $_SESSION['email'];
+            $user_ID = $_SESSION['user_ID'];
+            $otpHandler = new OTP($conn);  // Assuming $conn is available in this scope
+            $mailer = new Mailer();
+            $current_name = $_SESSION['user_name'];
+
+            // Generate and send new OTP
+            $otpData = $otpHandler->generateOTPUser($email);
+
+            if ($otpData && $mailer->sendOTPEmail($current_name, $email, $otpData['otp'])) {
+                $_SESSION['status'] = 'New OTP sent! Check your email.';
+                header('Location: /verifyEmail');
+                exit();
+            } else {
+                $_SESSION['error'] = 'Failed to resend OTP. Try again.';
+                header('Location: /verifyEmail');
+                exit();
+            }
+        } else {
+            $_SESSION['error'] = 'Session expired. Login again.';
+            header('Location: /');
+            exit();
+        }
+    }
+});
+
+
 $router->post('/', function() {
     $db = new Database();
     $conn = $db->getConnection();

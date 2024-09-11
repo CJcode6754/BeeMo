@@ -33,18 +33,20 @@ class OTP {
 
         return ['otp' => $otp, 'otp_expiry' => $otp_expiry];
     }
-    public function generateOTPUser($email)
-    {
+
+    public function generateOTPUser($email){
         $otp = rand(100000, 999999);
         $otp_expiry = date('Y-m-d H:i:s', strtotime('+3 minutes'));
 
-        $query = "UPDATE user_table SET otp='$otp', otp_expiry='$otp_expiry' WHERE email='$email'";
-        mysqli_query($this->conn, $query);
+        $stmt = $this->conn->prepare("UPDATE user_table SET otp=?, otp_expiry=? WHERE email=?");
+        $stmt->bind_param('iss', $otp, $otp_expiry, $email);
+        $stmt->execute();
 
         $_SESSION['otp_expiry'] = $otp_expiry;
 
         return ['otp' => $otp, 'otp_expiry' => $otp_expiry];
     }
+
 
     public function verifyOTP($email, $otp) {
         $current_time = date('Y-m-d H:i:s'); // Current time in server's timezone
