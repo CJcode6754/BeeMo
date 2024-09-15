@@ -429,7 +429,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                             <div class="form-floating pb-4">
                                 <input name="newPass" type="password" class="form-control" id="new-password" placeholder="Password" required>
-                                <label for="password"><i class="fa-solid fa-lock"></i> New Password</label>
+                                <label for="new-password"><i class="fa-solid fa-lock"></i> New Password</label>
                                 <div class="password-wrapper">
                                 <span id="togglePassword" class="toggle-password"><i class="fa-solid fa-eye-slash fa-lg"></i></span>
                                 </div>
@@ -437,7 +437,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                             <div class="form-floating pb-4">
                                 <input name="conNewPass" type="password" class="form-control" id="confirm-password" placeholder="Password" required>
-                                <label for="password"><i class="fa-solid fa-lock"></i> Confirm Password</label>
+                                <label for="confirm-password"><i class="fa-solid fa-lock"></i> Confirm Password</label>
                                 <div class="password-wrapper">
                                 <span id="togglePassword" class="toggle-password"><i class="fa-solid fa-eye-slash fa-lg"></i></span>
                                 </div>
@@ -455,26 +455,24 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     </div>
 
     <script>
-    // Function to handle redirection if the user is on the login page
-    function checkLoginStatus() {
-        // For this example, we assume you set a session variable or similar
-        if (sessionStorage.getItem('loggedIn')) {
-            // Redirect to dashboard or main page
-            window.location.href = 'dashboard.php';
+        // Function to handle redirection if the user is on the login page
+        function checkLoginStatus() {
+            if (sessionStorage.getItem('loggedIn')) {
+                window.location.href = 'dashboard.php';
+            }
         }
-    }
 
-    window.onload = function() {
-        checkLoginStatus();
-    };
+        window.onload = function() {
+            checkLoginStatus();
+        };
 
-    // Optional: Handle the back button
-    window.onpopstate = function(event) {
-        // Redirect to dashboard if user navigates back
-        if (sessionStorage.getItem('loggedIn')) {
-            window.location.href = 'dashboard.php';
-        }
-    };
+        // Optional: Handle the back button
+        window.onpopstate = function(event) {
+            // Redirect to dashboard if user navigates back
+            if (sessionStorage.getItem('loggedIn')) {
+                window.location.href = 'dashboard.php';
+            }
+        };
     </script>
 
 

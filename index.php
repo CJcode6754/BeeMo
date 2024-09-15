@@ -48,43 +48,6 @@ $router->get('/chooseHive', function() {
     require_once 'chooseHive.php';  // Load chooseHive page
 });
 
-$router->post('/setHive', function() {
-    session_start();
-
-    if (isset($_POST['hiveID'])) {
-        $hiveID = $_POST['hiveID'];
-
-        // Create a new database instance and get the connection
-        $db = new Database();
-        $conn = $db->getConnection();
-        $notificationHandler = new NotificationHandler($conn);
-        $adminID = $_SESSION['adminID'];
-
-        // Check if the hiveNum exists in the database
-        $stmt = $conn->prepare("SELECT hiveID FROM hivenumber WHERE hiveID = ?");
-        $stmt->bind_param("i", $hiveID);
-        $stmt->execute();
-        $result = $stmt->get_result();
-        $stmt->close();
-
-        if ($result->num_rows > 0) {
-            // If hiveNum exists, set it in the session
-            $_SESSION['hiveID'] = $hiveID;
-            header('Location: /parameterMonitoring');  // Redirect to parameterMonitoring
-            exit();
-        } else {
-            // Handle hive not found case
-            $notificationHandler->insertNotification($adminID, 'active', 'Hive not recorded.', 'emptyHiveNum', '/dashboard', 'unseen');
-            header('Location: /chooseHive');  // Redirect back to chooseHive
-            exit();
-        }
-    } else {
-        // If no hiveNum is provided, redirect back to chooseHive
-        header('Location: /chooseHive');
-        exit();
-    }
-});
-
 $router->get('/parameterMonitoring', function() {
     function season_start() {
         if (session_status() == PHP_SESSION_NONE) {
@@ -232,109 +195,32 @@ $router->get('/Verify', function() {
     require_once 'verifyWorker.php';  // Load Forgot Password page
 });
 
-$router->post('/Verify', function() {
-    if (!isset($_SESSION['adminID'])) {
-        session_destroy();
-        header('Location: /');
-        exit();
-    }
-
-    // Handle OTP submission for worker
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        $otp = $_POST['otp'] ?? '';
-        $userID = $_SESSION['userID']; // Use userID from session
-        $adminID = $_SESSION['adminID'];
-        // Database connection
-        require_once './src/db.php'; // Adjust the path as necessary
-        require_once './src/notification_handler.php'; // Ensure this is included
-
-        $db = new Database();
-        $conn = $db->getConnection();
-        $notificationHandler = new NotificationHandler($conn);
-
-        // Fetch the stored OTP and expiry from the database
-        $stmt = $conn->prepare("SELECT otp, otp_expiry, is_verified FROM user_table WHERE userID = ?");
-        $stmt->bind_param('i', $userID);
-        $stmt->execute();
-        $result = $stmt->get_result();
-        $userData = $result->fetch_assoc();
-
-        if ($userData) {
-            // Check if the entered OTP matches the stored OTP
-            if ($otp === $userData['otp']) {
-                // Check if OTP is still valid
-                if (strtotime($userData['otp_expiry']) > time()) {
-                    if ($userData['is_verified']) {
-                        // Send notification for already verified email
-                        $notificationHandler->insertNotification($adminID, 'active', 'Email already verified!', 'emailVerification', '/dashboard', 'unseen');
-                        $_SESSION['status'] = 'Email already verified!';
-                    } else {
-                        // Mark email as verified
-                        $stmt = $conn->prepare("UPDATE user_table SET is_verified = 1, otp = NULL, otp_expiry = NULL WHERE userID = ?");
-                        $stmt->bind_param('i', $userID);
-                        $stmt->execute();
-
-                        // Send notification for successful email verification
-                        $notificationHandler->insertNotification($adminID, 'active', 'Email verified successfully!', 'emailVerification', '/dashboard', 'unseen');
-                        header('Location: /Worker');
-                        exit();
-                    }
-                } else {
-                    $_SESSION['error'] = 'OTP expired. Please request a new one.';
-                }
-            } else {
-                $_SESSION['error'] = 'Invalid OTP. Please try again.';
-            }
-        } else {
-            $_SESSION['error'] = 'Please enter the OTP.';
-        }
-
-        // Redirect back to the verify page with error message
-        header('Location: /Verify');
-        exit();
-    }
-
-
-    if (isset($_POST['resend_otp'])) {
-        if (isset($_SESSION['email']) && isset($_SESSION['user_name'])) {
-            $email = $_SESSION['email'];
-            $name = $_SESSION['user_name'];
-            $otpHandler = new OTP($conn);  // Assuming $conn is available in this scope
-            $mailer = new Mailer();
-
-            // Generate and send new OTP
-            $otp = $otpHandler->generateOTPUser($email);
-
-            if ($mailer->sendOTPWorker($name, $email, $otp['otp'])) {
-                $_SESSION['status'] = 'New OTP sent! Check your email.';
-                header('Location: /Verify');
-                exit();
-            } else {
-                $_SESSION['error'] = 'Failed to resend OTP. Try again.';
-                header('Location: /Verify');
-                exit();
-            }
-        } else {
-            $_SESSION['error'] = 'Session expired. Login again.';
-            header('Location: /');
-            exit();
-        }
-    }
-});
-
 $router->get('/verifyProfile', function() {
     if (!isset($_SESSION['adminID'])) {
         session_destroy();
         header('Location: /');
         exit();
     }
-    require_once 'verifyProfile.php';  // Load Forgot Password page
+    require_once 'verifyProfile.php';
 });
 
 $router->get('/signup', function() {
-    require_once 'signup.php';  // Load signup page
+    require_once 'signup.php';
 });
 
+
+$router->get('/verifyEmail', function() {
+    if (!isset($_SESSION['adminID'])) {
+        session_destroy();
+        header('Location: /');
+        exit();
+    }
+    require_once 'verifyEditWorker.php';
+});
+
+
+
+//POST
 $router->post('/verifyProfile', function() {
     if (!isset($_SESSION['adminID'])) {
         session_destroy();
@@ -396,16 +282,6 @@ $router->post('/verifyProfile', function() {
         header('Location: /Verify');
         exit();
     }
-});
-
-
-$router->get('/verifyEmail', function() {
-    if (!isset($_SESSION['adminID'])) {
-        session_destroy();
-        header('Location: /');
-        exit();
-    }
-    require_once 'verifyEditWorker.php';  // Load Forgot Password page
 });
 
 $router->post('/verifyEmail', function() {
@@ -655,6 +531,134 @@ $router->post('/reports', function() {
     // Reload the reports page with the filtered results
     require_once 'reports.php';
 });
+
+$router->post('/setHive', function() {
+    session_start();
+
+    if (isset($_POST['hiveID'])) {
+        $hiveID = $_POST['hiveID'];
+
+        // Create a new database instance and get the connection
+        $db = new Database();
+        $conn = $db->getConnection();
+        $notificationHandler = new NotificationHandler($conn);
+        $adminID = $_SESSION['adminID'];
+
+        // Check if the hiveNum exists in the database
+        $stmt = $conn->prepare("SELECT hiveID FROM hivenumber WHERE hiveID = ?");
+        $stmt->bind_param("i", $hiveID);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $stmt->close();
+
+        if ($result->num_rows > 0) {
+            // If hiveNum exists, set it in the session
+            $_SESSION['hiveID'] = $hiveID;
+            header('Location: /parameterMonitoring');  // Redirect to parameterMonitoring
+            exit();
+        } else {
+            // Handle hive not found case
+            $notificationHandler->insertNotification($adminID, 'active', 'Hive not recorded.', 'emptyHiveNum', '/dashboard', 'unseen');
+            header('Location: /chooseHive');  // Redirect back to chooseHive
+            exit();
+        }
+    } else {
+        // If no hiveNum is provided, redirect back to chooseHive
+        header('Location: /chooseHive');
+        exit();
+    }
+});
+
+$router->post('/Verify', function() {
+    if (!isset($_SESSION['adminID'])) {
+        session_destroy();
+        header('Location: /');
+        exit();
+    }
+
+    // Handle OTP submission for worker
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $otp = $_POST['otp'] ?? '';
+        $userID = $_SESSION['userID']; // Use userID from session
+        $adminID = $_SESSION['adminID'];
+        // Database connection
+        require_once './src/db.php'; // Adjust the path as necessary
+        require_once './src/notification_handler.php'; // Ensure this is included
+
+        $db = new Database();
+        $conn = $db->getConnection();
+        $notificationHandler = new NotificationHandler($conn);
+
+        // Fetch the stored OTP and expiry from the database
+        $stmt = $conn->prepare("SELECT otp, otp_expiry, is_verified FROM user_table WHERE userID = ?");
+        $stmt->bind_param('i', $userID);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $userData = $result->fetch_assoc();
+
+        if ($userData) {
+            // Check if the entered OTP matches the stored OTP
+            if ($otp === $userData['otp']) {
+                // Check if OTP is still valid
+                if (strtotime($userData['otp_expiry']) > time()) {
+                    if ($userData['is_verified']) {
+                        // Send notification for already verified email
+                        $notificationHandler->insertNotification($adminID, 'active', 'Email already verified!', 'emailVerification', '/dashboard', 'unseen');
+                        $_SESSION['status'] = 'Email already verified!';
+                    } else {
+                        // Mark email as verified
+                        $stmt = $conn->prepare("UPDATE user_table SET is_verified = 1, otp = NULL, otp_expiry = NULL WHERE userID = ?");
+                        $stmt->bind_param('i', $userID);
+                        $stmt->execute();
+
+                        // Send notification for successful email verification
+                        $notificationHandler->insertNotification($adminID, 'active', 'Email verified successfully!', 'emailVerification', '/dashboard', 'unseen');
+                        header('Location: /Worker');
+                        exit();
+                    }
+                } else {
+                    $_SESSION['error'] = 'OTP expired. Please request a new one.';
+                }
+            } else {
+                $_SESSION['error'] = 'Invalid OTP. Please try again.';
+            }
+        } else {
+            $_SESSION['error'] = 'Please enter the OTP.';
+        }
+
+        // Redirect back to the verify page with error message
+        header('Location: /Verify');
+        exit();
+    }
+
+
+    if (isset($_POST['resend_otp'])) {
+        if (isset($_SESSION['email']) && isset($_SESSION['user_name'])) {
+            $email = $_SESSION['email'];
+            $name = $_SESSION['user_name'];
+            $otpHandler = new OTP($conn);  // Assuming $conn is available in this scope
+            $mailer = new Mailer();
+
+            // Generate and send new OTP
+            $otp = $otpHandler->generateOTPUser($email);
+
+            if ($mailer->sendOTPWorker($name, $email, $otp['otp'])) {
+                $_SESSION['status'] = 'New OTP sent! Check your email.';
+                header('Location: /Verify');
+                exit();
+            } else {
+                $_SESSION['error'] = 'Failed to resend OTP. Try again.';
+                header('Location: /Verify');
+                exit();
+            }
+        } else {
+            $_SESSION['error'] = 'Session expired. Login again.';
+            header('Location: /');
+            exit();
+        }
+    }
+});
+
 
 // Dispatch the route
 $router->dispatch();
