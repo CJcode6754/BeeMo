@@ -395,7 +395,7 @@
 
                         </div>
                         <div class="save-changes">
-                            <button name="changePass" type="submit" class="mt-4 mb-5" id="save-btn">
+                            <button name="changePass" type="submit" class="mt-4 mb-5" id="save-btn1">
                                 Save Change
                             </button>
                         </div>

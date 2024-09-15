@@ -8,10 +8,6 @@
         if (session_status() == PHP_SESSION_NONE) {
             session_start();
         }
-
-        if (!isset($_SESSION['season_started'])) {
-            $_SESSION['season_started'] = true;
-        }
     }
 
     season_start();
@@ -80,7 +76,7 @@
             <li class="sidebar-menu-item active">
                 <a href="/chooseHive">
                     <i class="fa-solid fa-temperature-three-quarters sidebar-menu-item-icon"></i>
-                    Parameters Monitoring
+                    Choose Hive
                 </a>
             </li>
             <li class="sidebar-menu-item">
@@ -183,12 +179,20 @@
                 <div class="px-4 py-2 my-4 text-center content-wrapper">
                     <div class="col-lg-6 mx-auto">
                         <p class="choosehive-text fs-4 mb-5 fw-bold choosehive-highlight">Choose Hive</p>
-                        <div class=" mt-4 gap-2 d-block justify-content-sm-center">
-                            <a href="/parameterMonitoring"><button type="button" class="hive-button mt-4 px-5 fs-5 fw-semibold">
-                                Hive 1</button></a>
-                            <button type="button" class="hive-button mt-5 px-5 fs-5 fw-semibold">
-                                Hive 2</button>
-                          </div>
+                            <div class="mt-4 gap-2 d-block justify-content-sm-center">
+                                <!-- Form for Hive 1 -->
+                                <form method="post" action="/setHive">
+                                    <input type="hidden" name="hiveID" value="1">
+                                    <button type="submit" class="hive-button mt-4 px-5 fs-5 fw-semibold">Hive 1</button>
+                                </form>
+
+                                <!-- Form for Hive 2 -->
+                                <form method="post" action="/setHive">
+                                    <input type="hidden" name="hiveID" value="2">
+                                    <button type="submit" class="hive-button mt-5 px-5 fs-5 fw-semibold">Hive 2</button>
+                                </form>
+                            </div>
+                        </div>
                     </div>
                     <div class="mt-4 d-flex justify-content-end pe-3">
                         <button class="edit-button mt-5 px-4 border border-1 border-black fw-semibold" type="button">
@@ -399,7 +403,7 @@
 
                         </div>
                         <div class="save-changes">
-                            <button name="changePass" type="submit" class="mt-4 mb-5" id="save-btn">
+                            <button name="changePass" type="submit" class="mt-4 mb-5" id="save-btn1">
                                 Save Change
                             </button>
                         </div>

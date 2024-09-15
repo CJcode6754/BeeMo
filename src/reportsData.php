@@ -1,4 +1,11 @@
 <?php
+function season_start() {
+    if (session_status() == PHP_SESSION_NONE) {
+        session_start();
+    }
+}
+season_start();
+
 header('Content-Type: application/json');
 
 // Database connection
@@ -18,21 +25,24 @@ if ($conn->connect_error) {
 // Get the selected date from POST request
 $data = json_decode(file_get_contents('php://input'), true);
 $selectedDate = $data['selected_date'];
-
+$adminID = $_SESSION['adminID'];
+$hiveID = $_SESSION['hiveID'];
 // Prepare the query to fetch data for the selected date
 $sql = "
     SELECT
         DATE_FORMAT(timestamp, '%Y-%m-%d %H:00:00') AS hour,
         AVG(temperature) AS avg_temperature,
         AVG(humidity) AS avg_humidity,
-        AVG(weight) AS avg_weight
+        AVG(weight) AS avg_weight,
+        adminID,
+        hiveID
     FROM subdata
-    WHERE DATE(timestamp) = ?
+    WHERE DATE(timestamp) = ? AND adminID = ? AND hiveID = ?
     GROUP BY hour
     ORDER BY hour
 ";
 $stmt = $conn->prepare($sql);
-$stmt->bind_param("s", $selectedDate);
+$stmt->bind_param("sii", $selectedDate, $adminID, $hiveID);
 $stmt->execute();
 $result = $stmt->get_result();
 

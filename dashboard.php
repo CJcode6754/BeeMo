@@ -79,7 +79,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 </a>
             </li>
             <li class="sidebar-menu-item">
-                <a href="/chooseHive">
+                <a href="/parameterMonitoring">
                     <i class="fa-solid fa-temperature-three-quarters sidebar-menu-item-icon"></i>
                     Parameters Monitoring
                 </a>
@@ -208,7 +208,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 </a>
             </li>
             <li class="sidebar-menu-item2 py-1">
-                <a href="/chooseHive">
+                <a href="/parameterMonitoring">
                     <i class="fa-solid fa-temperature-three-quarters sidebar-menu-item-icon2"></i>
                     Parameters Monitoring
                 </a>
@@ -445,7 +445,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                         </div>
                         <div class="save-changes">
-                            <button name="changePass" type="submit" class="mt-4 mb-5" id="save-btn">
+                            <button name="changePass" type="submit" class="mt-4 mb-5" id="save-btn1">
                                 Save Change
                             </button>
                         </div>

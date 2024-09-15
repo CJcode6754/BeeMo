@@ -88,7 +88,7 @@ class Mailer {
             $this->mail->Subject = 'Change Password';
             // $mail->Body    = "Hello, {$name}<br>Your account registration is successfully done! Click this link to continue the process of changing password 
             // <a href='https://beemo.website/reset_password.php?email=$email'>RESET PASSWORD</a>.";
-            $this->mail->Body    = "Hello, {$name}<br>Your account registration is successfully done! Click this link to continue the process of changing password 
+            $this->mail->Body    = "Hello, {$name}<br>Click this link to continue the process of changing password
             <a href='http://localhost:3000/resetPassword'>RESET PASSWORD</a>.";
             $this->mail->send();
             return true;
@@ -101,8 +101,8 @@ class Mailer {
         try {
             $this->mail->addAddress($email, $name);
             $this->mail->isHTML(true);
-            $this->mail->Subject = 'Verify your email';
-            $this->mail->Body = "Hello, {$name}<br>Your account registration is successfully done! Click this link to continue the process of changing password 
+            $this->mail->Subject = 'Change Password';
+            $this->mail->Body = "Hello, {$name}<br>Click this link to continue the process of changing password
             <a href='http://localhost:3000/resetPassword'>RESET PASSWORD</a>.";
             $this->mail->send();
             return true;

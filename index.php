@@ -48,21 +48,122 @@ $router->get('/chooseHive', function() {
     require_once 'chooseHive.php';  // Load chooseHive page
 });
 
-$router->get('/reports', function() {
+$router->post('/setHive', function() {
+    session_start();
+
+    if (isset($_POST['hiveID'])) {
+        $hiveID = $_POST['hiveID'];
+
+        // Create a new database instance and get the connection
+        $db = new Database();
+        $conn = $db->getConnection();
+        $notificationHandler = new NotificationHandler($conn);
+        $adminID = $_SESSION['adminID'];
+
+        // Check if the hiveNum exists in the database
+        $stmt = $conn->prepare("SELECT hiveID FROM hivenumber WHERE hiveID = ?");
+        $stmt->bind_param("i", $hiveID);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $stmt->close();
+
+        if ($result->num_rows > 0) {
+            // If hiveNum exists, set it in the session
+            $_SESSION['hiveID'] = $hiveID;
+            header('Location: /parameterMonitoring');  // Redirect to parameterMonitoring
+            exit();
+        } else {
+            // Handle hive not found case
+            $notificationHandler->insertNotification($adminID, 'active', 'Hive not recorded.', 'emptyHiveNum', '/dashboard', 'unseen');
+            header('Location: /chooseHive');  // Redirect back to chooseHive
+            exit();
+        }
+    } else {
+        // If no hiveNum is provided, redirect back to chooseHive
+        header('Location: /chooseHive');
+        exit();
+    }
+});
+
+$router->get('/parameterMonitoring', function() {
+    function season_start() {
+        if (session_status() == PHP_SESSION_NONE) {
+            session_start();
+        }
+
+        if (!isset($_SESSION['season_started'])) {
+            $_SESSION['season_started'] = true;
+        }
+    }
+
+    season_start();
+
     if (!isset($_SESSION['adminID'])) {
         session_destroy();
         header('Location: /');
         exit();
     }
+
+    if (!isset($_SESSION['hiveID'])) {
+        header('Location: /chooseHive');  // Redirect without destroying session
+        exit();
+    }
+
+    require_once 'parameterMonitoring.php';  // Load Parameter Monitoring page
+});
+
+
+$router->get('/reports', function() {
+    function season_start1() {
+        if (session_status() == PHP_SESSION_NONE) {
+            session_start();
+        }
+
+        if (!isset($_SESSION['season_started'])) {
+            $_SESSION['season_started'] = true;
+        }
+    }
+
+    season_start1();
+
+    if (!isset($_SESSION['adminID'])) {
+        session_destroy();
+        header('Location: /');
+        exit();
+    }
+
+    if (!isset($_SESSION['hiveID'])) {
+        header('Location: /chooseHive');  // Redirect without destroying session
+        exit();
+    }
+
     require_once 'reports.php';  // Load reports page
 });
 
 $router->get('/harvestCycle', function() {
+    function season_start2() {
+        if (session_status() == PHP_SESSION_NONE) {
+            session_start();
+        }
+
+        if (!isset($_SESSION['season_started'])) {
+            $_SESSION['season_started'] = true;
+        }
+    }
+
+    season_start2();
+
     if (!isset($_SESSION['adminID'])) {
         session_destroy();
         header('Location: /');
         exit();
     }
+
+    if (!isset($_SESSION['hiveID'])) {
+        header('Location: /chooseHive');  // Redirect without destroying session
+        exit();
+    }
+
     require_once 'harvestCycle.php';  // Load harvestCycle page
 });
 
@@ -104,15 +205,6 @@ $router->get('/profile', function() {
         exit();
     }
     require_once 'profile.php';  // Load Terms and Conditions page
-});
-
-$router->get('/parameterMonitoring', function() {
-    if (!isset($_SESSION['adminID'])) {
-        session_destroy();
-        header('Location: /');
-        exit();
-    }
-    require_once 'parameterMonitoring.php';  // Load Parameter Monitoring page
 });
 
 $router->get('/resendEmail', function() {

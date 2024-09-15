@@ -4,17 +4,6 @@
     ini_set('display_startup_errors', 1);
     error_reporting(E_ALL);
 
-    function season_start() {
-        if (session_status() == PHP_SESSION_NONE) {
-            session_start();
-        }
-
-        if (!isset($_SESSION['season_started'])) {
-            $_SESSION['season_started'] = true;
-        }
-    }
-
-    season_start();
     require_once './src/db.php';
     require_once './src/profileFunction.php';
 
@@ -446,7 +435,7 @@
 
                         </div>
                         <div class="save-changes">
-                            <button name="changePass" type="submit" class="mt-4 mb-5" id="save-btn">
+                            <button name="changePass" type="submit" class="mt-4 mb-5" id="save-btn1">
                                 Save Change
                             </button>
                         </div>

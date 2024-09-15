@@ -125,6 +125,10 @@ document.addEventListener('DOMContentLoaded', function() {
                             noti_message = 'Email verified successfully!';
                             noti_image = 'img/beemo-ico.ico';
                             break;
+                        case 'emptyHiveNum':
+                            noti_message = 'Hive not recorded.';
+                            noti_image = 'img/beemo-ico.ico';
+                            break;
                         default:
                             noti_message = 'Notification';
                             noti_image = 'img/beemo-ico.ico';

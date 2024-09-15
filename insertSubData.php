@@ -12,12 +12,13 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-// Define a valid cycle_number (replace with actual cycle_number as needed)
-$cycleNumber = 1; // Example: replace with an actual cycle_number that exists in your harvest_cycle table
+// Define the hive number and admin ID
+$hiveID = 1;
+$adminID = 10;
 
-// Start time (6 months ago)
+// Start time (current month)
 $startTime = new DateTime();
-$startTime->sub(new DateInterval('P6M')); // Subtract 6 months
+$startTime->modify('first day of this month'); // Start at the beginning of the current month
 
 // End time (1 year in the future)
 $endTime = new DateTime();
@@ -30,7 +31,7 @@ $period = new DatePeriod($startTime, $interval, $endTime); // End time as a Date
 $initialWeight = 1000; // Starting weight in grams
 $currentWeight = $initialWeight; // Set current weight to the initial value
 
-$weightIncrementPerDay = 15; // Increment weight by 15 grams each day if conditions are optimal
+$weightIncrementPerDay = 30; // Increment weight by 15 grams each day if conditions are optimal
 
 // Define temperature and humidity ranges for optimal conditions
 $optimalTempRange = [32, 34];
@@ -38,8 +39,8 @@ $optimalHumidityRange = [50, 60];
 
 foreach ($period as $dt) {
     // Generate random values for temperature and humidity
-    $temperature = rand(28, 40); // Random temperature between 28 and 40
-    $humidity = rand(40, 85); // Random humidity between 40 and 85
+    $temperature = rand(28, 38); // Random temperature between 28 and 40
+    $humidity = rand(40, 70); // Random humidity between 40 and 85
 
     // Check if temperature and humidity are within the optimal range
     if ($temperature >= $optimalTempRange[0] && $temperature <= $optimalTempRange[1] &&
@@ -52,8 +53,8 @@ foreach ($period as $dt) {
     $timestamp = $dt->format('Y-m-d H:i:s');
 
     // Prepare SQL statement
-    $sql = "INSERT INTO subdata (cycle_number, temperature, humidity, weight, timestamp) 
-            VALUES ('$cycleNumber', '$temperature', '$humidity', '$currentWeight', '$timestamp')";
+    $sql = "INSERT INTO subdata (adminID, hiveID, temperature, humidity, weight, timestamp) 
+            VALUES ('$adminID', '$hiveID', '$temperature', '$humidity', '$currentWeight', '$timestamp')";
 
     // Execute SQL statement
     if ($conn->query($sql) === TRUE) {

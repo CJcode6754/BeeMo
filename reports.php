@@ -1,12 +1,4 @@
 <?php
-    function season_start() {
-        if (session_status() == PHP_SESSION_NONE) {
-            session_start();
-        }
-    }
-
-    season_start();
-
     require_once './src/db.php';
     require_once './src/profileFunction.php';
 
@@ -18,7 +10,7 @@
         header('Location: /');
         exit();
     }
-
+    $adminID = $_SESSION['adminID'];
     $profile = new Profile($conn, $_SESSION['adminID']);
 
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -75,7 +67,7 @@
                 </a>
             </li>
             <li class="sidebar-menu-item">
-                <a href="/chooseHive">
+                <a href="/parameterMonitoring">
                     <i class="fa-solid fa-temperature-three-quarters sidebar-menu-item-icon"></i>
                     Parameters Monitoring
                 </a>
