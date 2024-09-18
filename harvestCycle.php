@@ -124,7 +124,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 </a>
             </li>
             <li class="sidebar-menu-item">
-                <a href="/chooseHive">
+                <a href="/parameterMonitoring">
                     <i class="fa-solid fa-temperature-three-quarters sidebar-menu-item-icon"></i>
                     Parameters Monitoring
                 </a>
@@ -428,7 +428,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                                     </div>
                                                                     <div class='col-md-4'>
                                                                         <label for='cycleEnd_<?= $editModalID ?>' class='form-label d-flex justify-content-start' style='font-size: 13px;'>End of Cycle</label>
-                                                                        <input name='edit_end_date' type='date' class='form-control rounded-3 py-2' style='border: 1.8px solid #2B2B2B; font-size: 13px;' id='cycleEnd_<?= $editModalID ?>' value='<?= htmlspecialchars($row['end_of_cycle']) ?>' required>
+                                                                        <input name='edit_end_date' type='date' class='form-control rounded-3 py-2' style='border: 1.8px solid #2B2B2B; font-size: 13px;' id='cycleEnd_<?= $editModalID ?>' value='<?= htmlspecialchars($row['end_of_cycle']) ?>' required min='<?= $currentDate ?>'>
                                                                     </div>
                                                                     <div class='mt-4 d-flex justify-content-end'>
                                                                         <input type='hidden' name='cycle_number' value='<?= $row['cycle_number'] ?>'>

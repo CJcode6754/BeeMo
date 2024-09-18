@@ -187,7 +187,7 @@
                             </ul>
                         </div>
                     </div>
-                    <div class="date-pick-size d-flex justify-content-center mt-3">
+                    <div class="col-12 col-md-12 mt-3">
                         <input type="date" id="start-date-picker" class="form-control">
                     </div>
                     <div class="container-chart">
