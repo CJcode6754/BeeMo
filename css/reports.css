@@ -22,16 +22,35 @@ main {
   }
   
   .label-container a {
-    font-size: 14px;
+    font-size: 13px;
+    padding: 3px;
   }
   
   .date-container a {
     font-size: 12px;
   }
+
+  .btn-group{
+    height: 30px;
+  }
   
+  .descriptive-analytics-container p{
+    font-size: 12px;
+  }
+
+  #date-range-label, #average-value, #min-value, #max-value{
+    font-size: 12px;
+  }
+
+  .date-pick-size{
+    margin-left: 100px;
+    margin-right: 110px;
+  }
+
   .btn-label.label-current {
     background-color: #faef9b;
     font-weight: 600;
+    font-size: 13px;
   }
   
   .btn-label.label-current:hover {

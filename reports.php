@@ -179,7 +179,7 @@
                     </div>
                     <div class="col-12 col-md-12">
                         <div class="dropdown">
-                            <button class="btn btn-primary dropdown-toggle" type="button" id="harvestCycleDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                            <button class="btn btn-warning btn-sm dropdown-toggle" type="button" id="harvestCycleDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                                 Select Harvest Cycle
                             </button>
                             <ul class="dropdown-menu" id="harvestCycleList">
@@ -187,7 +187,7 @@
                             </ul>
                         </div>
                     </div>
-                    <div class="col-12 col-md-12 mt-3">
+                    <div class="date-pick-size d-flex justify-content-center mt-3">
                         <input type="date" id="start-date-picker" class="form-control">
                     </div>
                     <div class="container-chart">
@@ -200,7 +200,7 @@
                     <span class="badge" style="background-color: rgba(0, 255, 0, 0.2); color: #2B2B2B;">Optimal Range</span>
                     <span class="badge" style="background-color: rgba(255, 127, 127, 0.4); color: #2B2B2B;">Out of Optimal Range</span>
                 </div>
-                <div class="descriptive-analytics-container mt-2 row row-cols-2 row-cols-lg-5 g-2 g-lg-3">
+                <div class="descriptive-analytics-container d-flex justify-content-center mt-2 row row-cols-2 row-cols-lg-5 g-2 g-lg-3" >
                     <p>Date Range: <span id="date-range-label">24 Hours</span></p>
                     <p>Average: <span id="average-value">-</span></p>
                     <p>Minimum: <span id="min-value">-</span></p>

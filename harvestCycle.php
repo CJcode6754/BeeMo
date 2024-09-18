@@ -1,5 +1,6 @@
 <?php
-function season_start() {
+function season_start()
+{
     if (session_status() == PHP_SESSION_NONE) {
         session_start();
     }
@@ -20,7 +21,7 @@ if (!isset($_SESSION['adminID'])) {
     exit;
 }
 
-if(isset($_POST['dashboard'])){
+if (isset($_POST['dashboard'])) {
     $_SESSION['adminID'] = $adminID;
     exit;
 }
@@ -51,7 +52,7 @@ if (isset($_POST['btn_edit'])) {
 
 // Fetch the next cycle number
 $nextCycleNumber = 1; // Default to 1 if no cycles exist
-$query_next_cycle = "SELECT MAX(cycle_number) AS max_cycle_num FROM harvest_cycle WHERE adminID = '".$_SESSION['adminID']."'";
+$query_next_cycle = "SELECT MAX(cycle_number) AS max_cycle_num FROM harvest_cycle WHERE adminID = '" . $_SESSION['adminID'] . "'";
 $result_next_cycle = mysqli_query($conn, $query_next_cycle);
 if ($row = mysqli_fetch_assoc($result_next_cycle)) {
     $nextCycleNumber = $row['max_cycle_num'] + 1;
@@ -96,6 +97,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -109,7 +111,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </head>
 
 <body class="overflow-x-hidden">
-  <!-- Sidebar -->
+    <!-- Sidebar -->
     <div id="sidebar" class="sidebar position-fixed top-0 bottom-0 bg-white border-end offcanvass">
         <div class="d-flex align-items-center p-3 py-5">
             <a href="/dashboard" class="sidebar-logo fw-bold text-dark text-decoration-none fs-4"><img src="img/BeeMo Logo Side.png" width="173px" height="75px" alt="BeeMo Logo"></a>
@@ -228,41 +230,133 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     <p class="fs-4 mb-5 fw-bold cycle-highlight">Harvest Cycle</p>
                     <div class="container-cycle">
 
-                    <!-- FORM TO RECORD HARVEST CYCLE -->
-                    <form action="harvestCycle.php" method="post" class="row mt-2 g-3">
-                        <div class="col-md-4">
-                            <label for="cycleNumber" class="form-label d-flex justify-content-start" style="font-size: 13px;">Cycle Number</label>
-                            <input name="cycle_num" type="number" class="form-control rounded-3 py-2" style="border: 1.8px solid #2B2B2B; font-size: 13px;" id="cycleNumber" required="This is required" value="<?php echo $nextCycleNumber; ?>" readonly>
-                        </div>
-                        <div class="col-md-4">
-                            <label for="cycleStart" class="form-label d-flex justify-content-start" style="font-size: 13px;">Start of Cycle</label>
-                            <input name="start_date" type="date" class="form-control rounded-3 py-2" style="border: 1.8px solid #2B2B2B; font-size: 13px;" id="cycleStart" required="This is required" min="<?php echo $currentDate; ?>">
-                        </div>
-                        <div class="col-md-4">
-                            <label for="cycleEnd" class="form-label d-flex justify-content-start"  style="font-size: 13px;">End of Cycle</label>
-                            <input name="end_date" type="date" class="form-control rounded-3 py-2" style="border: 1.8px solid #2B2B2B; font-size: 13px;" id="cycleEnd" required="This is required" min="<?php echo $currentDate; ?>">
-                        </div>
-                        <div class="mt-4 d-flex justify-content-end">
-                            <button name="submit" type="submit" class="save-button px-4 border border-1 border-black fw-semibold">Save</button>
-                        </div>
-                    </form>
+                        <!-- FORM TO RECORD HARVEST CYCLE -->
+                        <form action="harvestCycle.php" method="post" class="row mt-2 g-3">
+                            <div class="col-md-4">
+                                <label for="cycleNumber" class="form-label d-flex justify-content-start" style="font-size: 13px;">Cycle Number</label>
+                                <input name="cycle_num" type="number" class="form-control rounded-3 py-2" style="border: 1.8px solid #2B2B2B; font-size: 13px;" id="cycleNumber" required="This is required" value="<?php echo $nextCycleNumber; ?>" readonly>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="cycleStart" class="form-label d-flex justify-content-start" style="font-size: 13px;">Start of Cycle</label>
+                                <input name="start_date" type="date" class="form-control rounded-3 py-2" style="border: 1.8px solid #2B2B2B; font-size: 13px;" id="cycleStart" required="This is required" min="<?php echo $currentDate; ?>">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="cycleEnd" class="form-label d-flex justify-content-start" style="font-size: 13px;">End of Cycle</label>
+                                <input name="end_date" type="date" class="form-control rounded-3 py-2" style="border: 1.8px solid #2B2B2B; font-size: 13px;" id="cycleEnd" required="This is required" min="<?php echo $currentDate; ?>">
+                            </div>
+                            <div class="mt-4 d-flex justify-content-end">
+                                <button name="submit" type="submit" class="save-button px-4 border border-1 border-black fw-semibold">Save</button>
+                            </div>
+                        </form>
 
-                    <div class="table-responsive mt-2" style="max-height: 130px; overflow-y: auto;">
-                        <table class="table cycle-table border-dark">
-                            <thead>
-                                <tr>
-                                    <th style="background-color: #FAEF9B;">Cycle Number</th>
-                                    <th style="background-color: #FAEF9B;">Start of Cycle</th>
-                                    <th style="background-color: #FAEF9B">Honey (kg)</th>
-                                    <th style="background-color: #FAEF9B;">End of Harvest</th>
-                                    <th style="background-color: #FAEF9B;">Status</th>
-                                    <th style="background-color: #FAEF9B;">Edit</th>
-                                    <th style="background-color: #FAEF9B;">Remove</th>
-                                </tr>
-                            </thead>
-                            <tbody id="cycleTableBody">
-                                <?php foreach ($filtered_cycles as $row): ?>
-                                    <?php
+                        <!-- Filter -->
+                        <div class="mt-4 gap-2 d-flex justify-content-end mb-0" aria-expanded="false">
+                            <button class="filter-button dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                Filter
+                            </button>
+                            <ul class=" dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                <li><a class="dropdown-item filter-option" data-value="all" href="#">All Harvest Cycle</a></li>
+                                <li><a class="dropdown-item filter-option" data-value="pending" href="#">Pending</a></li>
+                                <li><a class="dropdown-item filter-option" data-value="complete" href="#">Complete</a></li>
+                            </ul>
+                            <form id="filterForm" action="/harvestCycle" method="post" style="display: none;">
+                                <input type="hidden" name="filter_value" value="">
+                            </form>
+
+                            <button type="button" class="view-button px-4 mx-1" data-bs-toggle='modal' data-bs-target='#viewAllModal'>View All</button>
+                        </div>
+                        <div class='modal fade' id='viewAllModal' tabindex='-1' aria-labelledby='ViewAllLabel' aria-hidden='true'>
+                            <div class='modal-dialog modal-lg modal-dialog-centered rounded-3'>
+                                <div class='modal-content' style='border: 2px solid #2B2B2B;'>
+                                    <div class='modal-header border-dark border-2' style='background-color: #FCF4B9;'>
+                                        <h5 class='modal-title fw-semibold mx-4' id='ViewAllLabel'>Harvest Cycle</h5>
+                                        <button name='closeBtn' type='button' class='btn-close' data-bs-dismiss='modal' aria-label='Close'></button>
+                                    </div>
+                                    <div class='modal-body m-5'>
+                                        <div class="table-responsive mt-2" style="max-height: 400px; overflow-y: auto;">
+                                            <table class="table cycle-table border-dark">
+                                                <thead>
+                                                    <tr>
+                                                        <th style="background-color: #FAEF9B;">Cycle Number</th>
+                                                        <th style="background-color: #FAEF9B;">Start of Cycle</th>
+                                                        <th style="background-color: #FAEF9B">Honey (kg)</th>
+                                                        <th style="background-color: #FAEF9B;">End of Harvest</th>
+                                                        <th style="background-color: #FAEF9B;">Status</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="viewAllTableBody">
+                                                    <?php foreach ($filtered_cycles as $row): ?>
+                                                        <?php
+                                                        $start_date = new DateTime($row['start_of_cycle']);
+                                                        $end_date = new DateTime($row['end_of_cycle']);
+                                                        $now = new DateTime();
+
+                                                        $total_duration = $end_date->getTimestamp() - $start_date->getTimestamp();
+                                                        $elapsed_duration = $now->getTimestamp() - $start_date->getTimestamp();
+
+                                                        // Handle the case where start and end dates are the same
+                                                        if ($total_duration == 0) {
+                                                            $progress_percentage = 100;
+                                                        } else {
+                                                            $progress_percentage = ($elapsed_duration / $total_duration) * 100;
+                                                        }
+
+                                                        $progress_percentage = min(max($progress_percentage, 0), 100);
+
+                                                        // Check if progress has reached 100% and status is not updated
+                                                        if ($progress_percentage == 100 && $row['status'] != 1) {
+                                                            // Update the status in the database
+                                                            $cycle_number = $row['cycle_number'];
+                                                            $update_status_query = "UPDATE your_table_name SET status = 1 WHERE cycle_number = $cycle_number";
+                                                            mysqli_query($conn, $update_status_query);
+
+                                                            // Update the row status locally to reflect the change
+                                                            $row['status'] = 1;
+                                                        }
+
+                                                        $progress_color = $row['status'] == 1 ? '#F9E37F' : ($progress_percentage >= 100 ? '#F9E37F' : '#4caf50');
+                                                        $icon = $row['status'] == 1 ? "<i class='fa-solid fa-check'></i>" : "";
+                                                        ?>
+                                                        <tr>
+                                                            <td><?= htmlspecialchars($row['cycle_number']) ?></td>
+                                                            <td><?= htmlspecialchars($row['start_of_cycle']) ?></td>
+                                                            <td><?= htmlspecialchars($row['honey_kg']) ?></td>
+                                                            <td><?= htmlspecialchars($row['end_of_cycle']) ?></td>
+                                                            <td>
+                                                                <div class='status_pending'>
+                                                                    <div class='progress-circle' style='background: conic-gradient(
+                                                                                        <?= $progress_color ?> <?= $progress_percentage ?>%,
+                                                                                        #f3f3f3 <?= $progress_percentage ?>%
+                                                                                    )'></div>
+                                                                </div>
+                                                                <div class='status-icon1'><?= $icon ?></div>
+                                                            </td>
+                                                        </tr>
+                                                    <?php endforeach; ?>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="table-responsive mt-2" style="max-height: 130px; overflow-y: auto;">
+                            <table class="table cycle-table border-dark">
+                                <thead>
+                                    <tr>
+                                        <th style="background-color: #FAEF9B;">Cycle Number</th>
+                                        <th style="background-color: #FAEF9B;">Start of Cycle</th>
+                                        <th style="background-color: #FAEF9B">Honey (kg)</th>
+                                        <th style="background-color: #FAEF9B;">End of Harvest</th>
+                                        <th style="background-color: #FAEF9B;">Status</th>
+                                        <th style="background-color: #FAEF9B;">Edit</th>
+                                        <th style="background-color: #FAEF9B;">Remove</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="cycleTableBody">
+                                    <?php foreach ($filtered_cycles as $row): ?>
+                                        <?php
                                         $start_date = new DateTime($row['start_of_cycle']);
                                         $end_date = new DateTime($row['end_of_cycle']);
                                         $now = new DateTime();
@@ -348,8 +442,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                             </td>
                                             <td>
                                                 <button class='btn delete-btn'><i class='fa-regular fa-trash-can' style='color: red;' data-bs-toggle='modal' type='button' data-bs-target='#<?= $deleteModalID ?>'></i></button>
-                                                 <!-- Edit Modal -->
-                                                 <div class='modal fade' id='<?= $deleteModalID ?>' tabindex='-1' aria-labelledby='Delete_CycleLabel_<?= $deleteModalID ?>' aria-hidden='true'>
+                                                <!-- Edit Modal -->
+                                                <div class='modal fade' id='<?= $deleteModalID ?>' tabindex='-1' aria-labelledby='Delete_CycleLabel_<?= $deleteModalID ?>' aria-hidden='true'>
                                                     <div class='modal-dialog modal-lg modal-dialog-centered rounded d-flex justify-content-center'>
                                                         <div class='modal-content' style='border: 2px solid #2B2B2B; width: 450px; height: 180px;'>
                                                             <div class='modal-header border-dark border-2' style='background-color: #FCF4B9;'>
@@ -361,7 +455,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                                         <button type="button" class="btn btn-dark" data-bs-dismiss='modal' aria-label='Close'>No</button>
                                                                     </div>
                                                                     <div class='col-md-4'>
-                                                                        <button name='btn_delete' type="submit" class="btn btn-success" >Yes</button>
+                                                                        <button name='btn_delete' type="submit" class="btn btn-success">Yes</button>
                                                                         <input type='hidden' name='cycle_number' value='<?= $row['cycle_number'] ?>'>
                                                                     </div>
                                                                 </form>
@@ -375,119 +469,28 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 </tbody>
                             </table>
                         </div>
-                                        <!-- Filter -->
-                                        <div class="dropdown mb-0" data-bs-toggle="dropdown" aria-expanded="false">
-                                            <button class="filter-button btn= dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                                Filter
-                                            </button>
-                                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                                                <li><a class="dropdown-item filter-option" data-value="all" href="#">All Harvest Cycle</a></li>
-                                                <li><a class="dropdown-item filter-option" data-value="pending" href="#">Pending</a></li>
-                                                <li><a class="dropdown-item filter-option" data-value="complete" href="#">Complete</a></li>
-                                            </ul>
-                                        </div>
-                                        <form id="filterForm" action="/harvestCycle" method="post" style="display: none;">
-                                            <input type="hidden" name="filter_value" value="">
-                                        </form>
 
-                                        <!-- View All Modal -->
-                                        <button type="button" class="view-button px-4 border border-1 border-black fw-semibold" data-bs-toggle='modal' data-bs-target='#viewAllModal'>View All</button>
-                                        <div class='modal fade' id='viewAllModal' tabindex='-1' aria-labelledby='ViewAllLabel' aria-hidden='true'>
-                                            <div class='modal-dialog modal-lg modal-dialog-centered rounded-3'>
-                                                <div class='modal-content' style='border: 2px solid #2B2B2B;'>
-                                                    <div class='modal-header border-dark border-2' style='background-color: #FCF4B9;'>
-                                                        <h5 class='modal-title fw-semibold mx-4' id='ViewAllLabel'>Harvest Cycle</h5>
-                                                        <button name='closeBtn' type='button' class='btn-close' data-bs-dismiss='modal' aria-label='Close'></button>
-                                                    </div>
-                                                    <div class='modal-body m-5'>
-                                                        <div class="table-responsive mt-2" style="max-height: 400px; overflow-y: auto;">
-                                                            <table class="table cycle-table border-dark">
-                                                                <thead>
-                                                                    <tr>
-                                                                        <th style="background-color: #FAEF9B;">Cycle Number</th>
-                                                                        <th style="background-color: #FAEF9B;">Start of Cycle</th>
-                                                                        <th style="background-color: #FAEF9B">Honey (kg)</th>
-                                                                        <th style="background-color: #FAEF9B;">End of Harvest</th>
-                                                                        <th style="background-color: #FAEF9B;">Status</th>
-                                                                    </tr>
-                                                                </thead>
-                                                                <tbody id="viewAllTableBody">
-                                                                    <?php foreach ($filtered_cycles as $row): ?>
-                                                                        <?php
-                                                                        $start_date = new DateTime($row['start_of_cycle']);
-                                                                        $end_date = new DateTime($row['end_of_cycle']);
-                                                                        $now = new DateTime();
-
-                                                                        $total_duration = $end_date->getTimestamp() - $start_date->getTimestamp();
-                                                                        $elapsed_duration = $now->getTimestamp() - $start_date->getTimestamp();
-
-                                                                        // Handle the case where start and end dates are the same
-                                                                        if ($total_duration == 0) {
-                                                                            $progress_percentage = 100;
-                                                                        } else {
-                                                                            $progress_percentage = ($elapsed_duration / $total_duration) * 100;
-                                                                        }
-
-                                                                        $progress_percentage = min(max($progress_percentage, 0), 100);
-
-                                                                        // Check if progress has reached 100% and status is not updated
-                                                                        if ($progress_percentage == 100 && $row['status'] != 1) {
-                                                                            // Update the status in the database
-                                                                            $cycle_number = $row['cycle_number'];
-                                                                            $update_status_query = "UPDATE your_table_name SET status = 1 WHERE cycle_number = $cycle_number";
-                                                                            mysqli_query($conn, $update_status_query);
-
-                                                                            // Update the row status locally to reflect the change
-                                                                            $row['status'] = 1;
-                                                                        }
-
-                                                                        $progress_color = $row['status'] == 1 ? '#F9E37F' : ($progress_percentage >= 100 ? '#F9E37F' : '#4caf50');
-                                                                        $icon = $row['status'] == 1 ? "<i class='fa-solid fa-check'></i>" : "";
-                                                                        ?>
-                                                                        <tr>
-                                                                            <td><?= htmlspecialchars($row['cycle_number']) ?></td>
-                                                                            <td><?= htmlspecialchars($row['start_of_cycle']) ?></td>
-                                                                            <td><?= htmlspecialchars($row['honey_kg']) ?></td>
-                                                                            <td><?= htmlspecialchars($row['end_of_cycle']) ?></td>
-                                                                            <td>
-                                                                                <div class='status_pending'>
-                                                                                    <div class='progress-circle' style='background: conic-gradient(
-                                                                                        <?= $progress_color ?> <?= $progress_percentage ?>%,
-                                                                                        #f3f3f3 <?= $progress_percentage ?>%
-                                                                                    )'></div>
-                                                                                </div>
-                                                                                <div class='status-icon1'><?= $icon ?></div>
-                                                                            </td>
-                                                                        </tr>
-                                                                    <?php endforeach; ?>
-                                                                </tbody>
-                                                            </table>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="legend">
-                                            <div class="complete"><i class='fa-solid fa-check'></i> <span class="text_legend1">Completed Cycle</span></div>
-                                            <div class="pending">
-                                                <div class="circle"></div>
-                                            </div>
-                                            <span class="text_legend2">Pending Cycle</span>
-                                        </div>
-                                    </div>
-                                </div>
+                        <div class="legend">
+                            <div class="complete"><i class='fa-solid fa-check'></i> <span class="text_legend1">Completed Cycle</span></div>
+                            <div class="pending">
+                                <div class="circle"></div>
                             </div>
+                            <span class="text_legend2">Pending Cycle</span>
                         </div>
-
-                </div>
+                    </div>
                 </div>
             </div>
         </div>
-            <div class="yellow mt-1 d-md-none fixed-bottom p-0 m-0"></div>
+
+        </div>
+        </div>
+        </div>
+        </div>
+        <div class="yellow mt-1 d-md-none fixed-bottom p-0 m-0"></div>
     </main>
 
-        <!-- Profile Modal -->
-        <div class="modal fade " id="Profile-Modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <!-- Profile Modal -->
+    <div class="modal fade " id="Profile-Modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable profile-dialog">
 
             <div class="modal-content border-2 border-dark" style="border-radius: 20px; box-shadow: 0 7px #2B2B2B; max-width: 400px;">
@@ -500,7 +503,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <div class="modal-body" style="color: #292929;">
                     <div class="icon text-center my-3"><img src="img/Profile icon.png" alt="" width="80" height="80"></div>
                     <div class="text-center">
-                    <?php
+                        <?php
                         require_once './src/db.php';
                         $db = new Database();
                         $conn = $db->getConnection();
@@ -508,14 +511,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         $get = "SELECT admin_name, email FROM admin_table WHERE adminID = '$adminID'";
                         $getQuery = mysqli_query($conn, $get);
 
-                        while($row = $getQuery->fetch_assoc()){
-                            echo"
-                            <h5>". $row['admin_name'] ."</h5>
-                            <h6 style='text-decoration: underline; font-weight: 350;'><small class='text-body-secondary'>". $row['email']."</small></h6>
+                        while ($row = $getQuery->fetch_assoc()) {
+                            echo "
+                            <h5>" . $row['admin_name'] . "</h5>
+                            <h6 style='text-decoration: underline; font-weight: 350;'><small class='text-body-secondary'>" . $row['email'] . "</small></h6>
                             ";
                         }
-                    ?>
-                    <hr class="mx-auto" width = "80%">
+                        ?>
+                        <hr class="mx-auto" width="80%">
                     </div>
 
                     <div class="Options mx-auto py-4">
@@ -524,7 +527,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             <p><i class="fa-solid fa-user"></i> <span>My Profile</span><i class="fa-solid fa-angle-right"></i></p>
                         </button>
 
-                        <button type="button" id="edit-profile-button" data-bs-toggle="modal" data-bs-target="#Change-Pass-Modal" style="padding: 10px;" >
+                        <button type="button" id="edit-profile-button" data-bs-toggle="modal" data-bs-target="#Change-Pass-Modal" style="padding: 10px;">
                             <p><i class="fa-solid fa-lock"></i> <span>Change Password</span><i class="fa-solid fa-angle-right"></i></p>
                         </button>
 
@@ -542,27 +545,27 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     <!-- Edit Profile -->
 
-        <div class="modal fade " id="Edit-Profile-Modal" tabindex="0" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable profile-dialog">
+    <div class="modal fade " id="Edit-Profile-Modal" tabindex="0" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable profile-dialog">
 
-                <div class="modal-content border-2 border-dark" style="border-radius: 20px; box-shadow: 0 7px #2B2B2B; max-width: 450px;">
-                    <div class="modal-header profile-header" style="padding: 5px;">
+            <div class="modal-content border-2 border-dark" style="border-radius: 20px; box-shadow: 0 7px #2B2B2B; max-width: 450px;">
+                <div class="modal-header profile-header" style="padding: 5px;">
 
-                        <button type="button" class="btn" data-bs-toggle="modal" data-bs-target="#Profile-Modal" data-bs-dismiss="modal" aria-label="Back">
-                            <i class="fa-solid fa-angle-left fa-lg"></i>
-                        </button>
+                    <button type="button" class="btn" data-bs-toggle="modal" data-bs-target="#Profile-Modal" data-bs-dismiss="modal" aria-label="Back">
+                        <i class="fa-solid fa-angle-left fa-lg"></i>
+                    </button>
 
-                        <button type="button" class="btn" data-bs-dismiss="modal" aria-label="Close">
-                            <i class="fa-solid fa-xmark fa-lg" style="margin-left: 360px;"></i>
-                        </button>
+                    <button type="button" class="btn" data-bs-dismiss="modal" aria-label="Close">
+                        <i class="fa-solid fa-xmark fa-lg" style="margin-left: 360px;"></i>
+                    </button>
 
-                    </div>
+                </div>
 
-                    <!-- Modal Contents -->
-                    <div class="modal-body" style="color: #292929;">
+                <!-- Modal Contents -->
+                <div class="modal-body" style="color: #292929;">
                     <div class="icon text-center my-3"><img src="img/Profile icon.png" alt="" width="80" height="80"></div>
                     <div class="text-center">
-                    <?php
+                        <?php
                         require_once './src/db.php';
                         $db = new Database();
                         $conn = $db->getConnection();
@@ -570,11 +573,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         $get = "SELECT admin_name, email, number FROM admin_table WHERE adminID = '$adminID'";
                         $getQuery = mysqli_query($conn, $get);
 
-                        while($row = $getQuery->fetch_assoc()){
+                        while ($row = $getQuery->fetch_assoc()) {
                             $currentName = $row['admin_name'];
                             $currentEmail = $row['email'];
                             $currentPhoneNumber = $row['number'];
-                            echo"
+                            echo "
                                 <h5>$currentName</h5>
                                 <h6 style='text-decoration: underline; font-weight: 350;'><small class='text-body-secondary'>$currentEmail</small></h6>
                                 <div class='Field-inputs mx-4' style='font-size: small;'>
@@ -602,13 +605,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         </div>
                             ";
                         }
-                    ?>
+                        ?>
                     </div>
                 </div>
 
-                </div>
             </div>
         </div>
+    </div>
 
     <!-- ----------------------------------------------------------------------------------------------------------- -->
 
@@ -620,12 +623,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <div class="modal-content border-2 border-dark" style="border-radius: 20px; box-shadow: 0 7px #2B2B2B; max-width: 450px;">
                 <div class="modal-header profile-header" style="padding: 5px;">
 
-                        <button type="button" data-bs-toggle="modal" data-bs-target="#Profile-Modal" class="btn" data-bs-dismiss="modal" aria-label="Back">
-                            <i class="fa-solid fa-angle-left fa-lg"></i>
-                        </button>
-                        <button type="button" class="btn" data-bs-dismiss="modal" aria-label="Close">
-                            <i class="fa-solid fa-xmark fa-lg" style="margin-left: 360px;"></i>
-                        </button>
+                    <button type="button" data-bs-toggle="modal" data-bs-target="#Profile-Modal" class="btn" data-bs-dismiss="modal" aria-label="Back">
+                        <i class="fa-solid fa-angle-left fa-lg"></i>
+                    </button>
+                    <button type="button" class="btn" data-bs-dismiss="modal" aria-label="Close">
+                        <i class="fa-solid fa-xmark fa-lg" style="margin-left: 360px;"></i>
+                    </button>
 
                 </div>
 
@@ -634,7 +637,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     <div class="icon text-center my-3"><img src="img/Profile icon.png" alt="" width="80" height="80"></div>
 
                     <div class="text-center">
-                    <?php
+                        <?php
                         require_once './src/db.php';
                         $db = new Database();
                         $conn = $db->getConnection();
@@ -642,14 +645,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         $get = "SELECT admin_name, email FROM admin_table WHERE adminID = '$adminID'";
                         $getQuery = mysqli_query($conn, $get);
 
-                        while($row = $getQuery->fetch_assoc()){
-                            echo"
-                            <h5>". $row['admin_name'] ."</h5>
-                            <h6 style='text-decoration: underline; font-weight: 350;'><small class='text-body-secondary'>". $row['email']."</small></h6>
+                        while ($row = $getQuery->fetch_assoc()) {
+                            echo "
+                            <h5>" . $row['admin_name'] . "</h5>
+                            <h6 style='text-decoration: underline; font-weight: 350;'><small class='text-body-secondary'>" . $row['email'] . "</small></h6>
                             ";
                         }
-                    ?>
-                    <hr class="mx-auto" width = "90%" >
+                        ?>
+                        <hr class="mx-auto" width="90%">
                     </div>
 
                     <div class="My-Profile text-center pb-4 pt-3">
@@ -663,7 +666,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 <input name="OldPass" type="password" class="form-control" id="password" placeholder="Password" required>
                                 <label for="password"><i class="fa-solid fa-lock"></i> Current Password</label>
                                 <div class="password-wrapper">
-                                <span id="togglePassword" class="toggle-password"><i class="fa-solid fa-eye-slash fa-lg"></i></span>
+                                    <span id="togglePassword" class="toggle-password"><i class="fa-solid fa-eye-slash fa-lg"></i></span>
                                 </div>
                             </div>
 
@@ -671,7 +674,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 <input name="newPass" type="password" class="form-control" id="new-password" placeholder="Password" required>
                                 <label for="password"><i class="fa-solid fa-lock"></i> New Password</label>
                                 <div class="password-wrapper">
-                                <span id="togglePassword" class="toggle-password"><i class="fa-solid fa-eye-slash fa-lg"></i></span>
+                                    <span id="togglePassword" class="toggle-password"><i class="fa-solid fa-eye-slash fa-lg"></i></span>
                                 </div>
                             </div>
 
@@ -679,7 +682,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 <input name="conNewPass" type="password" class="form-control" id="confirm-password" placeholder="Password" required>
                                 <label for="password"><i class="fa-solid fa-lock"></i> Confirm Password</label>
                                 <div class="password-wrapper">
-                                <span id="togglePassword" class="toggle-password"><i class="fa-solid fa-eye-slash fa-lg"></i></span>
+                                    <span id="togglePassword" class="toggle-password"><i class="fa-solid fa-eye-slash fa-lg"></i></span>
                                 </div>
                             </div>
 
@@ -690,105 +693,106 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             </button>
                         </div>
                     </form>
+                </div>
             </div>
         </div>
-    </div>
 
-    <!-- Side Bar Mobile View -->
-    <div id="offcanvasNav-Menu" class="offcanvas offcanvas-end sidebar-mobile bg-white p-3 border border-dark" tabindex="-1" aria-labelledby="offcanvasRightLabel">
-        <i class="fa-solid fa-xmark sidebar-close" data-bs-dismiss="offcanvas" aria-label="Close"></i>
-        <div class="d-flex align-items-center">
-            <a href="/dashboard" class="sidebar-logo fw-bold text-dark text-decoration-none fs-4"><img src="img/BeeMo Logo Side.png" width="173px" height="75px" alt="BeeMo Logo"></a>
+        <!-- Side Bar Mobile View -->
+        <div id="offcanvasNav-Menu" class="offcanvas offcanvas-end sidebar-mobile bg-white p-3 border border-dark" tabindex="-1" aria-labelledby="offcanvasRightLabel">
+            <i class="fa-solid fa-xmark sidebar-close" data-bs-dismiss="offcanvas" aria-label="Close"></i>
+            <div class="d-flex align-items-center">
+                <a href="/dashboard" class="sidebar-logo fw-bold text-dark text-decoration-none fs-4"><img src="img/BeeMo Logo Side.png" width="173px" height="75px" alt="BeeMo Logo"></a>
+            </div>
+            <ul class="sidebar-menu p-3 py-1 m-0 mb-0">
+                <li class="sidebar-menu-item">
+                    <a href="/dashboard">
+                        <i class="fa-solid fa-house sidebar-menu-item-icon"></i>
+                        Home
+                    </a>
+                </li>
+                <li class="sidebar-menu-item">
+                    <a href="/chooseHive">
+                        <i class="fa-solid fa-temperature-three-quarters sidebar-menu-item-icon"></i>
+                        Parameters Monitoring
+                    </a>
+                </li>
+                <li class="sidebar-menu-item">
+                    <a href="/reports">
+                        <i class="fa-solid fa-newspaper sidebar-menu-item-icon"></i>
+                        Reports
+                    </a>
+                </li>
+                <li class="sidebar-menu-item active">
+                    <a href="/harvestCycle">
+                        <i class="fa-solid fa-arrows-spin sidebar-menu-item-icon"></i>
+                        Harvest Cycle
+                    </a>
+                </li>
+                <li class="sidebar-menu-item">
+                    <a href="/beeGuide">
+                        <i class="fa-solid fa-book-open sidebar-menu-item-icon"></i>
+                        Bee Guide
+                    </a>
+                </li>
+                <li class="sidebar-menu-item">
+                    <a href="/Worker">
+                        <i class="fa-solid fa-user sidebar-menu-item-icon"></i>
+                        Worker
+                    </a>
+                </li>
+                <li class="sidebar-menu-item">
+                    <a href="/about">
+                        <i class="fa-solid fa-circle-info sidebar-menu-item-icon"></i>
+                        About
+                    </a>
+                </li>
+            </ul>
         </div>
-        <ul class="sidebar-menu p-3 py-1 m-0 mb-0">
-            <li class="sidebar-menu-item">
-                <a href="/dashboard">
-                    <i class="fa-solid fa-house sidebar-menu-item-icon"></i>
-                    Home
-                </a>
-            </li>
-            <li class="sidebar-menu-item">
-                <a href="/chooseHive">
-                    <i class="fa-solid fa-temperature-three-quarters sidebar-menu-item-icon"></i>
-                    Parameters Monitoring
-                </a>
-            </li>
-            <li class="sidebar-menu-item">
-                <a href="/reports">
-                    <i class="fa-solid fa-newspaper sidebar-menu-item-icon"></i>
-                    Reports
-                </a>
-            </li>
-            <li class="sidebar-menu-item active">
-                <a href="/harvestCycle">
-                    <i class="fa-solid fa-arrows-spin sidebar-menu-item-icon"></i>
-                    Harvest Cycle
-                </a>
-            </li>
-            <li class="sidebar-menu-item">
-                <a href="/beeGuide">
-                    <i class="fa-solid fa-book-open sidebar-menu-item-icon"></i>
-                    Bee Guide
-                </a>
-            </li>
-            <li class="sidebar-menu-item">
-                <a href="/Worker">
-                    <i class="fa-solid fa-user sidebar-menu-item-icon"></i>
-                    Worker
-                </a>
-            </li>
-            <li class="sidebar-menu-item">
-                <a href="/about">
-                    <i class="fa-solid fa-circle-info sidebar-menu-item-icon"></i>
-                    About
-                </a>
-            </li>
-        </ul>
-    </div>
 
-    <script>
-        document.querySelectorAll('.filter-option').forEach(item => {
-            item.addEventListener('click', function(event) {
-                event.preventDefault(); // Prevent default link behavior
-                const filterValue = this.getAttribute('data-value');
-                const form = document.getElementById('filterForm');
-                form.filter_value.value = filterValue;
-                form.submit();
+        <script>
+            document.querySelectorAll('.filter-option').forEach(item => {
+                item.addEventListener('click', function(event) {
+                    event.preventDefault(); // Prevent default link behavior
+                    const filterValue = this.getAttribute('data-value');
+                    const form = document.getElementById('filterForm');
+                    form.filter_value.value = filterValue;
+                    form.submit();
+                });
             });
-        });
 
-        const filterValue = "<?php echo $filter; ?>";
-        document.querySelectorAll('.filter-option').forEach(item => {
-            if (item.getAttribute('data-value') === filterValue) {
-                document.querySelector('.dropdown-toggle').textContent = item.textContent;
-            }
-        });
+            const filterValue = "<?php echo $filter; ?>";
+            document.querySelectorAll('.filter-option').forEach(item => {
+                if (item.getAttribute('data-value') === filterValue) {
+                    document.querySelector('.dropdown-toggle').textContent = item.textContent;
+                }
+            });
 
-        document.addEventListener('DOMContentLoaded', function() {
-            const filterSelect = document.getElementById('filterSelect');
-            const viewAllTableBody = document.getElementById('viewAllTableBody');
+            document.addEventListener('DOMContentLoaded', function() {
+                const filterSelect = document.getElementById('filterSelect');
+                const viewAllTableBody = document.getElementById('viewAllTableBody');
 
-            // Filter function
-            filterSelect.addEventListener('change', function() {
-            const filterValue = this.value;
-                fetch('/harvestCycle', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                        },
-                        body: `filter_value=${filterValue}`
-                    })
+                // Filter function
+                filterSelect.addEventListener('change', function() {
+                    const filterValue = this.value;
+                    fetch('/harvestCycle', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/x-www-form-urlencoded',
+                            },
+                            body: `filter_value=${filterValue}`
+                        })
                         .then(response => response.text())
                         .then(data => {
                             viewAllTableBody.innerHTML = data; // Update the View All modal table body with new data
                         })
-                            .catch(error => console.error('Error:', error));
-                        });
+                        .catch(error => console.error('Error:', error));
                 });
-    </script>
-    <script src="./js/notification.js"></script>
-    <script src="./js/reusable.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+            });
+        </script>
+        <script src="./js/notification.js"></script>
+        <script src="./js/reusable.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>
+
 </html>
