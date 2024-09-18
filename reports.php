@@ -173,9 +173,9 @@
             <div class="px-4 text-center content-wrapper">
                 <div class="container-top">
                     <div class="label-container btn-group rounded-3 d-flex justify-content-center mb-4">
-                        <a href="#" class="btn btn-label label-current" data-type="temperature">Temperature</a>
-                        <a href="#" class="btn btn-label" data-type="humidity">Humidity</a>
-                        <a href="#" class="btn btn-label" data-type="weight">Weight</a>
+                        <a href="#/temperature" class="btn btn-label label-current" data-type="temperature">Temperature</a>
+                        <a href="#/humidity" class="btn btn-label" data-type="humidity">Humidity</a>
+                        <a href="#/weight" class="btn btn-label" data-type="weight">Weight</a>
                     </div>
                     <div class="col-12 col-md-12">
                         <div class="dropdown">
@@ -187,8 +187,8 @@
                             </ul>
                         </div>
                     </div>
-                    <div class="col-12 col-md-12 mt-3">
-                        <input type="date" id="start-date-picker" class="form-control">
+                    <div class="date-pick-size d-flex justify-content-center mb-2 mt-3 w-75" style="margin-left: 110px;">
+                        <input id="start-date-picker" class="form-control"> <span class="input-group-text" id="calendar-icon"><i class="fas fa-calendar-alt"></i></span>
                     </div>
                     <div class="container-chart">
                         <div class="chart-container">
