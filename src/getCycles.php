@@ -24,7 +24,7 @@ if ($conn->connect_error) {
 
 // Prepare the query to fetch harvest cycles
 $adminID = $_SESSION['adminID'];
-$sql = "SELECT id, start_of_cycle, end_of_cycle FROM harvest_cycle WHERE adminID = '$adminID'";
+$sql = "SELECT id, start_of_cycle, cycle_number, end_of_cycle FROM harvest_cycle WHERE adminID = '$adminID'";
 $result = $conn->query($sql);
 // Fetch data
 $harvestCycles = [];

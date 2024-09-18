@@ -53,10 +53,6 @@ $router->get('/parameterMonitoring', function() {
         if (session_status() == PHP_SESSION_NONE) {
             session_start();
         }
-
-        if (!isset($_SESSION['season_started'])) {
-            $_SESSION['season_started'] = true;
-        }
     }
 
     season_start();
@@ -80,10 +76,6 @@ $router->get('/reports', function() {
     function season_start1() {
         if (session_status() == PHP_SESSION_NONE) {
             session_start();
-        }
-
-        if (!isset($_SESSION['season_started'])) {
-            $_SESSION['season_started'] = true;
         }
     }
 

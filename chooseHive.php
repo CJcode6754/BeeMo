@@ -73,10 +73,10 @@
                     Home
                 </a>
             </li>
-            <li class="sidebar-menu-item active">
-                <a href="/chooseHive">
+            <li class="sidebar-menu-item">
+                <a href="/parameterMonitoring">
                     <i class="fa-solid fa-temperature-three-quarters sidebar-menu-item-icon"></i>
-                    Choose Hive
+                    Parameter Monitoring
                 </a>
             </li>
             <li class="sidebar-menu-item">
@@ -429,7 +429,7 @@
                 </a>
             </li>
             <li class="sidebar-menu-item2 active">
-                <a href="/chooseHive">
+                <a href="/parameterMonitoring">
                     <i class="fa-solid fa-temperature-three-quarters sidebar-menu-item-icon2"></i>
                     Parameters Monitoring
                 </a>

@@ -187,8 +187,11 @@
                             </ul>
                         </div>
                     </div>
-                    <div class="col-12 col-md-12 mt-3">
-                        <input type="date" id="start-date-picker" class="form-control">
+                    <div class="col-12 col-md-12 mt-3 input-group">
+                        <input id="start-date-picker" class="form-control"> <span class="input-group-text"><i class="fas fa-calendar-alt"></i></span>
+                        <!-- <div class="input-group-append">
+                            <span class="input-group-text"><i class="fas fa-calendar-alt"></i></span>
+                        </div> -->
                     </div>
                     <div class="container-chart">
                         <div class="chart-container">

@@ -147,7 +147,7 @@ document.addEventListener('DOMContentLoaded', function() {
             data.forEach(cycle => {
                 const li = document.createElement('li');
                 li.classList.add('dropdown-item');
-                li.textContent = `Cycle ${cycle.id}`;
+                li.textContent = `Cycle ${cycle.cycle_number}`;
                 li.dataset.id = cycle.id;
                 li.dataset.start = cycle.start_of_cycle;
                 li.dataset.end = cycle.end_of_cycle;
