@@ -140,6 +140,10 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }).datepicker('setDate', today);
 
+    $('#calendar-icon').on('click', function() {
+        datePicker.datepicker('show');
+    });
+
     // Fetch and populate harvest cycles
     fetch('./src/getCycles.php')
         .then(response => response.json())
