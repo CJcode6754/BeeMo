@@ -168,46 +168,49 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     </ul>
                 </div>
             </nav>
-        <!-- Content -->
-        <div class="reports-page py-4 mt-4 border border-2 rounded-4 border-dark">
-            <div class="px-4 text-center content-wrapper">
-                <div class="container-top">
-                    <div class="label-container btn-group rounded-3 d-flex justify-content-center mb-4">
-                        <a href="#" class="btn btn-label label-current" data-type="temperature">Temperature</a>
-                        <a href="#" class="btn btn-label" data-type="humidity">Humidity</a>
-                        <a href="#" class="btn btn-label" data-type="weight">Weight</a>
-                    </div>
-                    <div class="col-12 col-md-12">
-                        <div class="dropdown">
-                            <button class="btn btn-warning btn-sm dropdown-toggle" type="button" id="harvestCycleDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                                Select Harvest Cycle
-                            </button>
-                            <ul class="dropdown-menu" id="harvestCycleList">
-                                <!-- Options will be populated via JavaScript -->
-                            </ul>
+            <!-- Content -->
+            <div class="reports-page py-4 mt-4 border border-2 rounded-4 border-dark">
+                <div class="px-4 text-center content-wrapper">
+                    <div class="container-top">
+                        <div class="label-container btn-group rounded-3 d-flex justify-content-center mb-4">
+                            <a href="#" class="btn btn-label label-current" data-type="temperature">Temperature</a>
+                            <a href="#" class="btn btn-label" data-type="humidity">Humidity</a>
+                            <a href="#" class="btn btn-label" data-type="weight">Weight</a>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center mt-3 mb-3">
+                            <!-- Select Harvest Cycle (Start) -->
+                            <div class="select-cycle dropdown">
+                                <button class="select-cycle-btn dropdown-toggle" type="button" id="harvestCycleDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Select Harvest Cycle
+                                </button>
+                                <ul class="dropdown-menu" id="harvestCycleList">
+                                    <!-- Options will be populated via JavaScript -->
+                                </ul>
+                            </div>
+
+                            <!-- Date Picker (End) -->
+                            <div class="date-pick-size">
+                                <input type="date" id="start-date-picker" class="form-control">
+                            </div>
+                        </div>
+                        <div class="container-chart">
+                            <div class="chart-container">
+                                <canvas id="myChart"></canvas>
+                            </div>
                         </div>
                     </div>
-                    <div class="col-12 col-md-12 mt-3">
-                        <input type="date" id="start-date-picker" class="form-control">
+                    <div class="legends d-flex justify-content-center gap-3 mt-4">
+                        <span class="badge" style="background-color: rgba(0, 255, 0, 0.2); color: #2B2B2B;">Optimal Range</span>
+                        <span class="badge" style="background-color: rgba(255, 127, 127, 0.4); color: #2B2B2B;">Out of Optimal Range</span>
                     </div>
-                    <div class="container-chart">
-                        <div class="chart-container">
-                            <canvas id="myChart"></canvas>
-                        </div>
+                    <div class="descriptive-analytics-container d-flex justify-content-center mt-2 row row-cols-2 row-cols-lg-5 g-2 g-lg-3">
+                        <p>Date Range: <span id="date-range-label">24 Hours</span></p>
+                        <p>Average: <span id="average-value">-</span></p>
+                        <p>Minimum: <span id="min-value">-</span></p>
+                        <p>Maximum: <span id="max-value">-</span></p>
                     </div>
-                </div>
-                <div class="legends d-flex justify-content-center gap-3 mt-4">
-                    <span class="badge" style="background-color: rgba(0, 255, 0, 0.2); color: #2B2B2B;">Optimal Range</span>
-                    <span class="badge" style="background-color: rgba(255, 127, 127, 0.4); color: #2B2B2B;">Out of Optimal Range</span>
-                </div>
-                <div class="descriptive-analytics-container d-flex justify-content-center mt-2 row row-cols-2 row-cols-lg-5 g-2 g-lg-3" >
-                    <p>Date Range: <span id="date-range-label">24 Hours</span></p>
-                    <p>Average: <span id="average-value">-</span></p>
-                    <p>Minimum: <span id="min-value">-</span></p>
-                    <p>Maximum: <span id="max-value">-</span></p>
                 </div>
             </div>
-        </div>
     </main>
 
     <!-- Profile Modal -->

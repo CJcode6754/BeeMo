@@ -70,6 +70,7 @@ main {
     .view-button:hover, .filter-button:hover{
       background-color: #FAEF9B;
       box-shadow: 0 2px #2B2B2B;
+      transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
     }
     .status_pending {
       position: relative;

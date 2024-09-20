@@ -22,8 +22,8 @@ main {
   }
   
   .label-container a {
-    font-size: 13px;
-    padding: 3px;
+    font-size: 15px;
+    padding: 5px;
   }
   
   .date-container a {
@@ -31,7 +31,7 @@ main {
   }
 
   .btn-group{
-    height: 30px;
+    height: 37px;
   }
   
   .descriptive-analytics-container p{
@@ -44,10 +44,22 @@ main {
 
   .select-cycle{
     margin-left: 127px;
+    
 
   }
   .select-cycle-btn{
+    background-color: #FCF4B9;
+    border-radius: 5px;
+    border: solid 1px #2B2B2B;
     width: 250px;
+    height: 33px;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+  }
+
+  .select-cycle-btn:hover{
+    background-color: #FAEF9B;
+    box-shadow: 0 2px #2B2B2B;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
   }
 
   .date-pick-size{
@@ -58,7 +70,7 @@ main {
   .btn-label.label-current {
     background-color: #faef9b;
     font-weight: 600;
-    font-size: 13px;
+    font-size: 15px;
   }
   
   .btn-label.label-current:hover {
