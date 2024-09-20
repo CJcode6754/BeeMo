@@ -42,9 +42,17 @@ main {
     font-size: 12px;
   }
 
+  .select-cycle{
+    margin-left: 127px;
+
+  }
+  .select-cycle-btn{
+    width: 250px;
+  }
+
   .date-pick-size{
-    margin-left: 100px;
     margin-right: 110px;
+    width: 250px;
   }
 
   .btn-label.label-current {
