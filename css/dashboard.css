@@ -1,0 +1,90 @@
+/* --------------------------------------------Start: Main Desktop View---------------------------------------------*/
+main {
+  min-height: 100vh;
+}
+.img-responsive {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+}
+.Beemo-text {
+  font-size: 1.4rem;
+  font-weight: 400;
+}
+
+.home-page {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 70vh;
+}
+
+.content-wrapper {
+  flex-grow: .5;
+}
+
+.home-page img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* --------------------------------------------End: Main Desktop View---------------------------------------------*/
+
+/* --------------------------------------------Start: Main Responsive View---------------------------------------------*/
+
+@media (min-width: 768px) {
+  main {
+    transition: padding-left 0.2s;
+    padding-left: 22rem;
+    padding-top: 2rem;
+    padding-right: 4rem;
+  }
+  .home-page {
+    box-shadow: 0 6px #2b2b2b;
+    background-image: linear-gradient(#f8f9fa 79%, #fcf4b9 21%);
+  }
+
+  .sidebar.collapsed ~ main {
+    padding-left: 4.75rem;
+  }
+}
+
+@media (max-width: 767.98px) {
+  .home-page {
+    min-height: 74vh;
+    padding: 10px;
+    margin: 10px;
+    background-image: linear-gradient(#f8f9fa 75%, #fcf4b9 25%);
+    box-shadow: 7px 7px rgba(0, 0, 0, 0.25);
+  }
+  .Beemo-text {
+    font-size: 1.2rem !important;
+  }
+   nav{
+    padding: 10px;
+    margin: 10px;
+    box-shadow: 7px 7px rgba(0, 0, 0, 0.25);
+
+  }
+  .navbar-link {
+    box-shadow: 3px 3px rgba(0, 0, 0, 0.4);
+  }
+  .navbar-link:hover {
+    border-radius: 50%;
+  }
+
+  .yellow {
+    min-height: 5vh;
+    background-color: #faef9b;
+    overflow-y: auto;
+  }
+}
+
+@media (max-width: 1200px) {
+  .Beemo-text {
+    font-size: 1.2rem !important;
+  }
+}
+
+/* --------------------------------------------End: Main Responsive View---------------------------------------------*/

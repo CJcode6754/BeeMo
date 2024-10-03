@@ -1,0 +1,176 @@
+/* --------------------------------------------Start: Main Desktop View---------------------------------------------*/
+main {
+  min-height: 100vh;
+}
+.monitoring-page {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 70vh;
+}
+.content-wrapper {
+  flex-grow: .5;
+}
+.monitoring-highlight {
+  display: inline;
+  background-color: #fef9d9;
+  padding: 0 5px;
+  border-radius: 7px;
+}
+
+.container1{
+  border-radius: 10px;
+  height: 260px;
+  border: 1.8px solid #2b2b2b;
+  margin-left: 70px;
+  box-shadow: 0 5px #2B2B2B;
+  background-image: linear-gradient(#f8f9fa 65%, #fcf4b9 35%);
+}
+
+.container2{
+  border-radius: 10px;
+  height: 130px;
+  border: 1.8px solid #2b2b2b;
+  margin-right: 70px;
+  box-shadow: 0 5px #2B2B2B;
+  background-image: linear-gradient(#f8f9fa 75%, #fcf4b9 25%);
+}
+.container3{
+  border-radius: 10px;
+  height: 115px;
+  border: 1.8px solid #2b2b2b;
+  margin-right: 70px;
+  box-shadow: 0 5px #2B2B2B;
+  background-color: #fcf4b9;
+}
+.fw-bold{
+  font-size: 20px;
+  font-weight: 700;
+}
+.temp-degree{
+  margin-left: 5px;
+  padding-right: 24px;
+  font-size: 24px;
+  font-weight: 700;
+  color: green;
+}
+.humid, .humid-based{
+  font-size: 13px;
+}
+.humid{
+  margin-left: 5px;
+  padding-right: 10px;
+  font-size: 20px;
+  font-weight: 700;
+}
+.humid-based{
+  font-size: 12px;
+  font-weight: 500;
+}
+.humid-percent{
+  padding-right: 15px;
+  font-size: 20px;
+  font-weight: 700;
+  color: green;
+}
+.weight{
+  padding-right: 97px;
+  font-weight: 700;
+  font-size: 16px;
+}
+.initial{
+  font-size: 14px;
+  font-weight: 500;
+  padding-right: 20px;
+  margin-left: 20px;
+}
+.weight-value{
+  padding-right: 105px;
+  font-size: 16px;
+  font-weight: 700;
+  color: green;
+}
+.weight-block p{
+  margin-left: 10px;
+}
+.auto-manual {
+  padding-right: 63px;
+  font-size: 15px;
+}
+.toggle-button {
+  font-size: 20px;
+}
+
+/* --------------------------------------------End: Main Desktop View---------------------------------------------*/
+
+/* --------------------------------------------Start: Main Responsive View---------------------------------------------*/
+
+@media (min-width: 768px) {
+  main {
+    transition: padding-left 0.2s;
+    padding-left: 22rem;
+    padding-top: 2rem;
+    padding-right: 4rem;
+  }
+  .monitoring-page {
+    box-shadow: 0 6px #2b2b2b;
+  }
+
+  .sidebar.collapsed ~ main {
+    padding-left: 4.75rem;
+  }
+}
+
+@media (max-width: 767.98px) {
+  .monitoring-page {
+    height: 100%;
+    min-height: 74vh;
+    padding: 10px;
+    margin: 10px;
+    box-shadow: 7px 7px rgba(0, 0, 0, 0.25);
+  }
+
+  nav{
+    padding: 10px;
+    margin: 10px;
+    box-shadow: 7px 7px rgba(0, 0, 0, 0.25);
+    
+  }
+  .navbar-link {
+    
+    box-shadow: 3px 3px rgba(0, 0, 0, 0.4);
+  }
+  .navbar-link:hover {
+    border-radius: 50%;
+  }
+  .container1, .container2, .container3{
+    margin: 0;
+  }
+
+  .auto-manual{
+    padding: 0%;
+  }
+
+  .yellow {
+    min-height: 5vh;
+    background-color: #faef9b;
+    overflow-y: auto;
+  }
+}
+
+
+@media (max-width: 1024px) {
+  .container1, .container2, .container3 {
+      padding: 5px;
+      margin: 5px;
+  }
+}
+
+@media (max-width: 768px) {
+  .row {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+  }
+}
+/* --------------------------------------------End: Main Responsive View---------------------------------------------*/
