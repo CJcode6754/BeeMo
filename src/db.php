@@ -1,14 +1,14 @@
 <?php
 class Database {
-    private $host = 'localhost';
-    private $username = 'u497761604_BeeMo';
-    private $password = 'NewPassword@6789054321';
-    private $dbname = 'u497761604_BeeMo_db';
+    // private $host = 'localhost';
+    // private $username = 'u497761604_BeeMo';
+    // private $password = 'NewPassword@6789054321';
+    // private $dbname = 'u497761604_BeeMo_db';
 
-    //private $host = 'localhost';
-    //private $username = 'root';
-    //private $password = '';
-    //private $dbname = 'BeeMo_db';
+    private $host = 'localhost';
+    private $username = 'root';
+    private $password = '';
+    private $dbname = 'BeeMo_db';
 
     private $conn;
 
