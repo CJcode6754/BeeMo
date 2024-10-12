@@ -1,34 +1,34 @@
 <?php
-    require_once './src/db.php';
-    require_once './src/profileFunction.php';
+require_once './src/db.php';
+require_once './src/profileFunction.php';
 
-    $db = new Database();
-    $conn = $db->getConnection();
+$db = new Database();
+$conn = $db->getConnection();
 
-    if (isset($_POST['logout_btn'])) {
-        session_destroy();
-        header('Location: /');
-        exit();
+if (isset($_POST['logout_btn'])) {
+    session_destroy();
+    header('Location: /');
+    exit();
+}
+
+$profile = new Profile($conn, $_SESSION['adminID']);
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    if (isset($_POST['editProfile'])) {
+        $name = $_POST['editName'];
+        $email = $_POST['editEmail'];
+        $phoneNumber = $_POST['editNumber'];
+
+        $profile->updateProfile($name, $email, $phoneNumber);
     }
 
-    $profile = new Profile($conn, $_SESSION['adminID']);
-
-    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-        if (isset($_POST['editProfile'])) {
-            $name = $_POST['editName'];
-            $email = $_POST['editEmail'];
-            $phoneNumber = $_POST['editNumber'];
-
-            $profile->updateProfile($name, $email, $phoneNumber);
-        }
-
-        if (isset($_POST['changePass'])) {
-            $oldPass = $_POST['OldPass'];
-            $newPass = $_POST['newPass'];
-            $conNewPass = $_POST['conNewPass'];
-            $profile->changePassword($oldPass, $newPass, $conNewPass);
-        }
+    if (isset($_POST['changePass'])) {
+        $oldPass = $_POST['OldPass'];
+        $newPass = $_POST['newPass'];
+        $conNewPass = $_POST['conNewPass'];
+        $profile->changePassword($oldPass, $newPass, $conNewPass);
     }
+}
 ?>
 
 <!DOCTYPE html>
@@ -147,7 +147,7 @@
                     <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
                         <li>
                             <a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#Profile-Modal"">
-                                <i class="fa-solid fa-user"></i>
+                                <i class=" fa-solid fa-user"></i>
                                 Profile
                             </a>
                         </li>
@@ -168,43 +168,36 @@
                     </ul>
                 </div>
             </nav>
-        <!-- Content -->
-        <div class="reports-page py-4 mt-4 border border-2 rounded-4 border-dark">
-            <div class="px-4 text-center content-wrapper">
-                <div class="container-top">
-                    <div class="label-container btn-group rounded-3 d-flex justify-content-center mb-4">
-                        <a href="#/temperature" class="btn btn-label label-current" data-type="temperature">Temperature</a>
-                        <a href="#/humidity" class="btn btn-label" data-type="humidity">Humidity</a>
-                        <a href="#/weight" class="btn btn-label" data-type="weight">Weight</a>
+            <!-- Content -->
+            <div class="reports-page py-4 mt-4 border border-2 rounded-4 border-dark">
+                <div class="px-4 text-center content-wrapper">
+                    <div class="container-top">
+                        <div class="label-container btn-group rounded-3 d-flex justify-content-center mb-4">
+                            <a href="#/temperature" class="btn btn-label label-current" data-type="temperature">Temperature</a>
+                            <a href="#/humidity" class="btn btn-label" data-type="humidity">Humidity</a>
+                            <a href="#/weight" class="btn btn-label" data-type="weight">Weight</a>
+                        </div>
+                        <div class="col-12 col-md-12">
+                            <div class="dropdown">
+                                <button class="btn btn-warning btn-sm dropdown-toggle" type="button" id="harvestCycleDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Select Harvest Cycle
+                                </button>
+                                <ul class="dropdown-menu" id="harvestCycleList">
+                                    <!-- Options will be populated via JavaScript -->
+                                </ul>
+                            </div>
+                        </div>
                     </div>
                     <div class="col-12 col-md-12">
                         <div class="dropdown">
-                            <button class="btn btn-warning btn-sm dropdown-toggle" type="button" id="harvestCycleDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                                Select Harvest Cycle
+                            <button class="btn btn-warning btn-sm dropdown-toggle" type="button" id="monthlyFilter" data-bs-toggle="dropdown" aria-expanded="false">
+                                Filter by Month
                             </button>
-                            <ul class="dropdown-menu" id="harvestCycleList">
-                                <!-- Options will be populated via JavaScript -->
+                            <ul class="dropdown-menu" id="monthDropdown" aria-labelledby="monthlyFilter">
+                                <!-- The months will be populated dynamically in JavaScript -->
                             </ul>
                         </div>
-                        </div>
                     </div>
-                    <div class="col-12 col-md-12">
-    <div class="dropdown">
-        <button class="btn btn-warning btn-sm dropdown-toggle" type="button" id="monthlyFilter" data-bs-toggle="dropdown" aria-expanded="false">
-            Filter by Month
-        </button>
-        <ul class="dropdown-menu" id="monthDropdown" aria-labelledby="monthlyFilter">
-            <li id="month-1" data-month="1"><a class="dropdown-item" href="#">1st Month</a></li>
-            <li id="month-2" data-month="2"><a class="dropdown-item" href="#">2nd Month</a></li>
-            <li id="month-3" data-month="3"><a class="dropdown-item" href="#">3rd Month</a></li>
-            <li id="month-4" data-month="4"><a class="dropdown-item" href="#">4th Month</a></li>
-            <li id="month-5" data-month="5"><a class="dropdown-item" href="#">5th Month</a></li>
-            <li id="month-6" data-month="6"><a class="dropdown-item" href="#">6th Month</a></li>
-            <li id="reset-filter"><a class="dropdown-item" href="#">Reset</a></li>
-        </ul>
-    </div>
-</div>
-
 
                     <div class="date-pick-size d-flex justify-content-center mb-2 mt-3 w-75" style="margin-left: 110px;">
                         <input id="start-date-picker" class="form-control"> <span class="input-group-text" id="calendar-icon"><i class="fas fa-calendar-alt"></i></span>
@@ -219,7 +212,7 @@
                     <span class="badge" style="background-color: rgba(0, 255, 0, 0.2); color: #2B2B2B;">Optimal Range</span>
                     <span class="badge" style="background-color: rgba(255, 127, 127, 0.4); color: #2B2B2B;">Out of Optimal Range</span>
                 </div>
-                <div class="descriptive-analytics-container d-flex justify-content-center mt-2 row row-cols-2 row-cols-lg-5 g-2 g-lg-3" >
+                <div class="descriptive-analytics-container d-flex justify-content-center mt-2 row row-cols-2 row-cols-lg-5 g-2 g-lg-3">
                     <p>Type: <span id="date-range-label">-</span></p>
                     <p>Average: <span id="average-value">-</span></p>
                     <p>Minimum: <span id="min-value">-</span></p>
@@ -229,8 +222,8 @@
         </div>
     </main>
 
-        <!-- Profile Modal -->
-        <div class="modal fade " id="Profile-Modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <!-- Profile Modal -->
+    <div class="modal fade " id="Profile-Modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable profile-dialog">
 
             <div class="modal-content border-2 border-dark" style="border-radius: 20px; box-shadow: 0 7px #2B2B2B; max-width: 400px;">
@@ -243,7 +236,7 @@
                 <div class="modal-body" style="color: #292929;">
                     <div class="icon text-center my-3"><img src="img/Profile icon.png" alt="" width="80" height="80"></div>
                     <div class="text-center">
-                    <?php
+                        <?php
                         require_once './src/db.php';
                         $db = new Database();
                         $conn = $db->getConnection();
@@ -251,14 +244,14 @@
                         $get = "SELECT admin_name, email FROM admin_table WHERE adminID = '$adminID'";
                         $getQuery = mysqli_query($conn, $get);
 
-                        while($row = $getQuery->fetch_assoc()){
-                            echo"
-                            <h5>". $row['admin_name'] ."</h5>
-                            <h6 style='text-decoration: underline; font-weight: 350;'><small class='text-body-secondary'>". $row['email']."</small></h6>
+                        while ($row = $getQuery->fetch_assoc()) {
+                            echo "
+                            <h5>" . $row['admin_name'] . "</h5>
+                            <h6 style='text-decoration: underline; font-weight: 350;'><small class='text-body-secondary'>" . $row['email'] . "</small></h6>
                             ";
                         }
-                    ?>
-                    <hr class="mx-auto" width = "80%">
+                        ?>
+                        <hr class="mx-auto" width="80%">
                     </div>
 
                     <div class="Options mx-auto py-4">
@@ -267,7 +260,7 @@
                             <p><i class="fa-solid fa-user"></i> <span>My Profile</span><i class="fa-solid fa-angle-right"></i></p>
                         </button>
 
-                        <button type="button" id="edit-profile-button" data-bs-toggle="modal" data-bs-target="#Change-Pass-Modal" style="padding: 10px;" >
+                        <button type="button" id="edit-profile-button" data-bs-toggle="modal" data-bs-target="#Change-Pass-Modal" style="padding: 10px;">
                             <p><i class="fa-solid fa-lock"></i> <span>Change Password</span><i class="fa-solid fa-angle-right"></i></p>
                         </button>
 
@@ -285,27 +278,27 @@
 
     <!-- Edit Profile -->
 
-        <div class="modal fade " id="Edit-Profile-Modal" tabindex="0" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable profile-dialog">
+    <div class="modal fade " id="Edit-Profile-Modal" tabindex="0" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable profile-dialog">
 
-                <div class="modal-content border-2 border-dark" style="border-radius: 20px; box-shadow: 0 7px #2B2B2B; max-width: 450px;">
-                    <div class="modal-header profile-header" style="padding: 5px;">
+            <div class="modal-content border-2 border-dark" style="border-radius: 20px; box-shadow: 0 7px #2B2B2B; max-width: 450px;">
+                <div class="modal-header profile-header" style="padding: 5px;">
 
-                        <button type="button" class="btn" data-bs-toggle="modal" data-bs-target="#Profile-Modal" data-bs-dismiss="modal" aria-label="Back">
-                            <i class="fa-solid fa-angle-left fa-lg"></i>
-                        </button>
+                    <button type="button" class="btn" data-bs-toggle="modal" data-bs-target="#Profile-Modal" data-bs-dismiss="modal" aria-label="Back">
+                        <i class="fa-solid fa-angle-left fa-lg"></i>
+                    </button>
 
-                        <button type="button" class="btn" data-bs-dismiss="modal" aria-label="Close">
-                            <i class="fa-solid fa-xmark fa-lg" style="margin-left: 360px;"></i>
-                        </button>
+                    <button type="button" class="btn" data-bs-dismiss="modal" aria-label="Close">
+                        <i class="fa-solid fa-xmark fa-lg" style="margin-left: 360px;"></i>
+                    </button>
 
-                    </div>
+                </div>
 
-                    <!-- Modal Contents -->
-                    <div class="modal-body" style="color: #292929;">
+                <!-- Modal Contents -->
+                <div class="modal-body" style="color: #292929;">
                     <div class="icon text-center my-3"><img src="img/Profile icon.png" alt="" width="80" height="80"></div>
                     <div class="text-center">
-                    <?php
+                        <?php
                         require_once './src/db.php';
                         $db = new Database();
                         $conn = $db->getConnection();
@@ -313,11 +306,11 @@
                         $get = "SELECT admin_name, email, number FROM admin_table WHERE adminID = '$adminID'";
                         $getQuery = mysqli_query($conn, $get);
 
-                        while($row = $getQuery->fetch_assoc()){
+                        while ($row = $getQuery->fetch_assoc()) {
                             $currentName = $row['admin_name'];
                             $currentEmail = $row['email'];
                             $currentPhoneNumber = $row['number'];
-                            echo"
+                            echo "
                                 <h5>$currentName</h5>
                                 <h6 style='text-decoration: underline; font-weight: 350;'><small class='text-body-secondary'>$currentEmail</small></h6>
                                 <div class='Field-inputs mx-4' style='font-size: small;'>
@@ -345,13 +338,13 @@
                         </div>
                             ";
                         }
-                    ?>
+                        ?>
                     </div>
                 </div>
 
-                </div>
             </div>
         </div>
+    </div>
 
     <!-- ----------------------------------------------------------------------------------------------------------- -->
 
@@ -363,12 +356,12 @@
             <div class="modal-content border-2 border-dark" style="border-radius: 20px; box-shadow: 0 7px #2B2B2B; max-width: 450px;">
                 <div class="modal-header profile-header" style="padding: 5px;">
 
-                        <button type="button" data-bs-toggle="modal" data-bs-target="#Profile-Modal" class="btn" data-bs-dismiss="modal" aria-label="Back">
-                            <i class="fa-solid fa-angle-left fa-lg"></i>
-                        </button>
-                        <button type="button" class="btn" data-bs-dismiss="modal" aria-label="Close">
-                            <i class="fa-solid fa-xmark fa-lg" style="margin-left: 360px;"></i>
-                        </button>
+                    <button type="button" data-bs-toggle="modal" data-bs-target="#Profile-Modal" class="btn" data-bs-dismiss="modal" aria-label="Back">
+                        <i class="fa-solid fa-angle-left fa-lg"></i>
+                    </button>
+                    <button type="button" class="btn" data-bs-dismiss="modal" aria-label="Close">
+                        <i class="fa-solid fa-xmark fa-lg" style="margin-left: 360px;"></i>
+                    </button>
 
                 </div>
 
@@ -377,7 +370,7 @@
                     <div class="icon text-center my-3"><img src="img/Profile icon.png" alt="" width="80" height="80"></div>
 
                     <div class="text-center">
-                    <?php
+                        <?php
                         require_once './src/db.php';
                         $db = new Database();
                         $conn = $db->getConnection();
@@ -385,14 +378,14 @@
                         $get = "SELECT admin_name, email FROM admin_table WHERE adminID = '$adminID'";
                         $getQuery = mysqli_query($conn, $get);
 
-                        while($row = $getQuery->fetch_assoc()){
-                            echo"
-                            <h5>". $row['admin_name'] ."</h5>
-                            <h6 style='text-decoration: underline; font-weight: 350;'><small class='text-body-secondary'>". $row['email']."</small></h6>
+                        while ($row = $getQuery->fetch_assoc()) {
+                            echo "
+                            <h5>" . $row['admin_name'] . "</h5>
+                            <h6 style='text-decoration: underline; font-weight: 350;'><small class='text-body-secondary'>" . $row['email'] . "</small></h6>
                             ";
                         }
-                    ?>
-                    <hr class="mx-auto" width = "90%" >
+                        ?>
+                        <hr class="mx-auto" width="90%">
                     </div>
 
                     <div class="My-Profile text-center pb-4 pt-3">
@@ -406,7 +399,7 @@
                                 <input name="OldPass" type="password" class="form-control" id="password" placeholder="Password" required>
                                 <label for="password"><i class="fa-solid fa-lock"></i> Current Password</label>
                                 <div class="password-wrapper">
-                                <span id="togglePassword" class="toggle-password"><i class="fa-solid fa-eye-slash fa-lg"></i></span>
+                                    <span id="togglePassword" class="toggle-password"><i class="fa-solid fa-eye-slash fa-lg"></i></span>
                                 </div>
                             </div>
 
@@ -414,7 +407,7 @@
                                 <input name="newPass" type="password" class="form-control" id="new-password" placeholder="Password" required>
                                 <label for="password"><i class="fa-solid fa-lock"></i> New Password</label>
                                 <div class="password-wrapper">
-                                <span id="togglePassword" class="toggle-password"><i class="fa-solid fa-eye-slash fa-lg"></i></span>
+                                    <span id="togglePassword" class="toggle-password"><i class="fa-solid fa-eye-slash fa-lg"></i></span>
                                 </div>
                             </div>
 
@@ -422,7 +415,7 @@
                                 <input name="conNewPass" type="password" class="form-control" id="confirm-password" placeholder="Password" required>
                                 <label for="password"><i class="fa-solid fa-lock"></i> Confirm Password</label>
                                 <div class="password-wrapper">
-                                <span id="togglePassword" class="toggle-password"><i class="fa-solid fa-eye-slash fa-lg"></i></span>
+                                    <span id="togglePassword" class="toggle-password"><i class="fa-solid fa-eye-slash fa-lg"></i></span>
                                 </div>
                             </div>
 
@@ -433,65 +426,65 @@
                             </button>
                         </div>
                     </form>
+                </div>
             </div>
         </div>
-    </div>
 
-    <!-- Side Bar Mobile View -->
-    <div class="offcanvas offcanvas-start sidebar2 overflow-x-hidden overflow-y-hidden" tabindex="-1"
-        id="offcanvasNav-Menu" aria-labelledby="staticBackdropLabel">
-        <div class="d-flex align-items-center p-3 py-5">
-            <a href="#" class="sidebar-logo fw-bold text-dark text-decoration-none fs-4" data-bs-dismiss="offcanvas"
-                aria-label="Close">
-                <img src="img/BeeMo Logo Side.png" width="173px" height="75px" alt="BeeMo Logo">
-            </a>
-            <button type="button" class="btn-close ms-auto" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        <!-- Side Bar Mobile View -->
+        <div class="offcanvas offcanvas-start sidebar2 overflow-x-hidden overflow-y-hidden" tabindex="-1"
+            id="offcanvasNav-Menu" aria-labelledby="staticBackdropLabel">
+            <div class="d-flex align-items-center p-3 py-5">
+                <a href="#" class="sidebar-logo fw-bold text-dark text-decoration-none fs-4" data-bs-dismiss="offcanvas"
+                    aria-label="Close">
+                    <img src="img/BeeMo Logo Side.png" width="173px" height="75px" alt="BeeMo Logo">
+                </a>
+                <button type="button" class="btn-close ms-auto" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+            </div>
+            <ul class="sidebar-menu p-2 py-2 m-0 mb-0">
+                <li class="sidebar-menu-item2 active">
+                    <a href="/dashboard">
+                        <i class="fa-solid fa-house sidebar-menu-item-icon2"></i>
+                        Home
+                    </a>
+                </li>
+                <li class="sidebar-menu-item2 py-1">
+                    <a href="/chooseHive">
+                        <i class="fa-solid fa-temperature-three-quarters sidebar-menu-item-icon2"></i>
+                        Parameters Monitoring
+                    </a>
+                </li>
+                <li class="sidebar-menu-item2">
+                    <a href="/reports">
+                        <i class="fa-solid fa-newspaper sidebar-menu-item-icon2"></i>
+                        Reports
+                    </a>
+                </li>
+                <li class="sidebar-menu-item2">
+                    <a href="/harvestCycle">
+                        <i class="fa-solid fa-arrows-spin sidebar-menu-item-icon2"></i>
+                        Harvest Cycle
+                    </a>
+                </li>
+                <li class="sidebar-menu-item2">
+                    <a href="/beeGuide">
+                        <i class="fa-solid fa-book-open sidebar-menu-item-icon2"></i>
+                        Bee Guide
+                    </a>
+                </li>
+                <li class="sidebar-menu-item2">
+                    <a href="/Worker">
+                        <i class="fa-solid fa-user sidebar-menu-item-icon2"></i>
+                        Worker
+                    </a>
+                </li>
+                <li class="sidebar-menu-item2">
+                    <a href="/about">
+                        <i class="fa-solid fa-circle-info sidebar-menu-item-icon2"></i>
+                        About
+                    </a>
+                </li>
+            </ul>
         </div>
-        <ul class="sidebar-menu p-2 py-2 m-0 mb-0">
-            <li class="sidebar-menu-item2 active">
-                <a href="/dashboard">
-                    <i class="fa-solid fa-house sidebar-menu-item-icon2"></i>
-                    Home
-                </a>
-            </li>
-            <li class="sidebar-menu-item2 py-1">
-                <a href="/chooseHive">
-                    <i class="fa-solid fa-temperature-three-quarters sidebar-menu-item-icon2"></i>
-                    Parameters Monitoring
-                </a>
-            </li>
-            <li class="sidebar-menu-item2">
-                <a href="/reports">
-                    <i class="fa-solid fa-newspaper sidebar-menu-item-icon2"></i>
-                    Reports
-                </a>
-            </li>
-            <li class="sidebar-menu-item2">
-                <a href="/harvestCycle">
-                    <i class="fa-solid fa-arrows-spin sidebar-menu-item-icon2"></i>
-                    Harvest Cycle
-                </a>
-            </li>
-            <li class="sidebar-menu-item2">
-                <a href="/beeGuide">
-                    <i class="fa-solid fa-book-open sidebar-menu-item-icon2"></i>
-                    Bee Guide
-                </a>
-            </li>
-            <li class="sidebar-menu-item2">
-                <a href="/Worker">
-                    <i class="fa-solid fa-user sidebar-menu-item-icon2"></i>
-                    Worker
-                </a>
-            </li>
-            <li class="sidebar-menu-item2">
-                <a href="/about">
-                    <i class="fa-solid fa-circle-info sidebar-menu-item-icon2"></i>
-                    About
-                </a>
-            </li>
-        </ul>
-    </div>
     </div>
     <script src="/js/notification.js"></script>
     <script src="./js/reusable.js"></script>
