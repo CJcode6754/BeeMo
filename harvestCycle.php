@@ -142,12 +142,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <body class="overflow-x-hidden">
     <!-- Sidebar -->
     <div id="sidebar" class="sidebar position-fixed top-0 bottom-0 bg-white border-end offcanvass">
+
         <div class="d-flex align-items-center p-3 py-5">
             <a href="/dashboard" class="sidebar-logo fw-bold text-dark text-decoration-none fs-4"><img src="img/BeeMo Logo Side.png" width="173px" height="75px" alt="BeeMo Logo"></a>
         </div>
         <ul class="sidebar-menu p-3 py-1 m-0 mb-0">
             <li class="sidebar-menu-item">
-                <a href="/dashboard" name="dashboard">
+                <a href="/dashboard">
                     <i class="fa-solid fa-house sidebar-menu-item-icon"></i>
                     Home
                 </a>
@@ -199,7 +200,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <div>
                     <p class="d-none d-lg-block mt-3 mx-3 fw-semibold">Welcome to Harvest Cycle</p>
                 </div>
-                <i class="fa-solid fa-bars sidebar-toggle me-3 d-block d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNav-Menu" aria-controls="offcanvasRight" aria-expanded="false" aria-label="Toggle navigation"></i>
+                <i class="fa-solid fa-bars sidebar-toggle me-3 d-block d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNav-Menu" aria-controls="offcanvasRight" aria-expanded="false" aria-label="Toggle navigation"></i>
                 <h5 class="fw-bold mb-0 me-auto"></h5>
                 <div class="dropdown me-3 d-sm-block">
                     <div id="nf-btn" class="navbar-link border border-1 border-black rounded-5" data-bs-toggle="dropdown" aria-expanded="false">
@@ -258,7 +259,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <div class="px-4 py-3 my-4 text-center content-wrapper">
                     <p class="fs-4 mb-5 fw-bold cycle-highlight">Harvest Cycle</p>
                     <div class="container-cycle">
-
                         <!-- FORM TO RECORD HARVEST CYCLE -->
                         <form action="harvestCycle.php" method="post" class="row mt-2 g-3">
                             <div class="col-md-4">
@@ -535,13 +535,68 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 </div>
             </div>
         </div>
-
         </div>
         </div>
         </div>
         </div>
+        <div class="space mt-1 d-md-none p-0 m-0"></div>
         <div class="yellow mt-1 d-md-none fixed-bottom p-0 m-0"></div>
     </main>
+
+
+    <!-- Side Bar Mobile View -->
+    <div class="offcanvas offcanvas-start sidebar2 overflow-x-hidden overflow-y-hidden" tabindex="-1" id="offcanvasNav-Menu" aria-labelledby="staticBackdropLabel">
+        <div class="d-flex align-items-center p-3 py-5">
+            <a href="/dashboard" class="sidebar-logo fw-bold text-dark text-decoration-none fs-4" data-bs-dismiss="offcanvas" aria-label="Close">
+                <img src="img/BeeMo Logo Side.png" width="173px" height="75px" alt="BeeMo Logo">
+            </a>
+            <button type="button" class="btn-close ms-auto" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <ul class="sidebar-menu p-2 py-2 m-0 mb-0">
+            <li class="sidebar-menu-item2">
+                <a href="/dashboard">
+                    <i class="fa-solid fa-house sidebar-menu-item-icon2"></i>
+                    Home
+                </a>
+            </li>
+            <li class="sidebar-menu-item2 py-1">
+                <a href="/parameterMonitoring">
+                    <i class="fa-solid fa-temperature-three-quarters sidebar-menu-item-icon2"></i>
+                    Parameters Monitoring
+                </a>
+            </li>
+            <li class="sidebar-menu-item2">
+                <a href="/reports">
+                    <i class="fa-solid fa-newspaper sidebar-menu-item-icon2"></i>
+                    Reports
+                </a>
+            </li>
+            <li class="sidebar-menu-item2 active">
+                <a href="/harvestCycle">
+                    <i class="fa-solid fa-arrows-spin sidebar-menu-item-icon2"></i>
+                    Harvest Cycle
+                </a>
+            </li>
+            <li class="sidebar-menu-item2">
+                <a href="/beeGuide">
+                    <i class="fa-solid fa-book-open sidebar-menu-item-icon2"></i>
+                    Bee Guide
+                </a>
+            </li>
+            <li class="sidebar-menu-item2">
+                <a href="/Worker">
+                    <i class="fa-solid fa-user sidebar-menu-item-icon2"></i>
+                    Worker
+                </a>
+            </li>
+            <li class="sidebar-menu-item2">
+                <a href="/about">
+                    <i class="fa-solid fa-circle-info sidebar-menu-item-icon2"></i>
+                    About
+                </a>
+            </li>
+        </ul>
+    </div>
 
     <!-- Profile Modal -->
     <div class="modal fade " id="Profile-Modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -751,57 +806,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             </div>
         </div>
 
-        <!-- Side Bar Mobile View -->
-        <div id="offcanvasNav-Menu" class="offcanvas offcanvas-end sidebar-mobile bg-white p-3 border border-dark" tabindex="-1" aria-labelledby="offcanvasRightLabel">
-            <i class="fa-solid fa-xmark sidebar-close" data-bs-dismiss="offcanvas" aria-label="Close"></i>
-            <div class="d-flex align-items-center">
-                <a href="/dashboard" class="sidebar-logo fw-bold text-dark text-decoration-none fs-4"><img src="img/BeeMo Logo Side.png" width="173px" height="75px" alt="BeeMo Logo"></a>
-            </div>
-            <ul class="sidebar-menu p-3 py-1 m-0 mb-0">
-                <li class="sidebar-menu-item">
-                    <a href="/dashboard">
-                        <i class="fa-solid fa-house sidebar-menu-item-icon"></i>
-                        Home
-                    </a>
-                </li>
-                <li class="sidebar-menu-item">
-                    <a href="/chooseHive">
-                        <i class="fa-solid fa-temperature-three-quarters sidebar-menu-item-icon"></i>
-                        Parameters Monitoring
-                    </a>
-                </li>
-                <li class="sidebar-menu-item">
-                    <a href="/reports">
-                        <i class="fa-solid fa-newspaper sidebar-menu-item-icon"></i>
-                        Reports
-                    </a>
-                </li>
-                <li class="sidebar-menu-item active">
-                    <a href="/harvestCycle">
-                        <i class="fa-solid fa-arrows-spin sidebar-menu-item-icon"></i>
-                        Harvest Cycle
-                    </a>
-                </li>
-                <li class="sidebar-menu-item">
-                    <a href="/beeGuide">
-                        <i class="fa-solid fa-book-open sidebar-menu-item-icon"></i>
-                        Bee Guide
-                    </a>
-                </li>
-                <li class="sidebar-menu-item">
-                    <a href="/Worker">
-                        <i class="fa-solid fa-user sidebar-menu-item-icon"></i>
-                        Worker
-                    </a>
-                </li>
-                <li class="sidebar-menu-item">
-                    <a href="/about">
-                        <i class="fa-solid fa-circle-info sidebar-menu-item-icon"></i>
-                        About
-                    </a>
-                </li>
-            </ul>
-        </div>
+        
 
         <script>
             document.querySelectorAll('.filter-option').forEach(item => {

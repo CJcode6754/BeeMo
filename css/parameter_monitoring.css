@@ -151,9 +151,15 @@ main {
     padding: 0%;
   }
 
+  .space{
+    min-height: 5vh;
+    overflow-y: auto;
+  }
+  
   .yellow {
     min-height: 5vh;
     background-color: #faef9b;
+    border: solid 1px #2B2B2B;
     overflow-y: auto;
   }
 }
@@ -171,6 +177,15 @@ main {
       display: flex;
       flex-direction: column;
       align-items: center;
+  }
+}
+
+@media (max-width: 991px) and (min-width: 768px) {
+  main {
+    transition: padding-left 0.2s;
+    padding-left: 2rem;
+    padding-top: 2rem;
+    padding-right: 2rem;
   }
 }
 /* --------------------------------------------End: Main Responsive View---------------------------------------------*/

@@ -1,4 +1,5 @@
 @import url("https://fonts.googleapis.com/css2?family=Karla:ital,wght@0,200..800;1,200..800&display=swap");
+
 * {
   padding: 0;
   margin: 0;
@@ -31,12 +32,15 @@ body {
   cursor: pointer;
   transition: 0.2s;
 }
+
 .sidebar-menu {
   list-style-type: none;
 }
+
 .sidebar-menu-item {
   margin-bottom: 0.9rem;
 }
+
 .sidebar-menu-item a {
   text-decoration: none;
   display: flex;
@@ -47,31 +51,38 @@ body {
   font-size: 1.1rem;
   white-space: nowrap;
 }
-.sidebar-menu-item > a {
+
+.sidebar-menu-item>a {
   overflow: hidden;
 }
-.sidebar-menu-item.focused > a,
-.sidebar-menu-item > a:hover {
+
+.sidebar-menu-item.focused>a,
+.sidebar-menu-item>a:hover {
   background-color: var(--bs-gray-200);
   transition: background-color 0.5s ease;
 }
+
 .sidebar-menu-item.active a {
   background-color: #fcf4b9;
   height: 2.7rem;
   color: #2b2b2b;
   box-shadow: 0 5px #2b2b2b;
 }
+
 .sidebar-menu-item-icon {
   margin-right: 0.625rem;
   font-size: 1rem;
 }
+
 .sidebar-menu-item-accordion {
   transition: transform 0.2s;
 }
-.sidebar-dropdown-menu-item.focused > a .sidebar-menu-item-accordion,
-.sidebar-menu-item.focused > a .sidebar-menu-item-accordion {
+
+.sidebar-dropdown-menu-item.focused>a .sidebar-menu-item-accordion,
+.sidebar-menu-item.focused>a .sidebar-menu-item-accordion {
   transform: rotateZ(180deg);
 }
+
 .sidebar.collapsed:hover .sidebar-menu-divider,
 .sidebar-menu-divider {
   font-size: 0.75rem;
@@ -81,18 +92,22 @@ body {
   visibility: visible;
   transition: background-color 0.5s ease;
 }
+
 .sidebar-dropdown-menu-item a {
   padding: 0.375rem 0;
   padding-right: 0.75rem;
 }
-.sidebar-dropdown-menu-item.focused > a,
+
+.sidebar-dropdown-menu-item.focused>a,
 .sidebar-dropdown-menu-item a:hover {
   color: var(--bs-indigo);
   transition: background-color 0.5s ease;
 }
+
 .sidebar-dropdown-menu {
   padding-left: 2rem;
 }
+
 /* --------------------------------------------End: Sidebar Desktop View---------------------------------------------*/
 
 /* --------------------------------------------Start: Sidebar Mobile View---------------------------------------------*/
@@ -103,9 +118,11 @@ body {
   left: 0;
   z-index: 500;
 }
+
 .sidebar-menu-item2 {
   margin-bottom: 0.9rem;
 }
+
 .sidebar-menu-item2 a {
   text-decoration: none;
   display: flex;
@@ -116,24 +133,29 @@ body {
   font-size: 1rem;
   white-space: nowrap;
 }
-.sidebar-menu-item2 > a {
+
+.sidebar-menu-item2>a {
   overflow: hidden;
 }
-.sidebar-menu-item2.focused > a,
-.sidebar-menu-item2 > a:hover {
+
+.sidebar-menu-item2.focused>a,
+.sidebar-menu-item2>a:hover {
   background-color: var(--bs-gray-200);
   transition: background-color 0.5s ease;
 }
+
 .sidebar-menu-item2.active a {
   background-color: #fcf4b9;
   height: 2.5rem;
   color: #2b2b2b;
   box-shadow: 0 5px #2b2b2b;
 }
+
 .sidebar-menu-item-icon2 {
   margin-right: 0.625rem;
   font-size: 1rem;
 }
+
 .sidebar-menu-item-accordion {
   transition: transform 0.2s;
 }
@@ -147,7 +169,7 @@ body {
   visibility: visible;
 }
 
-.sidebar-dropdown-menu-item2.focused > a,
+.sidebar-dropdown-menu-item2.focused>a,
 .sidebar-dropdown-menu-item2 a:hover {
   color: var(--bs-indigo);
   transition: background-color 0.5s ease;
@@ -158,22 +180,27 @@ body {
     width: 4.75rem;
     left: 0;
   }
+
   .sidebar.collapsed .sidebar-logo {
     display: none;
   }
+
   .sidebar.collapsed:hover .sidebar-logo {
     display: block;
     transition: background-color 0.5s ease;
   }
+
   .sidebar.collapsed:hover .sidebar-toggle {
     margin-left: auto;
     margin-right: 0;
     transition: background-color 0.5s ease;
   }
+
   .sidebar.collapsed .sidebar-toggle {
     margin: 0 auto;
     transform: rotateZ(180deg);
   }
+
   .sidebar.collapsed:hover .sidebar-menu-divider {
     font-size: 0.75rem;
     color: var(--bs-gray-600);
@@ -182,11 +209,13 @@ body {
     visibility: visible;
     transition: background-color 0.5s ease;
   }
+
   .sidebar.collapsed .sidebar-menu-divider {
     opacity: 0;
     visibility: hidden;
   }
 }
+
 /* --------------------------------------------End: Sidebar Mobile View---------------------------------------------*/
 
 
@@ -195,6 +224,7 @@ body {
   .btn-toggle {
     display: none;
   }
+
   .offcanvass {
     transform: none !important;
     visibility: visible !important;
@@ -205,8 +235,24 @@ body {
   .btn-toggle {
     display: block;
   }
+
   .offcanvass {
     visibility: hidden;
+  }
+}
+
+
+@media (max-width: 991px) and (min-width: 768px) {
+  .sidebar {
+    display: none; /* Hide sidebar in tablet view */
+  }
+
+  .sidebar.collapsed {
+    display: none; /* Ensure collapsed sidebar is hidden too */
+  }
+
+  .sidebar-toggle {
+    display: none; /* Hide the toggle button as well */
   }
 }
 /* --------------------------------------------End: Toggle and Off-Canvas ---------------------------------------------*/
@@ -220,6 +266,7 @@ nav {
   background-color: #fcf4b9;
   box-shadow: 0 5px #2b2b2b;
 }
+
 .navbar-link {
   background-color: #faef9b;
   box-shadow: 2.5px 2.5px rgba(0, 0, 0, 0.4);
@@ -232,19 +279,23 @@ nav {
   justify-content: center;
   border-radius: 0.3rem;
 }
+
 .navbar-link:hover {
   background-color: #fef9d9;
   border-radius: 50%;
 }
+
 .navbar-link i:hover {
   transform: scale(1.09);
 }
+
 /* --------------------------------------------End: Navbar Desktop View---------------------------------------------*/
 
 /* --------------------------------------------Start: Notifications---------------------------------------------*/
 /* Notifications Container */
 #notifications {
-  max-height: 350px; /* Adjust based on your preference */
+  max-height: 350px;
+  /* Adjust based on your preference */
   overflow-y: auto;
 }
 
@@ -261,25 +312,32 @@ nav {
   color: #333;
   background-color: #fff;
 }
+
 .notification-icon {
-  width: 30px; /* Adjust size as needed */
-  height: 30px; /* Adjust size as needed */
+  width: 30px;
+  /* Adjust size as needed */
+  height: 30px;
+  /* Adjust size as needed */
   margin-right: 10px;
   border-radius: 50%;
 }
+
 .notification-content {
   flex: 2;
 }
-.notif_message{
+
+.notif_message {
   width: 100%;
   font-size: 14px;
   text-decoration: none;
   padding-top: 12px;
   font-weight: 800;
 }
-.notif_date{
+
+.notif_date {
   font-size: 12px;
 }
+
 /* Success Notification */
 .alert-success {
   background-color: #d4edda;
@@ -330,18 +388,19 @@ nav {
 }
 
 
-.clearNotif{
+.clearNotif {
   color: #333;
   background: #fcf4b9;
   box-shadow: 0 3px #2b2b2b;
   text-decoration: none;
   font-size: 12px;
   font-weight: 700;
-  border:1px solid #2b2b2b;
+  border: 1px solid #2b2b2b;
   border-radius: 8px;
   margin-top: 15px;
   margin-left: 60px;
   padding: 5px;
   cursor: pointer;
 }
+
 /* --------------------------------------------End: Notifications---------------------------------------------*/

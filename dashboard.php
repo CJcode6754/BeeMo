@@ -137,9 +137,9 @@ if (isset($_POST['clearNotif'])) {
             <!-- Navbar -->
             <nav class="px-3 py-3 rounded-4">
                 <div>
-                    <p class="d-none d-lg-block mt-3 mx-3 fw-semibold">Welcome to BeeMo</p>
+                    <p class="d-none d-lg-block mt-3 mx-3 fw-semibold">Welcome to BeeMo Dashboard</p>
                 </div>
-                <i class="fa-solid fa-bars sidebar-toggle me-3 d-block d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNav-Menu" aria-controls="offcanvasRight" aria-expanded="false" aria-label="Toggle navigation"></i>
+                <i class="fa-solid fa-bars sidebar-toggle me-3 d-block d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNav-Menu" aria-controls="offcanvasRight" aria-expanded="false" aria-label="Toggle navigation"></i>
                 <h5 class="fw-bold mb-0 me-auto"></h5>
                 <div class="dropdown me-3 d-sm-block">
                     <div id="nf-btn" class="navbar-link border border-1 border-black rounded-5" data-bs-toggle="dropdown" aria-expanded="false">
