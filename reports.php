@@ -147,7 +147,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
                         <li>
                             <a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#Profile-Modal"">
-                                <i class="fa-solid fa-user"></i>
+                                <i class=" fa-solid fa-user"></i>
                                 Profile
                             </a>
                         </li>
@@ -169,6 +169,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 </div>
             </nav>
             <!-- Content -->
+<<<<<<< HEAD
             <div class="reports-page py-3 mt-4 border border-2 rounded-4 border-dark">
                 <div class="px-4 py-3  text-center content-wrapper" style="max-height: 450px; overflow-y: auto; scroll-behavior: smooth;">
                 <p class="fs-4 mb-3 fw-bold reports-highlight">Reports</p>
@@ -189,6 +190,37 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 <a href="#/humidity" class="btn btn-label" data-type="humidity">Humidity</a>
                                 <a href="#/weight" class="btn btn-label" data-type="weight">Weight</a>
                             </div>
+=======
+            <div class="reports-page py-4 mt-4 border border-2 rounded-4 border-dark">
+                <div class="px-4 text-center content-wrapper">
+                    <div class="container-top">
+                        <div class="label-container btn-group rounded-3 d-flex justify-content-center mb-4">
+                            <a href="#/temperature" class="btn btn-label label-current" data-type="temperature">Temperature</a>
+                            <a href="#/humidity" class="btn btn-label" data-type="humidity">Humidity</a>
+                            <a href="#/weight" class="btn btn-label" data-type="weight">Weight</a>
+                        </div>
+                        <div class="col-12 col-md-12">
+                            <div class="dropdown">
+                                <button class="btn btn-warning btn-sm dropdown-toggle" type="button" id="harvestCycleDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Select Harvest Cycle
+                                </button>
+                                <ul class="dropdown-menu" id="harvestCycleList">
+                                    <!-- Options will be populated via JavaScript -->
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-12">
+                        <div class="dropdown">
+                            <button class="btn btn-warning btn-sm dropdown-toggle" type="button" id="monthlyFilter" data-bs-toggle="dropdown" aria-expanded="false">
+                                Filter by Month
+                            </button>
+                            <ul class="dropdown-menu" id="monthDropdown" aria-labelledby="monthlyFilter">
+                                <!-- The months will be populated dynamically in JavaScript -->
+                            </ul>
+                        </div>
+                    </div>
+>>>>>>> 074e6dcb4d5faf7dccdb0d817d79a754b6686090
 
                             <!-- Filter Container (End) -->
                             <div class="filter-container d-flex justify-content-center justify-content-md-end align-items-center gap-2">
@@ -220,6 +252,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             </div>
                         </div>
                     </div>
+<<<<<<< HEAD
 
                     <div class="legends d-flex justify-content-center gap-3 mt-4">
                         <span class="badge" style="background-color: rgba(0, 255, 0, 0.2); color: #2B2B2B;">Optimal Range</span>
@@ -232,12 +265,25 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         <p>Minimum: <span id="min-value">-</span></p>
                         <p>Maximum: <span id="max-value">-</span></p>
                     </div>
+=======
+                </div>
+                <div class="legends d-flex justify-content-center gap-3 mt-4">
+                    <span class="badge" style="background-color: rgba(0, 255, 0, 0.2); color: #2B2B2B;">Optimal Range</span>
+                    <span class="badge" style="background-color: rgba(255, 127, 127, 0.4); color: #2B2B2B;">Out of Optimal Range</span>
+                </div>
+                <div class="descriptive-analytics-container d-flex justify-content-center mt-2 row row-cols-2 row-cols-lg-5 g-2 g-lg-3">
+                    <p>Type: <span id="date-range-label">-</span></p>
+                    <p>Average: <span id="average-value">-</span></p>
+                    <p>Minimum: <span id="min-value">-</span></p>
+                    <p>Maximum: <span id="max-value">-</span></p>
+>>>>>>> 074e6dcb4d5faf7dccdb0d817d79a754b6686090
                 </div>
             </div>
             <div class="space mt-1 d-md-none p-0 m-0"></div>
         <div class="yellow mt-1 d-md-none fixed-bottom p-0 m-0"></div>
     </main>
 
+<<<<<<< HEAD
     <!-- Side Bar Mobile View -->
     <div class="offcanvas offcanvas-start sidebar2 overflow-x-hidden overflow-y-hidden" tabindex="-1"
             id="offcanvasNav-Menu" aria-labelledby="staticBackdropLabel">
@@ -294,6 +340,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             </ul>
         </div>
 
+=======
+>>>>>>> 074e6dcb4d5faf7dccdb0d817d79a754b6686090
     <!-- Profile Modal -->
     <div class="modal fade " id="Profile-Modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable profile-dialog">
@@ -378,11 +426,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         $get = "SELECT admin_name, email, number FROM admin_table WHERE adminID = '$adminID'";
                         $getQuery = mysqli_query($conn, $get);
 
+<<<<<<< HEAD
                         while ($row = $getQuery->fetch_assoc()){
+=======
+                        while ($row = $getQuery->fetch_assoc()) {
+>>>>>>> 074e6dcb4d5faf7dccdb0d817d79a754b6686090
                             $currentName = $row['admin_name'];
                             $currentEmail = $row['email'];
                             $currentPhoneNumber = $row['number'];
-                            echo"
+                            echo "
                                 <h5>$currentName</h5>
                                 <h6 style='text-decoration: underline; font-weight: 350;'><small class='text-body-secondary'>$currentEmail</small></h6>
                                 <div class='Field-inputs mx-4' style='font-size: small;'>
@@ -502,7 +554,65 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             </div>
         </div>
 
+<<<<<<< HEAD
         
+=======
+        <!-- Side Bar Mobile View -->
+        <div class="offcanvas offcanvas-start sidebar2 overflow-x-hidden overflow-y-hidden" tabindex="-1"
+            id="offcanvasNav-Menu" aria-labelledby="staticBackdropLabel">
+            <div class="d-flex align-items-center p-3 py-5">
+                <a href="#" class="sidebar-logo fw-bold text-dark text-decoration-none fs-4" data-bs-dismiss="offcanvas"
+                    aria-label="Close">
+                    <img src="img/BeeMo Logo Side.png" width="173px" height="75px" alt="BeeMo Logo">
+                </a>
+                <button type="button" class="btn-close ms-auto" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+            </div>
+            <ul class="sidebar-menu p-2 py-2 m-0 mb-0">
+                <li class="sidebar-menu-item2 active">
+                    <a href="/dashboard">
+                        <i class="fa-solid fa-house sidebar-menu-item-icon2"></i>
+                        Home
+                    </a>
+                </li>
+                <li class="sidebar-menu-item2 py-1">
+                    <a href="/chooseHive">
+                        <i class="fa-solid fa-temperature-three-quarters sidebar-menu-item-icon2"></i>
+                        Parameters Monitoring
+                    </a>
+                </li>
+                <li class="sidebar-menu-item2">
+                    <a href="/reports">
+                        <i class="fa-solid fa-newspaper sidebar-menu-item-icon2"></i>
+                        Reports
+                    </a>
+                </li>
+                <li class="sidebar-menu-item2">
+                    <a href="/harvestCycle">
+                        <i class="fa-solid fa-arrows-spin sidebar-menu-item-icon2"></i>
+                        Harvest Cycle
+                    </a>
+                </li>
+                <li class="sidebar-menu-item2">
+                    <a href="/beeGuide">
+                        <i class="fa-solid fa-book-open sidebar-menu-item-icon2"></i>
+                        Bee Guide
+                    </a>
+                </li>
+                <li class="sidebar-menu-item2">
+                    <a href="/Worker">
+                        <i class="fa-solid fa-user sidebar-menu-item-icon2"></i>
+                        Worker
+                    </a>
+                </li>
+                <li class="sidebar-menu-item2">
+                    <a href="/about">
+                        <i class="fa-solid fa-circle-info sidebar-menu-item-icon2"></i>
+                        About
+                    </a>
+                </li>
+            </ul>
+        </div>
+>>>>>>> 074e6dcb4d5faf7dccdb0d817d79a754b6686090
     </div>
     <script src="/js/notification.js"></script>
     <script src="./js/reusable.js"></script>
