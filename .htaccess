@@ -24,7 +24,10 @@ RewriteRule ^verify$ verify.php [L]
 RewriteRule ^Verify$ verifyWorker.php [L]
 RewriteRule ^Verify2$ verifyProfile.php [L]
 RewriteRule ^Verify3$ verifyEditWorker.php [L]
-RewriteRule ^redirect$ redirect.php [L]
+RewriteRule ^userDashboard$ user_dashboard.php [L]
+RewriteRule ^userParameterMonitoring$ user_pmonitoring.php [L]
+RewriteRule ^userHarvestCycle$ userHarvestCycle.php [L]
+RewriteRule ^userBeeGuide$ userbeeguide.php [L]
 
 # Redirect to index.php for non-existing routes
 RewriteCond %{REQUEST_FILENAME} !-f

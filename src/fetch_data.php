@@ -1,9 +1,6 @@
 <?php
-header('Content-Type: application/json');
-
-// Error reporting to ensure any issues are visible
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
+header('Content-Type: text/event-stream');
+header('Cache-Control: no-cache');
 
 // Database connection settings
 $servername = "localhost";
@@ -16,23 +13,28 @@ $conn = new mysqli($servername, $username, $password, $dbname);
 
 // Check connection
 if ($conn->connect_error) {
-    echo json_encode(['error' => 'Connection failed: ' . $conn->connect_error]);
+    echo "data: Connection failed: " . $conn->connect_error . "\n\n";
     exit();
 }
 
-// Query to fetch data from the database
-$sql = "SELECT temperature, humidity, weight FROM your_table ORDER BY id DESC LIMIT 1";
-$result = $conn->query($sql);
+while (true) {
+    // Query to fetch data from the database
+    $sql = "SELECT temperature, humidity, weight FROM hive1 ORDER BY id DESC LIMIT 1";
+    $result = $conn->query($sql);
 
-if ($result->num_rows > 0) {
-    $row = $result->fetch_assoc();
-    echo json_encode([
-        'temperature' => $row['temperature'],
-        'humidity' => $row['humidity'],
-        'weight' => $row['weight']
-    ]);
-} else {
-    echo json_encode(['error' => 'No data found']);
+    if ($result->num_rows > 0) {
+        $row = $result->fetch_assoc();
+        echo "data: " . json_encode([
+            'temperature' => $row['temperature'],
+            'humidity' => $row['humidity'],
+            'weight' => $row['weight']
+        ]) . "\n\n";
+        ob_flush(); // Flush the output buffer
+        flush(); // Send the output to the client
+    }
+
+    // Wait before checking for new data again (e.g., 5 seconds)
+    sleep(5);
 }
 
 $conn->close();

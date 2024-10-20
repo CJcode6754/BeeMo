@@ -62,7 +62,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             noti_image = 'img/beemo-ico.ico';
                             break;
                         case 'delete_cycle':
-                            noti_message = 'Cycle was deleted successfully.';
+                            noti_message = 'Cycle deleted successfully.';
                             noti_image = 'img/beemo-ico.ico';
                             break;
                         case 'failed_to_delete_cycle':
@@ -70,7 +70,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             noti_image = 'img/beemo-ico.ico';
                             break;
                         case 'edit_cycle_success':
-                            noti_message = 'Cycle info was edited successfully.';
+                            noti_message = 'Cycle edited successfully.';
                             noti_image = 'img/beemo-ico.ico';
                             break;
                         case 'edit_cycle_failed':
@@ -82,7 +82,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             noti_image = 'img/beemo-ico.ico';
                             break;
                         case 'newPass':
-                            noti_message = 'Password changed successfully!';
+                            noti_message = 'Password changed successfully.';
                             noti_image = 'img/beemo-ico.ico';
                             break;
                         case 'errorPass':
@@ -129,6 +129,14 @@ document.addEventListener('DOMContentLoaded', function() {
                             noti_message = 'Hive not recorded.';
                             noti_image = 'img/beemo-ico.ico';
                             break;
+                        case 'user_new_cycle':
+                            noti_message = 'Cycle added successfully.';
+                            noti_image = 'img/beemo-ico.ico';
+                            break;
+                        case 'user_failed_to_add_cycle':
+                            noti_message = 'Failed to add new cycle.';
+                            noti_image = 'img/beemo-ico.ico';
+                            break;
                         default:
                             noti_message = 'Notification';
                             noti_image = 'img/beemo-ico.ico';
@@ -171,7 +179,6 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .then(response => response.json())
         .then(data => {
-            console.log("Marked as seen:", data); // Log response for debugging
             nfCountElement.textContent = 0; // Reset notification count to zero
             nfCountBadgeElement.textContent = 0; // Reset badge count to zero
         })
@@ -195,3 +202,4 @@ document.addEventListener('DOMContentLoaded', function() {
         e.stopPropagation(); // Prevent hiding when clicking inside notifications
     });
 });
+

@@ -1,3 +1,572 @@
 2024-09-21 02:42:05 - Received request
 2024-09-21 02:42:05 - Received incomplete data
 2024-09-21 02:42:05 - Connection closed
+2024-10-05 01:18:01 - Received request
+2024-10-05 01:18:01 - Database connection successful.
+2024-10-05 01:18:01 - Raw input: 
+2024-10-05 01:18:01 - Decoded input: 
+2024-10-05 01:18:01 - Received incomplete data
+2024-10-05 01:18:01 - Connection closed
+2024-10-05 01:21:05 - Received request
+2024-10-05 01:21:05 - Database connection successful.
+2024-10-05 01:21:05 - Received incomplete data
+2024-10-05 01:21:05 - Connection closed
+2024-10-06 01:40:05 - Received request
+2024-10-06 01:40:05 - Database connection successful.
+2024-10-06 01:40:05 - Received incomplete data
+2024-10-06 01:40:05 - Connection closed
+2024-10-06 01:54:00 - Received request
+2024-10-06 01:54:00 - Database connection successful.
+2024-10-06 01:54:00 - Received incomplete data
+2024-10-06 01:54:00 - Connection closed
+2024-10-06 01:55:26 - Received request
+2024-10-06 01:55:26 - Database connection successful.
+2024-10-06 01:55:26 - Received incomplete data
+2024-10-06 01:55:26 - Connection closed
+2024-10-06 01:59:28 - Received request
+2024-10-06 01:59:28 - Database connection successful.
+2024-10-06 01:59:28 - Received data - Temperature: 18.00, Humidity: 21.00, Weight: 84.00
+2024-10-06 01:59:28 - Values inserted into MySQL database table.
+2024-10-06 01:59:28 - Connection closed
+2024-10-06 01:59:37 - Received request
+2024-10-06 01:59:37 - Database connection successful.
+2024-10-06 01:59:37 - Received data - Temperature: 21.00, Humidity: 86.00, Weight: 33.00
+2024-10-06 01:59:37 - Values inserted into MySQL database table.
+2024-10-06 01:59:37 - Connection closed
+2024-10-06 01:59:45 - Received request
+2024-10-06 01:59:45 - Database connection successful.
+2024-10-06 01:59:45 - Received data - Temperature: 23.00, Humidity: 45.00, Weight: 38.00
+2024-10-06 01:59:45 - Values inserted into MySQL database table.
+2024-10-06 01:59:45 - Connection closed
+2024-10-06 01:59:54 - Received request
+2024-10-06 01:59:54 - Database connection successful.
+2024-10-06 01:59:54 - Received data - Temperature: 16.00, Humidity: 79.00, Weight: 23.00
+2024-10-06 01:59:54 - Values inserted into MySQL database table.
+2024-10-06 01:59:54 - Connection closed
+2024-10-06 02:00:02 - Received request
+2024-10-06 02:00:02 - Database connection successful.
+2024-10-06 02:00:02 - Received data - Temperature: 22.00, Humidity: 40.00, Weight: 69.00
+2024-10-06 02:00:02 - Values inserted into MySQL database table.
+2024-10-06 02:00:02 - Connection closed
+2024-10-06 02:00:11 - Received request
+2024-10-06 02:00:11 - Database connection successful.
+2024-10-06 02:00:11 - Received data - Temperature: 20.00, Humidity: 40.00, Weight: 77.00
+2024-10-06 02:00:11 - Values inserted into MySQL database table.
+2024-10-06 02:00:11 - Connection closed
+2024-10-06 02:00:19 - Received request
+2024-10-06 02:00:19 - Database connection successful.
+2024-10-06 02:00:19 - Received data - Temperature: 16.00, Humidity: 43.00, Weight: 73.00
+2024-10-06 02:00:19 - Values inserted into MySQL database table.
+2024-10-06 02:00:19 - Connection closed
+2024-10-06 02:00:28 - Received request
+2024-10-06 02:00:28 - Database connection successful.
+2024-10-06 02:00:28 - Received data - Temperature: 19.00, Humidity: 85.00, Weight: 26.00
+2024-10-06 02:00:28 - Values inserted into MySQL database table.
+2024-10-06 02:00:28 - Connection closed
+2024-10-06 02:00:37 - Received request
+2024-10-06 02:00:37 - Database connection successful.
+2024-10-06 02:00:37 - Received data - Temperature: 16.00, Humidity: 47.00, Weight: 73.00
+2024-10-06 02:00:37 - Values inserted into MySQL database table.
+2024-10-06 02:00:37 - Connection closed
+2024-10-06 02:00:46 - Received request
+2024-10-06 02:00:46 - Database connection successful.
+2024-10-06 02:00:46 - Received data - Temperature: 17.00, Humidity: 86.00, Weight: 24.00
+2024-10-06 02:00:46 - Values inserted into MySQL database table.
+2024-10-06 02:00:46 - Connection closed
+2024-10-06 02:00:54 - Received request
+2024-10-06 02:00:54 - Database connection successful.
+2024-10-06 02:00:54 - Received data - Temperature: 28.00, Humidity: 43.00, Weight: 56.00
+2024-10-06 02:00:54 - Values inserted into MySQL database table.
+2024-10-06 02:00:54 - Connection closed
+2024-10-06 02:01:03 - Received request
+2024-10-06 02:01:03 - Database connection successful.
+2024-10-06 02:01:03 - Received data - Temperature: 15.00, Humidity: 36.00, Weight: 83.00
+2024-10-06 02:01:03 - Values inserted into MySQL database table.
+2024-10-06 02:01:03 - Connection closed
+2024-10-06 02:01:11 - Received request
+2024-10-06 02:01:11 - Database connection successful.
+2024-10-06 02:01:11 - Received data - Temperature: 17.00, Humidity: 48.00, Weight: 15.00
+2024-10-06 02:01:11 - Values inserted into MySQL database table.
+2024-10-06 02:01:11 - Connection closed
+2024-10-06 02:01:20 - Received request
+2024-10-06 02:01:20 - Database connection successful.
+2024-10-06 02:01:20 - Received data - Temperature: 19.00, Humidity: 47.00, Weight: 76.00
+2024-10-06 02:01:20 - Values inserted into MySQL database table.
+2024-10-06 02:01:20 - Connection closed
+2024-10-06 02:01:29 - Received request
+2024-10-06 02:01:29 - Database connection successful.
+2024-10-06 02:01:29 - Received data - Temperature: 15.00, Humidity: 73.00, Weight: 60.00
+2024-10-06 02:01:29 - Values inserted into MySQL database table.
+2024-10-06 02:01:29 - Connection closed
+2024-10-06 02:12:07 - Received request
+2024-10-06 02:12:07 - Database connection successful.
+2024-10-06 02:12:07 - Received data - Temperature: 33.00, Humidity: 73.00, Weight: 4.00
+2024-10-06 02:12:07 - Values inserted into MySQL database table.
+2024-10-06 02:12:07 - Connection closed
+2024-10-06 02:12:16 - Received request
+2024-10-06 02:12:16 - Database connection successful.
+2024-10-06 02:12:16 - Received data - Temperature: 25.00, Humidity: 78.00, Weight: 91.00
+2024-10-06 02:12:16 - Values inserted into MySQL database table.
+2024-10-06 02:12:16 - Connection closed
+2024-10-06 02:12:25 - Received request
+2024-10-06 02:12:25 - Database connection successful.
+2024-10-06 02:12:25 - Received data - Temperature: 32.00, Humidity: 57.00, Weight: 52.00
+2024-10-06 02:12:25 - Values inserted into MySQL database table.
+2024-10-06 02:12:25 - Connection closed
+2024-10-06 02:12:33 - Received request
+2024-10-06 02:12:33 - Database connection successful.
+2024-10-06 02:12:33 - Received data - Temperature: 16.00, Humidity: 63.00, Weight: 40.00
+2024-10-06 02:12:33 - Values inserted into MySQL database table.
+2024-10-06 02:12:33 - Connection closed
+2024-10-06 02:12:42 - Received request
+2024-10-06 02:12:42 - Database connection successful.
+2024-10-06 02:12:42 - Received data - Temperature: 24.00, Humidity: 63.00, Weight: 89.00
+2024-10-06 02:12:42 - Values inserted into MySQL database table.
+2024-10-06 02:12:42 - Connection closed
+2024-10-06 02:12:50 - Received request
+2024-10-06 02:12:50 - Database connection successful.
+2024-10-06 02:12:50 - Received data - Temperature: 18.00, Humidity: 78.00, Weight: 42.00
+2024-10-06 02:12:50 - Values inserted into MySQL database table.
+2024-10-06 02:12:50 - Connection closed
+2024-10-06 02:12:59 - Received request
+2024-10-06 02:12:59 - Database connection successful.
+2024-10-06 02:12:59 - Received data - Temperature: 18.00, Humidity: 45.00, Weight: 74.00
+2024-10-06 02:12:59 - Values inserted into MySQL database table.
+2024-10-06 02:12:59 - Connection closed
+2024-10-06 02:13:07 - Received request
+2024-10-06 02:13:07 - Database connection successful.
+2024-10-06 02:13:07 - Received data - Temperature: 28.00, Humidity: 55.00, Weight: 34.00
+2024-10-06 02:13:07 - Values inserted into MySQL database table.
+2024-10-06 02:13:07 - Connection closed
+2024-10-06 02:13:16 - Received request
+2024-10-06 02:13:16 - Database connection successful.
+2024-10-06 02:13:16 - Received data - Temperature: 32.00, Humidity: 59.00, Weight: 84.00
+2024-10-06 02:13:16 - Values inserted into MySQL database table.
+2024-10-06 02:13:16 - Connection closed
+2024-10-06 02:13:25 - Received request
+2024-10-06 02:13:25 - Database connection successful.
+2024-10-06 02:13:25 - Received data - Temperature: 23.00, Humidity: 77.00, Weight: 3.00
+2024-10-06 02:13:25 - Values inserted into MySQL database table.
+2024-10-06 02:13:25 - Connection closed
+2024-10-06 02:13:33 - Received request
+2024-10-06 02:13:33 - Database connection successful.
+2024-10-06 02:13:33 - Received data - Temperature: 34.00, Humidity: 23.00, Weight: 34.00
+2024-10-06 02:13:33 - Values inserted into MySQL database table.
+2024-10-06 02:13:33 - Connection closed
+2024-10-06 02:13:42 - Received request
+2024-10-06 02:13:42 - Database connection successful.
+2024-10-06 02:13:42 - Received data - Temperature: 28.00, Humidity: 63.00, Weight: 71.00
+2024-10-06 02:13:42 - Values inserted into MySQL database table.
+2024-10-06 02:13:42 - Connection closed
+2024-10-06 02:13:51 - Received request
+2024-10-06 02:13:51 - Database connection successful.
+2024-10-06 02:13:51 - Received data - Temperature: 19.00, Humidity: 32.00, Weight: 22.00
+2024-10-06 02:13:51 - Values inserted into MySQL database table.
+2024-10-06 02:13:51 - Connection closed
+2024-10-06 02:13:59 - Received request
+2024-10-06 02:13:59 - Database connection successful.
+2024-10-06 02:13:59 - Received data - Temperature: 25.00, Humidity: 73.00, Weight: 36.00
+2024-10-06 02:13:59 - Values inserted into MySQL database table.
+2024-10-06 02:13:59 - Connection closed
+2024-10-06 02:14:08 - Received request
+2024-10-06 02:14:08 - Database connection successful.
+2024-10-06 02:14:08 - Received data - Temperature: 34.00, Humidity: 75.00, Weight: 19.00
+2024-10-06 02:14:08 - Values inserted into MySQL database table.
+2024-10-06 02:14:08 - Connection closed
+2024-10-06 02:14:16 - Received request
+2024-10-06 02:14:16 - Database connection successful.
+2024-10-06 02:14:16 - Received data - Temperature: 22.00, Humidity: 46.00, Weight: 45.00
+2024-10-06 02:14:16 - Values inserted into MySQL database table.
+2024-10-06 02:14:16 - Connection closed
+2024-10-06 02:14:24 - Received request
+2024-10-06 02:14:24 - Database connection successful.
+2024-10-06 02:14:24 - Received data - Temperature: 23.00, Humidity: 38.00, Weight: 35.00
+2024-10-06 02:14:24 - Values inserted into MySQL database table.
+2024-10-06 02:14:24 - Connection closed
+2024-10-06 02:14:33 - Received request
+2024-10-06 02:14:33 - Database connection successful.
+2024-10-06 02:14:33 - Received data - Temperature: 32.00, Humidity: 35.00, Weight: 5.00
+2024-10-06 02:14:33 - Values inserted into MySQL database table.
+2024-10-06 02:14:33 - Connection closed
+2024-10-06 02:14:41 - Received request
+2024-10-06 02:14:41 - Database connection successful.
+2024-10-06 02:14:41 - Received data - Temperature: 30.00, Humidity: 28.00, Weight: 49.00
+2024-10-06 02:14:41 - Values inserted into MySQL database table.
+2024-10-06 02:14:41 - Connection closed
+2024-10-06 02:14:50 - Received request
+2024-10-06 02:14:50 - Database connection successful.
+2024-10-06 02:14:50 - Received data - Temperature: 22.00, Humidity: 29.00, Weight: 97.00
+2024-10-06 02:14:50 - Values inserted into MySQL database table.
+2024-10-06 02:14:50 - Connection closed
+2024-10-06 02:15:00 - Received request
+2024-10-06 02:15:00 - Database connection successful.
+2024-10-06 02:15:00 - Received data - Temperature: 23.00, Humidity: 38.00, Weight: 19.00
+2024-10-06 02:15:00 - Values inserted into MySQL database table.
+2024-10-06 02:15:00 - Connection closed
+2024-10-06 02:15:09 - Received request
+2024-10-06 02:15:09 - Database connection successful.
+2024-10-06 02:15:09 - Received data - Temperature: 18.00, Humidity: 86.00, Weight: 26.00
+2024-10-06 02:15:09 - Values inserted into MySQL database table.
+2024-10-06 02:15:09 - Connection closed
+2024-10-06 02:17:34 - Received request
+2024-10-06 02:17:34 - Database connection successful.
+2024-10-06 02:17:34 - Received data - Temperature: 24.00, Humidity: 50.00, Weight: 16.00
+2024-10-06 02:17:34 - Values inserted into MySQL database table.
+2024-10-06 02:17:34 - Connection closed
+2024-10-06 02:18:10 - Received request
+2024-10-06 02:18:10 - Database connection successful.
+2024-10-06 02:18:10 - Received data - Temperature: 33.00, Humidity: 62.00, Weight: 99.00
+2024-10-06 02:18:10 - Values inserted into MySQL database table.
+2024-10-06 02:18:10 - Connection closed
+2024-10-06 02:18:25 - Received request
+2024-10-06 02:18:25 - Database connection successful.
+2024-10-06 02:18:25 - Received data - Temperature: 29.00, Humidity: 52.00, Weight: 31.00
+2024-10-06 02:18:25 - Values inserted into MySQL database table.
+2024-10-06 02:18:25 - Connection closed
+2024-10-06 02:18:39 - Received request
+2024-10-06 02:18:39 - Database connection successful.
+2024-10-06 02:18:39 - Received data - Temperature: 28.00, Humidity: 58.00, Weight: 53.00
+2024-10-06 02:18:39 - Values inserted into MySQL database table.
+2024-10-06 02:18:39 - Connection closed
+2024-10-06 02:18:52 - Received request
+2024-10-06 02:18:52 - Database connection successful.
+2024-10-06 02:18:52 - Received data - Temperature: 31.00, Humidity: 24.00, Weight: 30.00
+2024-10-06 02:18:52 - Values inserted into MySQL database table.
+2024-10-06 02:18:52 - Connection closed
+2024-10-06 02:19:06 - Received request
+2024-10-06 02:19:06 - Database connection successful.
+2024-10-06 02:19:06 - Received data - Temperature: 29.00, Humidity: 63.00, Weight: 40.00
+2024-10-06 02:19:06 - Values inserted into MySQL database table.
+2024-10-06 02:19:06 - Connection closed
+2024-10-06 02:19:20 - Received request
+2024-10-06 02:19:20 - Database connection successful.
+2024-10-06 02:19:20 - Received data - Temperature: 19.00, Humidity: 71.00, Weight: 25.00
+2024-10-06 02:19:20 - Values inserted into MySQL database table.
+2024-10-06 02:19:20 - Connection closed
+2024-10-06 02:19:34 - Received request
+2024-10-06 02:19:34 - Database connection successful.
+2024-10-06 02:19:34 - Received data - Temperature: 18.00, Humidity: 68.00, Weight: 22.00
+2024-10-06 02:19:34 - Values inserted into MySQL database table.
+2024-10-06 02:19:34 - Connection closed
+2024-10-06 02:19:47 - Received request
+2024-10-06 02:19:47 - Database connection successful.
+2024-10-06 02:19:47 - Received data - Temperature: 28.00, Humidity: 79.00, Weight: 59.00
+2024-10-06 02:19:47 - Values inserted into MySQL database table.
+2024-10-06 02:19:47 - Connection closed
+2024-10-06 02:20:01 - Received request
+2024-10-06 02:20:01 - Database connection successful.
+2024-10-06 02:20:01 - Received data - Temperature: 31.00, Humidity: 63.00, Weight: 76.00
+2024-10-06 02:20:01 - Values inserted into MySQL database table.
+2024-10-06 02:20:01 - Connection closed
+2024-10-06 02:20:14 - Received request
+2024-10-06 02:20:14 - Database connection successful.
+2024-10-06 02:20:14 - Received data - Temperature: 24.00, Humidity: 60.00, Weight: 0.00
+2024-10-06 02:20:14 - Values inserted into MySQL database table.
+2024-10-06 02:20:14 - Connection closed
+2024-10-06 02:20:28 - Received request
+2024-10-06 02:20:28 - Database connection successful.
+2024-10-06 02:20:28 - Received data - Temperature: 27.00, Humidity: 72.00, Weight: 52.00
+2024-10-06 02:20:28 - Values inserted into MySQL database table.
+2024-10-06 02:20:28 - Connection closed
+2024-10-06 02:20:42 - Received request
+2024-10-06 02:20:42 - Database connection successful.
+2024-10-06 02:20:42 - Received data - Temperature: 23.00, Humidity: 85.00, Weight: 56.00
+2024-10-06 02:20:42 - Values inserted into MySQL database table.
+2024-10-06 02:20:42 - Connection closed
+2024-10-06 02:20:55 - Received request
+2024-10-06 02:20:55 - Database connection successful.
+2024-10-06 02:20:55 - Received data - Temperature: 34.00, Humidity: 20.00, Weight: 46.00
+2024-10-06 02:20:55 - Values inserted into MySQL database table.
+2024-10-06 02:20:55 - Connection closed
+2024-10-06 02:21:09 - Received request
+2024-10-06 02:21:09 - Database connection successful.
+2024-10-06 02:21:09 - Received data - Temperature: 27.00, Humidity: 33.00, Weight: 73.00
+2024-10-06 02:21:09 - Values inserted into MySQL database table.
+2024-10-06 02:21:09 - Connection closed
+2024-10-06 02:21:23 - Received request
+2024-10-06 02:21:23 - Database connection successful.
+2024-10-06 02:21:23 - Received data - Temperature: 19.00, Humidity: 63.00, Weight: 10.00
+2024-10-06 02:21:23 - Values inserted into MySQL database table.
+2024-10-06 02:21:23 - Connection closed
+2024-10-06 02:21:36 - Received request
+2024-10-06 02:21:36 - Database connection successful.
+2024-10-06 02:21:36 - Received data - Temperature: 27.00, Humidity: 59.00, Weight: 19.00
+2024-10-06 02:21:36 - Values inserted into MySQL database table.
+2024-10-06 02:21:36 - Connection closed
+2024-10-06 02:21:50 - Received request
+2024-10-06 02:21:50 - Database connection successful.
+2024-10-06 02:21:50 - Received data - Temperature: 17.00, Humidity: 78.00, Weight: 77.00
+2024-10-06 02:21:50 - Values inserted into MySQL database table.
+2024-10-06 02:21:50 - Connection closed
+2024-10-06 02:22:03 - Received request
+2024-10-06 02:22:03 - Database connection successful.
+2024-10-06 02:22:03 - Received data - Temperature: 31.00, Humidity: 26.00, Weight: 47.00
+2024-10-06 02:22:03 - Values inserted into MySQL database table.
+2024-10-06 02:22:03 - Connection closed
+2024-10-06 02:52:44 - Received request
+2024-10-06 02:52:44 - Database connection successful.
+2024-10-06 02:52:44 - Received data - Temperature: 32.00, Humidity: 67.00, Weight: 85.00
+2024-10-06 02:52:44 - Values inserted into MySQL database table.
+2024-10-06 02:52:44 - Connection closed
+2024-10-06 02:53:00 - Received request
+2024-10-06 02:53:00 - Database connection successful.
+2024-10-06 02:53:00 - Received data - Temperature: 24.00, Humidity: 59.00, Weight: 7.00
+2024-10-06 02:53:00 - Values inserted into MySQL database table.
+2024-10-06 02:53:00 - Connection closed
+2024-10-06 02:53:14 - Received request
+2024-10-06 02:53:14 - Database connection successful.
+2024-10-06 02:53:14 - Received data - Temperature: 23.00, Humidity: 71.00, Weight: 13.00
+2024-10-06 02:53:14 - Values inserted into MySQL database table.
+2024-10-06 02:53:14 - Connection closed
+2024-10-06 02:53:27 - Received request
+2024-10-06 02:53:27 - Database connection successful.
+2024-10-06 02:53:27 - Received data - Temperature: 31.00, Humidity: 41.00, Weight: 2.00
+2024-10-06 02:53:27 - Values inserted into MySQL database table.
+2024-10-06 02:53:27 - Connection closed
+2024-10-06 02:53:41 - Received request
+2024-10-06 02:53:41 - Database connection successful.
+2024-10-06 02:53:41 - Received data - Temperature: 17.00, Humidity: 46.00, Weight: 4.00
+2024-10-06 02:53:41 - Values inserted into MySQL database table.
+2024-10-06 02:53:41 - Connection closed
+2024-10-06 02:53:54 - Received request
+2024-10-06 02:53:54 - Database connection successful.
+2024-10-06 02:53:54 - Received data - Temperature: 28.00, Humidity: 66.00, Weight: 59.00
+2024-10-06 02:53:54 - Values inserted into MySQL database table.
+2024-10-06 02:53:54 - Connection closed
+2024-10-06 02:54:08 - Received request
+2024-10-06 02:54:08 - Database connection successful.
+2024-10-06 02:54:08 - Received data - Temperature: 26.00, Humidity: 42.00, Weight: 42.00
+2024-10-06 02:54:08 - Values inserted into MySQL database table.
+2024-10-06 02:54:08 - Connection closed
+2024-10-06 02:54:21 - Received request
+2024-10-06 02:54:21 - Database connection successful.
+2024-10-06 02:54:21 - Received data - Temperature: 17.00, Humidity: 67.00, Weight: 82.00
+2024-10-06 02:54:22 - Values inserted into MySQL database table.
+2024-10-06 02:54:22 - Connection closed
+2024-10-06 02:57:17 - Received request
+2024-10-06 02:57:17 - Database connection successful.
+2024-10-06 02:57:17 - Received data - Temperature: 24.00, Humidity: 47.00, Weight: 86.00
+2024-10-06 02:57:17 - Values inserted into MySQL database table.
+2024-10-06 02:57:17 - Connection closed
+2024-10-06 02:57:31 - Received request
+2024-10-06 02:57:31 - Database connection successful.
+2024-10-06 02:57:31 - Received data - Temperature: 19.00, Humidity: 44.00, Weight: 15.00
+2024-10-06 02:57:31 - Values inserted into MySQL database table.
+2024-10-06 02:57:31 - Connection closed
+2024-10-06 02:57:45 - Received request
+2024-10-06 02:57:45 - Database connection successful.
+2024-10-06 02:57:45 - Received data - Temperature: 28.00, Humidity: 34.00, Weight: 29.00
+2024-10-06 02:57:45 - Values inserted into MySQL database table.
+2024-10-06 02:57:45 - Connection closed
+2024-10-06 02:57:58 - Received request
+2024-10-06 02:57:58 - Database connection successful.
+2024-10-06 02:57:58 - Received data - Temperature: 31.00, Humidity: 35.00, Weight: 7.00
+2024-10-06 02:57:58 - Values inserted into MySQL database table.
+2024-10-06 02:57:58 - Connection closed
+2024-10-06 02:58:12 - Received request
+2024-10-06 02:58:12 - Database connection successful.
+2024-10-06 02:58:12 - Received data - Temperature: 30.00, Humidity: 81.00, Weight: 44.00
+2024-10-06 02:58:12 - Values inserted into MySQL database table.
+2024-10-06 02:58:12 - Connection closed
+2024-10-06 02:58:25 - Received request
+2024-10-06 02:58:25 - Database connection successful.
+2024-10-06 02:58:25 - Received data - Temperature: 16.00, Humidity: 35.00, Weight: 72.00
+2024-10-06 02:58:25 - Values inserted into MySQL database table.
+2024-10-06 02:58:25 - Connection closed
+2024-10-06 02:58:39 - Received request
+2024-10-06 02:58:39 - Database connection successful.
+2024-10-06 02:58:39 - Received data - Temperature: 23.00, Humidity: 42.00, Weight: 64.00
+2024-10-06 02:58:39 - Values inserted into MySQL database table.
+2024-10-06 02:58:39 - Connection closed
+2024-10-06 02:58:52 - Received request
+2024-10-06 02:58:52 - Database connection successful.
+2024-10-06 02:58:52 - Received data - Temperature: 20.00, Humidity: 47.00, Weight: 21.00
+2024-10-06 02:58:52 - Values inserted into MySQL database table.
+2024-10-06 02:58:52 - Connection closed
+2024-10-06 02:59:06 - Received request
+2024-10-06 02:59:06 - Database connection successful.
+2024-10-06 02:59:06 - Received data - Temperature: 31.00, Humidity: 83.00, Weight: 72.00
+2024-10-06 02:59:06 - Values inserted into MySQL database table.
+2024-10-06 02:59:06 - Connection closed
+2024-10-06 03:06:21 - Received request
+2024-10-06 03:06:21 - Database connection successful.
+2024-10-06 03:06:21 - Received data - Temperature: 19.00, Humidity: 40.00, Weight: 38.00
+2024-10-06 03:06:21 - Values inserted into MySQL database table.
+2024-10-06 03:06:21 - Connection closed
+2024-10-06 03:06:35 - Received request
+2024-10-06 03:06:35 - Database connection successful.
+2024-10-06 03:06:35 - Received data - Temperature: 18.00, Humidity: 88.00, Weight: 90.00
+2024-10-06 03:06:35 - Values inserted into MySQL database table.
+2024-10-06 03:06:35 - Connection closed
+2024-10-06 03:06:49 - Received request
+2024-10-06 03:06:49 - Database connection successful.
+2024-10-06 03:06:49 - Received data - Temperature: 17.00, Humidity: 25.00, Weight: 97.00
+2024-10-06 03:06:49 - Values inserted into MySQL database table.
+2024-10-06 03:06:49 - Connection closed
+2024-10-06 03:07:03 - Received request
+2024-10-06 03:07:03 - Database connection successful.
+2024-10-06 03:07:03 - Received data - Temperature: 20.00, Humidity: 38.00, Weight: 8.00
+2024-10-06 03:07:03 - Values inserted into MySQL database table.
+2024-10-06 03:07:03 - Connection closed
+2024-10-06 03:07:17 - Received request
+2024-10-06 03:07:17 - Database connection successful.
+2024-10-06 03:07:17 - Received data - Temperature: 17.00, Humidity: 51.00, Weight: 34.00
+2024-10-06 03:07:17 - Values inserted into MySQL database table.
+2024-10-06 03:07:17 - Connection closed
+2024-10-06 03:07:30 - Received request
+2024-10-06 03:07:30 - Database connection successful.
+2024-10-06 03:07:30 - Received data - Temperature: 18.00, Humidity: 89.00, Weight: 13.00
+2024-10-06 03:07:30 - Values inserted into MySQL database table.
+2024-10-06 03:07:30 - Connection closed
+2024-10-06 03:07:44 - Received request
+2024-10-06 03:07:44 - Database connection successful.
+2024-10-06 03:07:44 - Received data - Temperature: 23.00, Humidity: 73.00, Weight: 78.00
+2024-10-06 03:07:44 - Values inserted into MySQL database table.
+2024-10-06 03:07:44 - Connection closed
+2024-10-06 03:07:58 - Received request
+2024-10-06 03:07:58 - Database connection successful.
+2024-10-06 03:07:58 - Received data - Temperature: 33.00, Humidity: 88.00, Weight: 87.00
+2024-10-06 03:07:58 - Values inserted into MySQL database table.
+2024-10-06 03:07:58 - Connection closed
+2024-10-16 10:13:27 - Received request
+2024-10-16 10:13:27 - Database connection successful.
+2024-10-16 10:13:27 - Raw POST Data: 
+2024-10-16 10:13:27 - POST parameters missing or incomplete.
+2024-10-16 10:13:27 - Connection closed
+2024-10-16 10:15:08 - Received request
+2024-10-16 10:15:08 - Database connection successful.
+2024-10-16 10:15:08 - Raw POST Data: 
+2024-10-16 10:15:08 - POST parameters missing or incomplete.
+2024-10-16 10:15:08 - Connection closed
+2024-10-16 10:24:24 - Received request
+2024-10-16 10:24:24 - Database connection successful.
+2024-10-16 10:24:24 - Raw POST Data: temperature=10.00&humidity=10.00&weight=10.00
+2024-10-16 10:24:24 - Received data - Temperature: 10.00, Humidity: 10.00, Weight: 10.00
+2024-10-16 10:24:24 - Values inserted into MySQL database table.
+2024-10-16 10:24:24 - Connection closed
+2024-10-16 11:08:21 - Received request
+2024-10-16 11:08:21 - Database connection successful.
+2024-10-16 11:08:21 - Raw POST Data: 
+2024-10-16 11:08:21 - POST parameters missing or incomplete.
+2024-10-16 11:08:21 - Connection closed
+2024-10-16 11:08:22 - Received request
+2024-10-16 11:08:22 - Database connection successful.
+2024-10-16 11:08:22 - Raw POST Data: 
+2024-10-16 11:08:22 - POST parameters missing or incomplete.
+2024-10-16 11:08:22 - Connection closed
+2024-10-16 11:08:23 - Received request
+2024-10-16 11:08:23 - Database connection successful.
+2024-10-16 11:08:23 - Raw POST Data: 
+2024-10-16 11:08:23 - POST parameters missing or incomplete.
+2024-10-16 11:08:23 - Connection closed
+2024-10-16 11:56:27 - Received request
+2024-10-16 11:56:27 - Database connection successful.
+2024-10-16 11:56:27 - Raw POST Data: temperature=28.20&humidity=70.00&weight=811.00
+2024-10-16 11:56:27 - Received data - Temperature: 28.20, Humidity: 70.00, Weight: 811.00
+2024-10-16 11:56:27 - Values inserted into MySQL database table.
+2024-10-16 11:56:27 - Connection closed
+2024-10-16 12:46:57 - Received request
+2024-10-16 12:46:57 - Database connection successful.
+2024-10-16 12:46:57 - Raw POST Data: 
+2024-10-16 12:46:57 - POST parameters missing or incomplete.
+2024-10-16 12:46:57 - Connection closed
+2024-10-16 12:46:58 - Received request
+2024-10-16 12:46:58 - Database connection successful.
+2024-10-16 12:46:58 - Raw POST Data: 
+2024-10-16 12:46:58 - POST parameters missing or incomplete.
+2024-10-16 12:46:58 - Connection closed
+2024-10-16 12:46:59 - Received request
+2024-10-16 12:46:59 - Database connection successful.
+2024-10-16 12:46:59 - Raw POST Data: 
+2024-10-16 12:46:59 - POST parameters missing or incomplete.
+2024-10-16 12:46:59 - Connection closed
+2024-10-16 13:04:48 - Received request
+2024-10-16 13:04:48 - Database connection successful.
+2024-10-16 13:04:48 - Raw POST Data: temperature=27.70&humidity=69.40&weight=598.00
+2024-10-16 13:04:48 - Received data - Temperature: 27.70, Humidity: 69.40, Weight: 598.00
+2024-10-16 13:04:48 - Values inserted into MySQL database table.
+2024-10-16 13:04:48 - Connection closed
+2024-10-16 13:53:47 - Received request
+2024-10-16 13:53:47 - Database connection successful.
+2024-10-16 13:53:47 - Raw POST Data: temperature=27.60&humidity=71.30&weight=813.00
+2024-10-16 13:53:47 - Received data - Temperature: 27.60, Humidity: 71.30, Weight: 813.00\r
+2024-10-16 13:53:47 - Values inserted into MySQL database table.
+2024-10-16 13:53:47 - Connection closed
+2024-10-16 13:53:55 - Received request
+2024-10-16 13:53:55 - Database connection successful.
+2024-10-16 13:53:55 - Raw POST Data: temperature=27.50&humidity=71.30&weight=825.00
+2024-10-16 13:53:55 - Received data - Temperature: 27.50, Humidity: 71.30, Weight: 825.00\r
+2024-10-16 13:53:55 - Values inserted into MySQL database table.
+2024-10-16 13:53:55 - Connection closed
+2024-10-16 13:54:04 - Received request
+2024-10-16 13:54:04 - Database connection successful.
+2024-10-16 13:54:04 - Raw POST Data: temperature=27.50&humidity=71.30&weight=828.00
+2024-10-16 13:54:04 - Received data - Temperature: 27.50, Humidity: 71.30, Weight: 828.00\r
+2024-10-16 13:54:04 - Values inserted into MySQL database table.
+2024-10-16 13:54:04 - Connection closed
+2024-10-16 13:54:13 - Received request
+2024-10-16 13:54:13 - Database connection successful.
+2024-10-16 13:54:13 - Raw POST Data: temperature=27.60&humidity=71.40&weight=842.00
+2024-10-16 13:54:13 - Received data - Temperature: 27.60, Humidity: 71.40, Weight: 842.00\r
+2024-10-16 13:54:13 - Values inserted into MySQL database table.
+2024-10-16 13:54:13 - Connection closed
+2024-10-16 13:54:21 - Received request
+2024-10-16 13:54:21 - Database connection successful.
+2024-10-16 13:54:21 - Raw POST Data: temperature=27.50&humidity=71.30&weight=839.00
+2024-10-16 13:54:21 - Received data - Temperature: 27.50, Humidity: 71.30, Weight: 839.00\r
+2024-10-16 13:54:21 - Values inserted into MySQL database table.
+2024-10-16 13:54:21 - Connection closed
+2024-10-16 13:54:30 - Received request
+2024-10-16 13:54:30 - Database connection successful.
+2024-10-16 13:54:30 - Raw POST Data: temperature=27.50&humidity=71.40&weight=829.00
+2024-10-16 13:54:30 - Received data - Temperature: 27.50, Humidity: 71.40, Weight: 829.00\r
+2024-10-16 13:54:30 - Values inserted into MySQL database table.
+2024-10-16 13:54:30 - Connection closed
+2024-10-16 13:54:38 - Received request
+2024-10-16 13:54:38 - Database connection successful.
+2024-10-16 13:54:38 - Raw POST Data: temperature=27.50&humidity=71.40&weight=0.00
+2024-10-16 13:54:38 - Received data - Temperature: 27.50, Humidity: 71.40, Weight: 0.00\r
+2024-10-16 13:54:38 - Values inserted into MySQL database table.
+2024-10-16 13:54:38 - Connection closed
+2024-10-16 13:54:47 - Received request
+2024-10-16 13:54:47 - Database connection successful.
+2024-10-16 13:54:47 - Raw POST Data: temperature=27.50&humidity=71.40&weight=14.00
+2024-10-16 13:54:47 - Received data - Temperature: 27.50, Humidity: 71.40, Weight: 14.00\r
+2024-10-16 13:54:47 - Values inserted into MySQL database table.
+2024-10-16 13:54:47 - Connection closed
+2024-10-16 13:54:56 - Received request
+2024-10-16 13:54:56 - Database connection successful.
+2024-10-16 13:54:56 - Raw POST Data: temperature=27.60&humidity=71.30&weight=23.00
+2024-10-16 13:54:56 - Received data - Temperature: 27.60, Humidity: 71.30, Weight: 23.00\r
+2024-10-16 13:54:56 - Values inserted into MySQL database table.
+2024-10-16 13:54:56 - Connection closed
+2024-10-16 13:55:04 - Received request
+2024-10-16 13:55:04 - Database connection successful.
+2024-10-16 13:55:04 - Raw POST Data: temperature=27.70&humidity=71.10&weight=11.00
+2024-10-16 13:55:04 - Received data - Temperature: 27.70, Humidity: 71.10, Weight: 11.00\r
+2024-10-16 13:55:04 - Values inserted into MySQL database table.
+2024-10-16 13:55:04 - Connection closed
+2024-10-16 13:55:13 - Received request
+2024-10-16 13:55:13 - Database connection successful.
+2024-10-16 13:55:13 - Raw POST Data: temperature=27.60&humidity=71.10&weight=21.00
+2024-10-16 13:55:13 - Received data - Temperature: 27.60, Humidity: 71.10, Weight: 21.00\r
+2024-10-16 13:55:13 - Values inserted into MySQL database table.
+2024-10-16 13:55:13 - Connection closed
+2024-10-16 13:55:22 - Received request
+2024-10-16 13:55:22 - Database connection successful.
+2024-10-16 13:55:22 - Raw POST Data: temperature=27.70&humidity=71.00&weight=32.00
+2024-10-16 13:55:22 - Received data - Temperature: 27.70, Humidity: 71.00, Weight: 32.00\r
+2024-10-16 13:55:22 - Values inserted into MySQL database table.
+2024-10-16 13:55:22 - Connection closed
+2024-10-16 13:55:30 - Received request
+2024-10-16 13:55:30 - Database connection successful.
+2024-10-16 13:55:30 - Raw POST Data: temperature=27.70&humidity=70.80&weight=30.00
+2024-10-16 13:55:30 - Received data - Temperature: 27.70, Humidity: 70.80, Weight: 30.00\r
+2024-10-16 13:55:30 - Values inserted into MySQL database table.
+2024-10-16 13:55:30 - Connection closed
+2024-10-16 13:55:39 - Received request
+2024-10-16 13:55:39 - Database connection successful.
+2024-10-16 13:55:39 - Raw POST Data: temperature=27.80&humidity=70.80&weight=34.00
+2024-10-16 13:55:39 - Received data - Temperature: 27.80, Humidity: 70.80, Weight: 34.00\r
+2024-10-16 13:55:39 - Values inserted into MySQL database table.
+2024-10-16 13:55:39 - Connection closed

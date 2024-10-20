@@ -1,74 +1,60 @@
 <?php
-function season_start() {
-    if (session_status() == PHP_SESSION_NONE) {
-        session_start();
-    }
+    // Enable error reporting for debugging
+    ini_set('display_errors', 1);
+    ini_set('display_startup_errors', 1);
+    error_reporting(E_ALL);
+    function season_start() {
+        if (session_status() == PHP_SESSION_NONE) {
+            session_start();
+        }
 
-    if (!isset($_SESSION['season_started'])) {
-        $_SESSION['season_started'] = true;
-    }
-}
-
-season_start();
-
-require_once './src/db.php';
-require_once './src/profileFunction.php';
-
-$db = new Database();
-$conn = $db->getConnection();
-
-if (isset($_POST['logout_btn'])) {
-    // Clear all cookies by setting their expiration date in the past
-    if (isset($_SERVER['HTTP_COOKIE'])) {
-        $cookies = explode(';', $_SERVER['HTTP_COOKIE']);
-        foreach ($cookies as $cookie) {
-            $parts = explode('=', $cookie);
-            $name = trim($parts[0]);
-            // Set the cookie to expire in the past
-            setcookie($name, '', time() - 3600, '/');
+        if (!isset($_SESSION['season_started'])) {
+            $_SESSION['season_started'] = true;
         }
     }
-    
-    // Destroy the session
-    session_unset();
-    session_destroy();
-    
-    // Redirect to home or login page
-    header('Location: /');
-    exit;
-}
 
-if (isset($_POST['clearNotif'])) {
-        $clearNotif = "DELETE FROM tblNotification WHERE adminID = '" . $_SESSION['adminID'] . "'";
-        mysqli_query($conn, $clearNotif);
+    season_start();
+    require_once './src/db.php';
+    require_once './src/profileFunction.php';
 
-        header("Location: /dashboard");
+    $db = new Database();
+    $conn = $db->getConnection();
+    $notificationHandler = new NotificationHandler($conn);
+
+    if (isset($_POST['logout_btn'])) {
+        session_destroy();
+        header('Location: /');
         exit();
     }
 
-// Ensure $_SESSION['adminID'] is set before creating the Profile object
-    if (isset($_SESSION['adminID'])) {
-        $profile = new Profile($conn, $_SESSION['adminID']);
-    
-        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            if (isset($_POST['editProfile'])) {
-                $name = $_POST['editName'];
-                $email = $_POST['editEmail'];
-                $phoneNumber = $_POST['editNumber'];
-    
-                $profile->updateProfile($name, $email, $phoneNumber);
-            }
-    
-            if (isset($_POST['changePass'])) {
-                $oldPass = $_POST['OldPass'];
-                $newPass = $_POST['newPass'];
-                $conNewPass = $_POST['conNewPass'];
-                $profile->changePassword($oldPass, $newPass, $conNewPass);
-            }
+    $profile = new Profile($conn, $_SESSION['userID']);
+
+    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+        if (isset($_POST['editProfile'])) {
+            $name = $_POST['editName'];
+            $email = $_POST['editEmail'];
+            $phoneNumber = $_POST['editNumber'];
+
+            $profile->updateProfile($name, $email, $phoneNumber);
         }
-    } else {
-        // Handle the case where adminID is not set
-        echo "Session expired. Please log in again.";
+
+        if (isset($_POST['changePass'])) {
+            $oldPass = $_POST['OldPass'];
+            $newPass = $_POST['newPass'];
+            $conNewPass = $_POST['conNewPass'];
+            $profile->changePassword($oldPass, $newPass, $conNewPass);
+        }
+    }
+    
+    // Handle clearing notifications
+    if (isset($_POST['clearNotif'])) {
+        $clearNotif = "DELETE FROM tblNotification WHERE userID = ?";
+        $stmt = $conn->prepare($clearNotif);
+        $stmt->bind_param('i', $_SESSION['userID']);
+        $stmt->execute();
+
+        header("Location: /beeGuide");
+        exit();
     }
 ?>
 
@@ -79,7 +65,7 @@ if (isset($_POST['clearNotif'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BeeMo</title>
-    <link rel="stylesheet" href="./css/dashboard.css">
+    <link rel="stylesheet" href="./css/beeguide.css">
     <link rel="stylesheet" href="./css/reusable.css">
     <link rel="stylesheet" href="./css/profile.css">
     <link rel="icon" href="img/beemo-ico.ico">
@@ -90,43 +76,42 @@ if (isset($_POST['clearNotif'])) {
 <body class="overflow-x-hidden">
   <!-- Sidebar -->
     <div id="sidebar" class="sidebar position-fixed top-0 bottom-0 bg-white border-end offcanvass">
-
         <div class="d-flex align-items-center p-3 py-5">
-            <a href="/dashboard" class="sidebar-logo fw-bold text-dark text-decoration-none fs-4"><img src="img/BeeMo Logo Side.png" width="173px" height="75px" alt="BeeMo Logo"></a>
+            <a href="/userDashboard" class="sidebar-logo fw-bold text-dark text-decoration-none fs-4"><img src="img/BeeMo Logo Side.png" width="173px" height="75px" alt="BeeMo Logo"></a>
         </div>
         <ul class="sidebar-menu p-3 py-1 m-0 mb-0">
-            <li class="sidebar-menu-item active">
-                <a href="/dashboard">
+            <li class="sidebar-menu-item">
+                <a href="/userDashboard">
                     <i class="fa-solid fa-house sidebar-menu-item-icon"></i>
                     Home
                 </a>
             </li>
             <li class="sidebar-menu-item">
-                <a href="/parameterMonitoring">
+                <a href="/userParameterMonitoring">
                     <i class="fa-solid fa-temperature-three-quarters sidebar-menu-item-icon"></i>
                     Parameters Monitoring
                 </a>
             </li>
             <li class="sidebar-menu-item">
-                <a href="/reports">
+                <a href="javascript:void(0);" style="pointer-events: none; color: gray;">
                     <i class="fa-solid fa-newspaper sidebar-menu-item-icon"></i>
                     Reports
                 </a>
             </li>
             <li class="sidebar-menu-item">
-                <a href="/harvestCycle">
+                <a href="/userHarvestCycle">
                     <i class="fa-solid fa-arrows-spin sidebar-menu-item-icon"></i>
                     Harvest Cycle
                 </a>
             </li>
-            <li class="sidebar-menu-item">
-                <a href="/beeGuide">
+            <li class="sidebar-menu-item active">
+                <a href="/userBeeGuide">
                     <i class="fa-solid fa-book-open sidebar-menu-item-icon"></i>
                     Bee Guide
                 </a>
             </li>
             <li class="sidebar-menu-item">
-                <a href="/Worker">
+                <a href="javascript:void(0);" style="pointer-events: none; color: gray;">
                     <i class="fa-solid fa-user sidebar-menu-item-icon"></i>
                     Worker
                 </a>
@@ -146,29 +131,29 @@ if (isset($_POST['clearNotif'])) {
             <!-- Navbar -->
             <nav class="px-3 py-3 rounded-4">
                 <div>
-                    <p class="d-none d-lg-block mt-3 mx-3 fw-semibold">Welcome to BeeMo Dashboard</p>
+                    <p class="d-none d-lg-block mt-3 mx-3 fw-semibold">Welcome to Bee Guide</p>
                 </div>
-                <i class="fa-solid fa-bars sidebar-toggle me-3 d-block d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNav-Menu" aria-controls="offcanvasRight" aria-expanded="false" aria-label="Toggle navigation"></i>
+                <i class="fa-solid fa-bars sidebar-toggle me-3 d-block d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNav-Menu" aria-controls="offcanvasRight" aria-expanded="false" aria-label="Toggle navigation"></i>
                 <h5 class="fw-bold mb-0 me-auto"></h5>
                 <div class="dropdown me-3 d-sm-block">
-                    <div id="nf-btn" class="navbar-link border border-1 border-black rounded-5" data-bs-toggle="dropdown" aria-expanded="false">
+                    <div id="nf-btn1" class="navbar-link border border-1 border-black rounded-5" data-bs-toggle="dropdown" aria-expanded="false">
                         <i class="fa-solid fa-bell"></i>
-                        <span id="nf-count"></span>
+                        <span id="nf-count1"></span>
                     </div>
                     <div class="dropdown-menu dropdown-menu-start border-dark border-2 rounded-3" style="width: 320px;">
                         <div class="d-flex justify-content-between dropdown-header border-dark border-2">
                             <div>
                                 <p class="fs-5 text-dark text-uppercase pt-3">Notifications
-                                    <span class="badge text-dark bg-warning-subtle rounded-pill" id="nf-count-badge">0</span>
+                                    <span class="badge text-dark bg-warning-subtle rounded-pill" id="nf-count-badge1">0</span>
                                 </p>
                             </div>
                             <div>
-                                <form action="/dashboard" method="post">
+                                <form action="user_beeguide.php" method="post">
                                     <button class="clearNotif" name="clearNotif">Clear all</button>
                                 </form>
                             </div>
                         </div>
-                        <div id="notifications">
+                        <div id="notifications1">
                             <!-- Notifications will be dynamically inserted here -->
                         </div>
                     </div>
@@ -192,7 +177,7 @@ if (isset($_POST['clearNotif'])) {
                             </a>
                         </li>
                         <!-- Logout -->
-                        <form id="logoutForm" action="dashboard.php" method="post" style="display: none;">
+                        <form id="logoutForm" action="/beeGuide" method="post" style="display: none;">
                             <input type="hidden" name="logout_btn" value="true">
                         </form>
                         <li class="dropdown-item" onclick="document.getElementById('logoutForm').submit();">
@@ -203,59 +188,66 @@ if (isset($_POST['clearNotif'])) {
                 </div>
             </nav>
             <!-- Content -->
-            <div class="home-page py-3 mt-4 border border-2 rounded-4 border-dark">
-                <div class="px-4 py-4 my-4 text-center content-wrapper">
-                    <img src="img/BeeMo Logo.png" class="img-responsive" alt="BeeMo Logo">
+            <div class="beeguide-page py-4 mt-4 border border-2 rounded-4 border-dark">
+                <div class="px-4 py-2 my-4 text-center content-wrapper">
                     <div class="col-lg-6 mx-auto">
-                        <p class="Beemo-text py-3 mb-5">BeeMo: An IoT-Enabled Web-Based Stingless Beehive Management System with Real-Time Temperature, Humidity, Weight Monitoring</p>
+                        <p class="beeguide-text fs-4 mb-5 fw-bold beeguide-highlight">Bee Guide</p>
+                        <div class="hardware mt-5 mx-auto d-flex align-items-center justify-content-start p-3" type="button" >
+                            <i class="fa-solid fa-hard-drive me-2 mx-auto"></i>
+                            <p class="fw-semibold fs-5 mb-0 mx-auto">Hardware Tutorial</p>
+                        </div>
+                        <div class="web-system mt-5 mx-auto d-flex align-items-center justify-content-start p-3" type="button">
+                            <i class="fa-solid fa-computer me-2 mx-auto"></i>
+                            <p class="fw-semibold fs-5 mb-0 mx-auto">Web-System Tutorial</p>
+                        </div>
+                        <div class="mt-4"></div>
                     </div>
                 </div>
             </div>
-        </div>
             <div class="yellow mt-1 d-md-none fixed-bottom p-0 m-0"></div>
     </main>
 
     <!-- Side Bar Mobile View -->
     <div class="offcanvas offcanvas-start sidebar2 overflow-x-hidden overflow-y-hidden" tabindex="-1" id="offcanvasNav-Menu" aria-labelledby="staticBackdropLabel">
         <div class="d-flex align-items-center p-3 py-5">
-            <a href="/dashboard" class="sidebar-logo fw-bold text-dark text-decoration-none fs-4" data-bs-dismiss="offcanvas" aria-label="Close">
-                <img src="img/BeeMo Logo Side.png" width="173px" height="75px" alt="BeeMo Logo">
+            <a href="/userDashboard" class="sidebar-logo fw-bold text-dark text-decoration-none fs-4" data-bs-dismiss="offcanvas" aria-label="Close">
+                <img src="img/BeeMo Logo Side.png" width="173px" height="75px" alt="">
             </a>
             <button type="button" class="btn-close ms-auto" data-bs-dismiss="offcanvas" aria-label="Close"></button>
         </div>
         <ul class="sidebar-menu p-2 py-2 m-0 mb-0">
-            <li class="sidebar-menu-item2 active">
-                <a href="/dashboard">
+            <li class="sidebar-menu-item2">
+                <a href="/userDashboard">
                     <i class="fa-solid fa-house sidebar-menu-item-icon2"></i>
                     Home
                 </a>
             </li>
             <li class="sidebar-menu-item2 py-1">
-                <a href="/parameterMonitoring">
+                <a href="/userParameterMonitoring">
                     <i class="fa-solid fa-temperature-three-quarters sidebar-menu-item-icon2"></i>
                     Parameters Monitoring
                 </a>
             </li>
             <li class="sidebar-menu-item2">
-                <a href="/reports">
+                <a href="href="javascript:void(0);" style="pointer-events: none; color: gray;"">
                     <i class="fa-solid fa-newspaper sidebar-menu-item-icon2"></i>
                     Reports
                 </a>
             </li>
             <li class="sidebar-menu-item2">
-                <a href="/harvestCycle">
+                <a href="/userHarvestCycle">
                     <i class="fa-solid fa-arrows-spin sidebar-menu-item-icon2"></i>
                     Harvest Cycle
                 </a>
             </li>
             <li class="sidebar-menu-item2">
-                <a href="/beeGuide">
+                <a href="/userBeeGuide">
                     <i class="fa-solid fa-book-open sidebar-menu-item-icon2"></i>
                     Bee Guide
                 </a>
             </li>
-            <li class="sidebar-menu-item2">
-                <a href="/Worker">
+            <li class="sidebar-menu-item2 active">
+                <a href="javascript:void(0);" style="pointer-events: none; color: gray;">
                     <i class="fa-solid fa-user sidebar-menu-item-icon2"></i>
                     Worker
                 </a>
@@ -269,8 +261,8 @@ if (isset($_POST['clearNotif'])) {
         </ul>
     </div>
 
-    <!-- Profile Modal -->
-    <div class="modal fade " id="Profile-Modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <!-- Profile Modal -->
+        <div class="modal fade " id="Profile-Modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable profile-dialog">
 
             <div class="modal-content border-2 border-dark" style="border-radius: 20px; box-shadow: 0 7px #2B2B2B; max-width: 400px;">
@@ -287,13 +279,13 @@ if (isset($_POST['clearNotif'])) {
                         require_once './src/db.php';
                         $db = new Database();
                         $conn = $db->getConnection();
-                        $adminID = $_SESSION['adminID'];
-                        $get = "SELECT admin_name, email FROM admin_table WHERE adminID = '$adminID'";
+                        $userID = $_SESSION['userID'];
+                        $get = "SELECT user_name, email FROM user_table WHERE userID = '$userID'";
                         $getQuery = mysqli_query($conn, $get);
 
                         while($row = $getQuery->fetch_assoc()){
                             echo"
-                            <h5>". $row['admin_name'] ."</h5>
+                            <h5>". $row['user_name'] ."</h5>
                             <h6 style='text-decoration: underline; font-weight: 350;'><small class='text-body-secondary'>". $row['email']."</small></h6>
                             ";
                         }
@@ -307,7 +299,7 @@ if (isset($_POST['clearNotif'])) {
                             <p><i class="fa-solid fa-user"></i> <span>My Profile</span><i class="fa-solid fa-angle-right"></i></p>
                         </button>
 
-                        <button type="button" id="edit-profile-button" data-bs-toggle="modal" data-bs-target="#Change-Pass-Modal" style="padding: 10px;" >
+                        <button type="button" disabled id="edit-profile-button" data-bs-toggle="modal" data-bs-target="#Change-Pass-Modal" style="padding: 10px;" >
                             <p><i class="fa-solid fa-lock"></i> <span>Change Password</span><i class="fa-solid fa-angle-right"></i></p>
                         </button>
 
@@ -349,12 +341,12 @@ if (isset($_POST['clearNotif'])) {
                         require_once './src/db.php';
                         $db = new Database();
                         $conn = $db->getConnection();
-                        $adminID = $_SESSION['adminID'];
-                        $get = "SELECT admin_name, email, number FROM admin_table WHERE adminID = '$adminID'";
+                        $userID = $_SESSION['userID'];
+                        $get = "SELECT user_name, email, number FROM user_table WHERE userID = '$userID'";
                         $getQuery = mysqli_query($conn, $get);
 
                         while($row = $getQuery->fetch_assoc()){
-                            $currentName = $row['admin_name'];
+                            $currentName = $row['user_name'];
                             $currentEmail = $row['email'];
                             $currentPhoneNumber = $row['number'];
                             echo"
@@ -364,17 +356,17 @@ if (isset($_POST['clearNotif'])) {
                                 <form method='POST' action=''>
 
                                 <div class='form-floating pb-4'>
-                                    <input name='editName' type='text' class='form-control' id='fullName' placeholder='Full Name' value='$currentName'>
+                                    <input name='editName' type='text' class='form-control' id='fullName' placeholder='Full Name' value='$currentName' readonly>
                                     <label for='fullName'><i class='fa-solid fa-user'></i> Full Name</label>
                                 </div>
 
                                 <div class='form-floating pb-4'>
-                                    <input name='editEmail' type='email' class='form-control' id='email' placeholder='name@example.com' value='$currentEmail'>
+                                    <input name='editEmail' type='email' class='form-control' id='email' placeholder='name@example.com' value='$currentEmail' readonly>
                                     <label for='email'><i class='fa-solid fa-envelope'></i> Email</label>
                                 </div>
 
                                 <div class='form-floating pb-4'>
-                                    <input name='editNumber' type='number' class='form-control' id='mobileNumber' placeholder='Mobile Number' value='$currentPhoneNumber'>
+                                    <input name='editNumber' type='number' class='form-control' id='mobileNumber' placeholder='Mobile Number' value='$currentPhoneNumber' readonly>
                                     <label for='mobileNumber'><i class='fa-solid fa-mobile'></i> Mobile Number</label>
                                 </div>
 
@@ -421,13 +413,13 @@ if (isset($_POST['clearNotif'])) {
                         require_once './src/db.php';
                         $db = new Database();
                         $conn = $db->getConnection();
-                        $adminID = $_SESSION['adminID'];
-                        $get = "SELECT admin_name, email FROM admin_table WHERE adminID = '$adminID'";
+                        $userID = $_SESSION['userID'];
+                        $get = "SELECT user_name, email FROM user_table WHERE userID = '$userID'";
                         $getQuery = mysqli_query($conn, $get);
 
                         while($row = $getQuery->fetch_assoc()){
                             echo"
-                            <h5>". $row['admin_name'] ."</h5>
+                            <h5>". $row['user_name'] ."</h5>
                             <h6 style='text-decoration: underline; font-weight: 350;'><small class='text-body-secondary'>". $row['email']."</small></h6>
                             ";
                         }
@@ -452,7 +444,7 @@ if (isset($_POST['clearNotif'])) {
 
                             <div class="form-floating pb-4">
                                 <input name="newPass" type="password" class="form-control" id="new-password" placeholder="Password" required>
-                                <label for="new-password"><i class="fa-solid fa-lock"></i> New Password</label>
+                                <label for="password"><i class="fa-solid fa-lock"></i> New Password</label>
                                 <div class="password-wrapper">
                                 <span id="togglePassword" class="toggle-password"><i class="fa-solid fa-eye-slash fa-lg"></i></span>
                                 </div>
@@ -460,7 +452,7 @@ if (isset($_POST['clearNotif'])) {
 
                             <div class="form-floating pb-4">
                                 <input name="conNewPass" type="password" class="form-control" id="confirm-password" placeholder="Password" required>
-                                <label for="confirm-password"><i class="fa-solid fa-lock"></i> Confirm Password</label>
+                                <label for="password"><i class="fa-solid fa-lock"></i> Confirm Password</label>
                                 <div class="password-wrapper">
                                 <span id="togglePassword" class="toggle-password"><i class="fa-solid fa-eye-slash fa-lg"></i></span>
                                 </div>
@@ -476,31 +468,12 @@ if (isset($_POST['clearNotif'])) {
             </div>
         </div>
     </div>
-    <script>
-        // history.pushState(null, null, null);
-        // window.addEventListener('popstate', function () {
-        //     history.pushState(null, null, null);
-        // });
+    </div>
 
-        function handleBackNavigation() {
-            history.pushState(null, null, null);
-            window.addEventListener('popstate', function () {
-                history.pushState(null, null, null);
-                // Optionally redirect to a specific page if needed
-                window.location.replace('/'); // Redirect to login or another page
-            });
-        }
-
-        // Call the function to handle back navigation
-        handleBackNavigation();
-    </script>
     <script src="./js/reusable.js"></script>
-    <script src="./js/notification.js"></script>
+    <script src="./js/userNotification.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 
 </body>
 </html>
-
-      
-

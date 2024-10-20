@@ -22,15 +22,17 @@ $router->get('/index.php', function() {
 });
 
 $router->get('/dashboard', function() {
-    require_once 'dashboard.php';  // Load dashboard
-});
-
-$router->get('/user_page', function() {
-    if (!isset($_SESSION['userID'])) {
+    if (!isset($_SESSION['adminID'])) {
+        session_destroy();
         header('Location: /');
         exit();
     }
-    require_once 'user_page.php';  // Load user page
+
+    require_once 'dashboard.php';  // Load dashboard
+});
+
+$router->get('/userDashboard', function() {
+    require_once 'user_dashboard.php';  // Load dashboard
 });
 
 // Additional routes
@@ -65,6 +67,29 @@ $router->get('/parameterMonitoring', function() {
     }
 
     require_once 'parameterMonitoring.php';  // Load Parameter Monitoring page
+});
+
+$router->get('/userParameterMonitoring', function() {
+    function season_start5() {
+        if (session_status() == PHP_SESSION_NONE) {
+            session_start();
+        }
+    }
+
+    season_start5();
+
+    if (!isset($_SESSION['userID'])) {
+        session_destroy();
+        header('Location: /');
+        exit();
+    }
+
+    // if (!isset($_SESSION['hiveID'])) {
+    //     header('Location: /chooseHive');  // Redirect without destroying session
+    //     exit();
+    // }
+
+    require_once 'user_pmonitoring.php';  // Load Parameter Monitoring page
 });
 
 
@@ -106,6 +131,21 @@ $router->get('/harvestCycle', function() {
     require_once 'harvestCycle.php';  // Load harvestCycle page
 });
 
+$router->get('/userHarvestCycle', function() {
+    if (!isset($_SESSION['userID'])) {
+        session_destroy();
+        header('Location: /');
+        exit();
+    }
+
+    // if (!isset($_SESSION['hiveID'])) {
+    //     header('Location: /chooseHive');  // Redirect without destroying session
+    //     exit();
+    // }
+
+    require_once 'userHarvestCycle.php';  // Load harvestCycle page
+});
+
 $router->get('/beeGuide', function() {
     if (!isset($_SESSION['adminID'])) {
         session_destroy();
@@ -113,6 +153,15 @@ $router->get('/beeGuide', function() {
         exit();
     }
     require_once 'beeguide.php';  // Load beeGuide page
+});
+
+$router->get('/userBeeGuide', function() {
+    if (!isset($_SESSION['userID'])) {
+        session_destroy();
+        header('Location: /');
+        exit();
+    }
+    require_once 'user_beeguide.php';  // Load beeGuide page
 });
 
 $router->get('/Worker', function() {
@@ -125,11 +174,11 @@ $router->get('/Worker', function() {
 });
 
 $router->get('/about', function() {
-    if (!isset($_SESSION['adminID'])) {
-        session_destroy();
-        header('Location: /');
-        exit();
-    }
+    // if (!isset($_SESSION['adminID'])) {
+    //     session_destroy();
+    //     header('Location: /');
+    //     exit();
+    // }
     require_once 'about.php';  // Load about page
 });
 

@@ -36,6 +36,11 @@ main {
   border-radius: 11px;
   overflow: hidden;
 }
+.cycle-table1 {
+  width: 100%;
+  border-radius: 5px;
+  overflow: hidden;
+}
 
 td,
 th {
@@ -105,6 +110,7 @@ th {
   width: 100%;
   height: 100%;
   border-radius: 50%;
+  margin-left: 17px;
 }
 
 .status-icon {
@@ -118,7 +124,7 @@ th {
   color: whitesmoke;
   position: relative;
   margin-top: -20px;
-  margin-left: -13px;
+  margin-left: 20px;
 }
 
 .legend {

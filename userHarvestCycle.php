@@ -9,19 +9,17 @@ function season_start()
 season_start();
 
 require_once './src/db.php';
-require_once './src/harvest_function.php';
+require_once './src/userHarvestCycleFunction.php';
 require_once './src/profileFunction.php';
-require_once './src/userCycleFunctionAdminPage.php';
 
 $db = new Database();
 $conn = $db->getConnection();
-$harvestCycle = new HarvestCycle($conn);
-$userHarvestCycle = new AdminPageHarvestCycle($conn);
+$harvestCycle = new UserHarvestCycle($conn);
 
-$adminID = $_SESSION['adminID']; // Assign adminID here, so it's available for all logic
+$userID = $_SESSION['userID'];
 
 // Check if the admin is logged in
-if (!isset($_SESSION['adminID'])) {
+if (!isset($_SESSION['userID'])) {
     header('Location: /'); // Redirect to login page if not logged in
     exit;
 }
@@ -34,103 +32,25 @@ if (isset($_POST['logout_btn'])) {
     exit;
 }
 
-// Handle form submissions for admin cycle
+// Handle form submissions
 if (isset($_POST['submit'])) {
     $harvestCycle->insertCycle($_POST['start_date'], $_POST['end_date']);
-    header('Location: /harvestCycle');
+    header('Location: /userHarvestCycle');
     exit;
 }
-
-// Handle delete for admin cycle
-if (isset($_POST['btn_delete'])) {
-    // Delete the specified harvest cycle
-    $cycleNumber = $_POST['cycle_number'];
-
-    // Ensure $adminID is set before calling deleteCycle
-    if (isset($adminID) && !empty($cycleNumber)) {
-        $harvestCycle->deleteCycle($cycleNumber, $adminID);
-
-        // Redirect back to the harvestCycle page
-        header('Location: /harvestCycle');
-        exit();
-    } else {
-        // If $adminID or cycle number is missing, handle the error
-        // Optionally insert a notification or show an error message
-        echo "Error: Cycle number or admin ID missing.";
-    }
-}
-
-// Handle edit cycle for admin cycle
-if (isset($_POST['btn_edit'])) {
-    // Retrieve userCycleNumber correctly from $_POST
-    $current_cycle_num = $_POST['cycle_number'];
-    $new_cycle_num = $_POST['edit_cycle_num'];
-    $edit_start = $_POST['edit_start_date'];
-    $edit_end = $_POST['edit_end_date'];
-    $adminID = $_SESSION['adminID'];  // Ensure this is set in session
-
-    // Call the editCycle function
-    $harvestCycle->editCycle($current_cycle_num, $new_cycle_num, $edit_start, $edit_end, $adminID);
-
-    header('Location: /harvestCycle');
-    exit;
-}
-
-
-// Handle form submissions for worker cycle
-if (isset($_POST['submit'])) {
-    $userHarvestCycle->insertCycle($_POST['start_date'], $_POST['end_date']);
-    header('Location: /harvestCycle');
-    exit;
-}
-
-// Handle delete for worker cycle
-if (isset($_POST['btn_delete'])) {
-    // Delete the specified harvest cycle
-    $cycleNumber = $_POST['userCycleNumber'];
-
-    // Ensure $adminID is set before calling deleteCycle
-    if (isset($adminID) && !empty($cycleNumber)) {
-        $userHarvestCycle->deleteCycle($cycleNumber, $adminID);
-
-        // Redirect back to the harvestCycle page
-        header('Location: /harvestCycle');
-        exit();
-    } else {
-        echo "Error: Cycle number or admin ID missing.";
-    }
-}
-
-// Handle edit cycle for worker cycle
-if (isset($_POST['btn_edit1'])) {
-    // Retrieve userCycleNumber correctly from $_POST
-    $current_cycle_num = $_POST['userCycleNumber'];
-    $new_cycle_num = $_POST['edit_cycle_num'];
-    $edit_start = $_POST['edit_start_date'];
-    $edit_end = $_POST['edit_end_date'];
-    $adminID = $_SESSION['adminID'];  // Ensure this is set in session
-
-    // Call the editCycle function
-    $userHarvestCycle->userEditCycle($current_cycle_num, $new_cycle_num, $edit_start, $edit_end, $adminID);
-
-    header('Location: /harvestCycle');
-    exit;
-}
-
-
 
 // Handle clearing notifications
 if (isset($_POST['clearNotif'])) {
-    $clearNotif = "DELETE FROM tblNotification WHERE adminID = '" . $_SESSION['adminID'] . "'";
+    $clearNotif = "DELETE FROM user_tbl_notification WHERE userID = '" . $_SESSION['userID'] . "'";
     mysqli_query($conn, $clearNotif);
 
-    header("Location: /harvestCycle");
+    header("Location: /userHarvestCycle");
     exit();
 }
 
-// Fetch the next cycle number for admin
+// Fetch the next cycle number
 $nextCycleNumber = 1; // Default to 1 if no cycles exist
-$query_next_cycle = "SELECT MAX(cycle_number) AS max_cycle_num FROM harvest_cycle WHERE adminID = '" . $_SESSION['adminID'] . "'";
+$query_next_cycle = "SELECT MAX(userCycleNumber) AS max_cycle_num FROM user_harvest_cycle WHERE userID = '" . $_SESSION['userID'] . "'";
 $result_next_cycle = mysqli_query($conn, $query_next_cycle);
 if ($row = mysqli_fetch_assoc($result_next_cycle)) {
     $nextCycleNumber = $row['max_cycle_num'] + 1;
@@ -142,7 +62,7 @@ $currentDate = date('Y-m-d');
 // Fetch and filter the cycles
 $filter = isset($_POST['filter_value']) ? $_POST['filter_value'] : 'all'; // Default to 'all'
 
-$select_cycle = "SELECT cycle_number, start_of_cycle, honey_kg, end_of_cycle, status FROM harvest_cycle WHERE adminID = '$adminID'";
+$select_cycle = "SELECT userCycleNumber, user_start_of_cycle, honey_kg, user_end_of_cycle, status FROM user_harvest_cycle WHERE userID = '$userID'";
 
 if ($filter == 'pending') {
     $select_cycle .= " AND status = 0";
@@ -153,34 +73,8 @@ if ($filter == 'pending') {
 $query_select_cycle = mysqli_query($conn, $select_cycle);
 $filtered_cycles = mysqli_fetch_all($query_select_cycle, MYSQLI_ASSOC);
 
-
-// Fetch the next cycle number for worker
-$nextCycleNumber1 = 1; // Default to 1 if no cycles exist
-$query_next_cycle1 = "SELECT MAX(userCycleNumber) AS max_cycle_num FROM user_harvest_cycle WHERE adminID = '" . $_SESSION['adminID'] . "'";
-$result_next_cycle1 = mysqli_query($conn, $query_next_cycle1);
-if ($row = mysqli_fetch_assoc($result_next_cycle1)) {
-    $nextCycleNumber1 = $row['max_cycle_num'] + 1;
-}
-
-// Get the current date in YYYY-MM-DD format
-$currentDate = date('Y-m-d');
-
-// Fetch and filter the cycles
-$filter = isset($_POST['filter_value']) ? $_POST['filter_value'] : 'all'; // Default to 'all'
-
-$select_cycle = "SELECT userID, userCycleNumber, user_start_of_cycle, honey_kg, user_end_of_cycle, status FROM user_harvest_cycle WHERE adminID = '$adminID'";
-
-if ($filter == 'pending') {
-    $select_cycle .= " AND status = 0";
-} elseif ($filter == 'complete') {
-    $select_cycle .= " AND status = 1";
-}
-
-$query_select_cycle = mysqli_query($conn, $select_cycle);
-$filtered_cycles1 = mysqli_fetch_all($query_select_cycle, MYSQLI_ASSOC);
-
 // Handle profile edits
-$profile = new Profile($conn, $_SESSION['adminID']);
+$profile = new Profile($conn, $_SESSION['userID']);
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (isset($_POST['editProfile'])) {
@@ -221,41 +115,41 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <div id="sidebar" class="sidebar position-fixed top-0 bottom-0 bg-white border-end offcanvass">
 
         <div class="d-flex align-items-center p-3 py-5">
-            <a href="/dashboard" class="sidebar-logo fw-bold text-dark text-decoration-none fs-4"><img src="img/BeeMo Logo Side.png" width="173px" height="75px" alt="BeeMo Logo"></a>
+            <a href="/userDashboard" class="sidebar-logo fw-bold text-dark text-decoration-none fs-4"><img src="img/BeeMo Logo Side.png" width="173px" height="75px" alt="BeeMo Logo"></a>
         </div>
         <ul class="sidebar-menu p-3 py-1 m-0 mb-0">
             <li class="sidebar-menu-item">
-                <a href="/dashboard">
+                <a href="/userDashboard">
                     <i class="fa-solid fa-house sidebar-menu-item-icon"></i>
                     Home
                 </a>
             </li>
             <li class="sidebar-menu-item">
-                <a href="/parameterMonitoring">
+                <a href="/userParameterMonitoring">
                     <i class="fa-solid fa-temperature-three-quarters sidebar-menu-item-icon"></i>
                     Parameters Monitoring
                 </a>
             </li>
             <li class="sidebar-menu-item">
-                <a href="/reports">
+                <a href="javascript:void(0);" style="pointer-events: none; color: gray;">
                     <i class="fa-solid fa-newspaper sidebar-menu-item-icon"></i>
                     Reports
                 </a>
             </li>
             <li class="sidebar-menu-item active">
-                <a href="/harvestCycle">
+                <a href="/userHarvestCycle">
                     <i class="fa-solid fa-arrows-spin sidebar-menu-item-icon"></i>
                     Harvest Cycle
                 </a>
             </li>
             <li class="sidebar-menu-item">
-                <a href="/beeGuide">
+                <a href="/userBeeGuide">
                     <i class="fa-solid fa-book-open sidebar-menu-item-icon"></i>
                     Bee Guide
                 </a>
             </li>
             <li class="sidebar-menu-item">
-                <a href="/Worker">
+                <a href="javascript:void(0);" style="pointer-events: none; color: gray;">
                     <i class="fa-solid fa-user sidebar-menu-item-icon"></i>
                     Worker
                 </a>
@@ -280,24 +174,24 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <i class="fa-solid fa-bars sidebar-toggle me-3 d-block d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNav-Menu" aria-controls="offcanvasRight" aria-expanded="false" aria-label="Toggle navigation"></i>
                 <h5 class="fw-bold mb-0 me-auto"></h5>
                 <div class="dropdown me-3 d-sm-block">
-                    <div id="nf-btn" class="navbar-link border border-1 border-black rounded-5" data-bs-toggle="dropdown" aria-expanded="false">
+                    <div id="nf-btn1" class="navbar-link border border-1 border-black rounded-5" data-bs-toggle="dropdown" aria-expanded="false">
                         <i class="fa-solid fa-bell"></i>
-                        <span id="nf-count"></span>
+                        <span id="nf-count1"></span>
                     </div>
                     <div class="dropdown-menu dropdown-menu-start border-dark border-2 rounded-3" style="width: 320px;">
                         <div class="d-flex justify-content-between dropdown-header border-dark border-2">
                             <div>
                                 <p class="fs-5 text-dark text-uppercase pt-3">Notifications
-                                    <span class="badge text-dark bg-warning-subtle rounded-pill" id="nf-count-badge">0</span>
+                                    <span class="badge text-dark bg-warning-subtle rounded-pill" id="nf-count-badge1">0</span>
                                 </p>
                             </div>
                             <div>
-                                <form action="/harvestCycle" method="post">
+                                <form action="userHarvestCycle.php" method="post">
                                     <button class="clearNotif" name="clearNotif">Clear all</button>
                                 </form>
                             </div>
                         </div>
-                        <div id="notifications">
+                        <div id="notifications1">
                             <!-- Notifications will be dynamically inserted here -->
                         </div>
                     </div>
@@ -337,7 +231,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     <p class="fs-4 mb-5 fw-bold cycle-highlight">Harvest Cycle</p>
                     <div class="container-cycle">
                         <!-- FORM TO RECORD HARVEST CYCLE -->
-                        <form action="harvestCycle.php" method="post" class="row mt-2 g-3">
+                        <form action="userHarvestCycle.php" method="post" class="row mt-2 g-3">
                             <div class="col-md-4">
                                 <label for="cycleNumber" class="form-label d-flex justify-content-start" style="font-size: 13px;">Cycle Number</label>
                                 <input name="cycle_num" type="number" class="form-control rounded-3 py-2" style="border: 1.8px solid #2B2B2B; font-size: 13px;" id="cycleNumber" required="This is required" value="<?php echo $nextCycleNumber; ?>" readonly>
@@ -365,7 +259,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 <li><a class="dropdown-item filter-option" data-value="pending" href="#">Pending</a></li>
                                 <li><a class="dropdown-item filter-option" data-value="complete" href="#">Complete</a></li>
                             </ul>
-                            <form id="filterForm" action="harvestCycle.php" method="post" style="display: none;">
+                            <form id="filterForm" action="/harvestCycle" method="post" style="display: none;">
                                 <input type="hidden" name="filter_value" value="">
                             </form>
 
@@ -392,86 +286,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                 </thead>
                                                 <tbody id="viewAllTableBody">
                                                     <?php foreach ($filtered_cycles as $row): ?>
-                                                        <?php
-                                                        $start_date = new DateTime($row['start_of_cycle']);
-                                                        $end_date = new DateTime($row['end_of_cycle']);
-                                                        $now = new DateTime();
-
-                                                        // Calculate total and elapsed duration in seconds
-                                                        $total_duration = $end_date->getTimestamp() - $start_date->getTimestamp();
-                                                        $elapsed_duration = $now->getTimestamp() - $start_date->getTimestamp();
-
-                                                        // If current date has passed the end date or the start and end dates are the same, set progress to 100%
-                                                        if ($now >= $end_date) {
-                                                            $progress_percentage = 100;
-                                                        } else if ($total_duration > 0) {
-                                                            // Calculate progress if within cycle duration
-                                                            $progress_percentage = ($elapsed_duration / $total_duration) * 100;
-                                                        } else {
-                                                            // If the start and end dates are the same, set progress to 100%
-                                                            $progress_percentage = 100;
-                                                        }
-
-                                                        // Clamp progress between 0 and 100%
-                                                        $progress_percentage = min(max($progress_percentage, 0), 100);
-
-                                                        // If progress is 100% and status is not updated, update the status to 1 (complete)
-                                                        if ($progress_percentage == 100 && $row['status'] != 1) {
-                                                            $cycle_number = $row['cycle_number'];
-                                                            $update_status_query = "UPDATE harvest_cycle SET status = 1 WHERE cycle_number = '$cycle_number'";
-
-                                                            // Execute the query and check for errors
-                                                            if (mysqli_query($conn, $update_status_query)) {
-                                                                // Update local status in the row
-                                                                $row['status'] = 1;
-                                                            } else {
-                                                                // Debugging: Print error message if query fails
-                                                                echo "Error updating record: " . mysqli_error($conn);
-                                                            }
-                                                        }
-
-                                                        // Set the color and icon based on the status
-                                                        $progress_color = $row['status'] == 1 ? '#F9E37F' : ($progress_percentage >= 100 ? '#F9E37F' : '#4caf50');
-                                                        $icon = $row['status'] == 1 ? "<i class='fa-solid fa-check'></i>" : "";
-                                                        $editModalID = 'Edit_HarvestModal_' . $row['cycle_number'];
-                                                        $deleteModalID = 'Delete_HarvestModal_' . $row['cycle_number'];
-                                                        ?>
-
-                                                        <tr>
-                                                            <td><?= htmlspecialchars($row['cycle_number']) ?></td>
-                                                            <td><?= htmlspecialchars($row['start_of_cycle']) ?></td>
-                                                            <td><?= htmlspecialchars($row['honey_kg']) ?></td>
-                                                            <td><?= htmlspecialchars($row['end_of_cycle']) ?></td>
-                                                            <td>
-                                                                <div class='status_pending'>
-                                                                    <div class='progress-circle' style='background: conic-gradient(
-                                                                    <?= $progress_color ?> <?= $progress_percentage ?>%,
-                                                                    #f3f3f3 <?= $progress_percentage ?>%
-                                                                )'></div>
-                                                                </div>
-                                                                <div class='status-icon1'><?= $icon ?></div>
-                                                            </td>
-                                                        </tr>
-                                                    <?php endforeach; ?>
-                                                </tbody>
-                                            </table>
-                                            <table class="table cycle-table1 border-dark">
-                                                <thead>
-                                                    <tr>
-                                                        <th colspan="6" style="background-color: #FAEF9B;">Cycle created by worker</th>
-                                                    </tr>
-                                                    <tr>
-                                                        <th style="background-color: #FAEF9B;">User ID</th>
-                                                        <th style="background-color: #FAEF9B;">Cycle Number</th>
-                                                        <th style="background-color: #FAEF9B;">Start of Cycle</th>
-                                                        <th style="background-color: #FAEF9B">Honey (kg)</th>
-                                                        <th style="background-color: #FAEF9B;">End of Harvest</th>
-                                                        <th style="background-color: #FAEF9B;">Status</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody id="viewAllTableBody">
-                                                    
-                                                <?php foreach ($filtered_cycles1 as $row): ?>
                                                         <?php
                                                         $start_date = new DateTime($row['user_start_of_cycle']);
                                                         $end_date = new DateTime($row['user_end_of_cycle']);
@@ -516,8 +330,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                         $editModalID = 'Edit_HarvestModal_' . $row['userCycleNumber'];
                                                         $deleteModalID = 'Delete_HarvestModal_' . $row['userCycleNumber'];
                                                         ?>
+
                                                         <tr>
-                                                            <th><?= htmlspecialchars($row['userID']) ?></th>
                                                             <td><?= htmlspecialchars($row['userCycleNumber']) ?></td>
                                                             <td><?= htmlspecialchars($row['user_start_of_cycle']) ?></td>
                                                             <td><?= htmlspecialchars($row['honey_kg']) ?></td>
@@ -533,6 +347,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                             </td>
                                                         </tr>
                                                     <?php endforeach; ?>
+
                                                 </tbody>
                                             </table>
                                         </div>
@@ -540,17 +355,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 </div>
                             </div>
                         </div>
-                        
-                        <div class="button-group my-3 text-center">
-                            <!-- Button 1 to show Table 1 -->
-                            <button id="showTable1" class="btn btn-primary">Show Table 1</button>
-                            
-                            <!-- Button 2 to show Table 2 -->
-                            <button id="showTable2" class="btn btn-secondary">Show Table 2</button>
-                        </div>
-                        
-                        <!-- //TABLE 1 -->
-                        <div id="table1Container" class="table-responsive mt-2" style="max-height: 130px; overflow-y: auto;">
+
+                        <div class="table-responsive mt-2" style="max-height: 130px; overflow-y: auto;">
                             <table class="table cycle-table border-dark">
                                 <thead>
                                     <tr>
@@ -559,154 +365,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                         <th style="background-color: #FAEF9B">Honey (kg)</th>
                                         <th style="background-color: #FAEF9B;">End of Harvest</th>
                                         <th style="background-color: #FAEF9B;">Status</th>
-                                        <th style="background-color: #FAEF9B;">Edit</th>
-                                        <th style="background-color: #FAEF9B;">Remove</th>
                                     </tr>
                                 </thead>
                                 <tbody id="cycleTableBody">
                                     <?php foreach ($filtered_cycles as $row): ?>
-                                        <?php
-                                        $start_date = new DateTime($row['start_of_cycle']);
-                                        $end_date = new DateTime($row['end_of_cycle']);
-                                        $now = new DateTime();
-
-                                        // Calculate total and elapsed duration in seconds
-                                        $total_duration = $end_date->getTimestamp() - $start_date->getTimestamp();
-                                        $elapsed_duration = $now->getTimestamp() - $start_date->getTimestamp();
-
-                                        // If current date has passed the end date or the start and end dates are the same, set progress to 100%
-                                        if ($now >= $end_date) {
-                                            $progress_percentage = 100;
-                                        } else if ($total_duration > 0) {
-                                            // Calculate progress if within cycle duration
-                                            $progress_percentage = ($elapsed_duration / $total_duration) * 100;
-                                        } else {
-                                            // If the start and end dates are the same, set progress to 100%
-                                            $progress_percentage = 100;
-                                        }
-
-                                        // Clamp progress between 0 and 100%
-                                        $progress_percentage = min(max($progress_percentage, 0), 100);
-
-                                        // If progress is 100% and status is not updated, update the status to 1 (complete)
-                                        if ($progress_percentage == 100 && $row['status'] != 1) {
-                                            $cycle_number = $row['cycle_number'];
-                                            $update_status_query = "UPDATE harvest_cycle SET status = 1 WHERE cycle_number = '$cycle_number'";
-
-                                            // Execute the query and check for errors
-                                            if (mysqli_query($conn, $update_status_query)) {
-                                                // Update local status in the row
-                                                $row['status'] = 1;
-                                            } else {
-                                                // Debugging: Print error message if query fails
-                                                echo "Error updating record: " . mysqli_error($conn);
-                                            }
-                                        }
-
-                                        // Set the color and icon based on the status
-                                        $progress_color = $row['status'] == 1 ? '#F9E37F' : ($progress_percentage >= 100 ? '#F9E37F' : '#4caf50');
-                                        $icon = $row['status'] == 1 ? "<i class='fa-solid fa-check'></i>" : "";
-                                        $editModalID = 'Edit_HarvestModal_' . $row['cycle_number'];
-                                        $deleteModalID = 'Delete_HarvestModal_' . $row['cycle_number'];
-                                        ?>
-                                        <tr>
-                                            <td><?= htmlspecialchars($row['cycle_number']) ?></td>
-                                            <td><?= htmlspecialchars($row['start_of_cycle']) ?></td>
-                                            <td><?= htmlspecialchars($row['honey_kg']) ?></td>
-                                            <td><?= htmlspecialchars($row['end_of_cycle']) ?></td>
-                                            <td>
-                                                <div class='status_pending'>
-                                                    <div class='progress-circle' style='background: conic-gradient(
-                                                    <?= $progress_color ?> <?= $progress_percentage ?>%,
-                                                    #f3f3f3 <?= $progress_percentage ?>%
-                                                )'></div>
-                                                </div>
-                                                <div class='status-icon'><?= $icon ?></div>
-                                            </td>
-                                            <td>
-                                                <button name='btn_edit' class='btn edit-btn' data-bs-toggle='modal' type='button' data-bs-target='#<?= $editModalID ?>'>
-                                                    <i class='fa-regular fa-pen-to-square'></i>
-                                                </button>
-                                                <!-- Edit Modal -->
-                                                <div class='modal fade' id='<?= $editModalID ?>' tabindex='-1' aria-labelledby='Edit_CycleLabel_<?= $editModalID ?>' aria-hidden='true'>
-                                                    <div class='modal-dialog modal-lg modal-dialog-centered rounded-3'>
-                                                        <div class='modal-content' style='border: 2px solid #2B2B2B;'>
-                                                            <div class='modal-header border-dark border-2' style='background-color: #FCF4B9;'>
-                                                                <h5 class='modal-title fw-semibold mx-4' id='Edit_CycleLabel_<?= $editModalID ?>'>Edit Harvest Cycle</h5>
-                                                                <button name='close' type='button' class='btn-close' data-bs-dismiss='modal' aria-label='Close'></button>
-                                                            </div>
-                                                            <div class='modal-body m-5'>
-                                                                <form action='harvestCycle.php' method='post' class='row mt-2 g-3'>
-                                                                    <div class='col-md-4'>
-                                                                        <label for='cycleNumber_<?= $editModalID ?>' class='form-label d-flex justify-content-start' style='font-size: 13px;'>Cycle Number</label>
-                                                                        <input name='edit_cycle_num' type='text' class='form-control rounded-3 py-2' style='border: 1.8px solid #2B2B2B; font-size: 13px;' id='cycleNumber_<?= $editModalID ?>' value='<?= htmlspecialchars($row['cycle_number']) ?>' readonly>
-                                                                    </div>
-                                                                    <div class='col-md-4'>
-                                                                        <label for='cycleStart_<?= $editModalID ?>' class='form-label d-flex justify-content-start' style='font-size: 13px;'>Start of Cycle</label>
-                                                                        <input name='edit_start_date' type='date' class='form-control rounded-3 py-2' style='border: 1.8px solid #2B2B2B; font-size: 13px;' id='cycleStart_<?= $editModalID ?>' value='<?= htmlspecialchars($row['start_of_cycle']) ?>' required min='<?= $currentDate ?>'>
-                                                                    </div>
-                                                                    <div class='col-md-4'>
-                                                                        <label for='cycleEnd_<?= $editModalID ?>' class='form-label d-flex justify-content-start' style='font-size: 13px;'>End of Cycle</label>
-                                                                        <input name='edit_end_date' type='date' class='form-control rounded-3 py-2' style='border: 1.8px solid #2B2B2B; font-size: 13px;' id='cycleEnd_<?= $editModalID ?>' value='<?= htmlspecialchars($row['end_of_cycle']) ?>' required min='<?= $currentDate ?>'>
-                                                                    </div>
-                                                                    <div class='mt-4 d-flex justify-content-end'>
-                                                                        <input type='hidden' name='cycle_number' value='<?= $row['cycle_number'] ?>'>
-                                                                        <button name='btn_edit' type='submit' class='save-button px-4 border border-1 border-black fw-semibold'>Save</button>
-                                                                    </div>
-                                                                </form>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <button class='btn delete-btn'><i class='fa-regular fa-trash-can' style='color: red;' data-bs-toggle='modal' type='button' data-bs-target='#<?= $deleteModalID ?>'></i></button>
-                                                <!-- Delete Modal -->
-                                                <div class='modal fade' id='<?= $deleteModalID ?>' tabindex='-1' aria-labelledby='Delete_CycleLabel_<?= $deleteModalID ?>' aria-hidden='true'>
-                                                    <div class='modal-dialog modal-lg modal-dialog-centered rounded d-flex justify-content-center'>
-                                                        <div class='modal-content' style='border: 2px solid #2B2B2B; width: 450px; height: 180px;'>
-                                                            <div class='modal-header border-dark border-2' style='background-color: #FCF4B9;'>
-                                                                <h5 class='modal-title fw-semibold mx-4' id='Delete_CycleLabel_<?= $deleteModalID ?>'>Are you sure you want to delete this cycle? </h5>
-                                                            </div>
-                                                            <div class='modal-body m-2 d-flex justify-content-center'>
-                                                                <form action='harvestCycle.php' method='post' class='row mt-2 g-1'>
-                                                                    <div class='col-md-4 me-5'>
-                                                                        <button type="button" class="btn btn-dark" data-bs-dismiss='modal' aria-label='Close'>No</button>
-                                                                    </div>
-                                                                    <div class='col-md-4'>
-                                                                        <button name='btn_delete' type="submit" class="btn btn-success">Yes</button>
-                                                                        <input type='hidden' name='cycle_number' value='<?= $row['cycle_number'] ?>'>
-                                                                    </div>
-                                                                </form>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    <?php endforeach; ?>
-                                </tbody>
-                            </table>
-                        </div>
-                        
-
-                        <!-- //TABLE 2 -->
-                        <div id="table2Container" class="table-responsive mt-2" style="max-height: 130px; overflow-y: auto;">
-                            <table class="table cycle-table border-dark">
-                                <thead>
-                                    <tr>
-                                        <th style="background-color: #FAEF9B;">User ID</th>
-                                        <th style="background-color: #FAEF9B;">Cycle Number</th>
-                                        <th style="background-color: #FAEF9B;">Start of Cycle</th>
-                                        <th style="background-color: #FAEF9B">Honey (kg)</th>
-                                        <th style="background-color: #FAEF9B;">End of Harvest</th>
-                                        <th style="background-color: #FAEF9B;">Status</th>
-                                        <th style="background-color: #FAEF9B;">Edit</th>
-                                        <th style="background-color: #FAEF9B;">Remove</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="cycleTableBody">
-                                    <?php foreach ($filtered_cycles1 as $row): ?>
                                         <?php
                                         $start_date = new DateTime($row['user_start_of_cycle']);
                                         $end_date = new DateTime($row['user_end_of_cycle']);
@@ -748,11 +410,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                         // Set the color and icon based on the status
                                         $progress_color = $row['status'] == 1 ? '#F9E37F' : ($progress_percentage >= 100 ? '#F9E37F' : '#4caf50');
                                         $icon = $row['status'] == 1 ? "<i class='fa-solid fa-check'></i>" : "";
-                                        $editModalID1 = 'Edit_HarvestModal1_' . $row['userCycleNumber'];
-                                        $deleteModalID1 = 'Delete_HarvestModal1_' . $row['userCycleNumber'];
+                                        $editModalID = 'Edit_HarvestModal_' . $row['userCycleNumber'];
+                                        $deleteModalID = 'Delete_HarvestModal_' . $row['userCycleNumber'];
                                         ?>
                                         <tr>
-                                            <td><?= htmlspecialchars($row['userID']) ?></td>
                                             <td><?= htmlspecialchars($row['userCycleNumber']) ?></td>
                                             <td><?= htmlspecialchars($row['user_start_of_cycle']) ?></td>
                                             <td><?= htmlspecialchars($row['honey_kg']) ?></td>
@@ -765,66 +426,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                 )'></div>
                                                 </div>
                                                 <div class='status-icon'><?= $icon ?></div>
-                                            </td>
-                                            <td>
-                                                <button name='btn_edit' class='btn edit-btn' data-bs-toggle='modal' type='button' data-bs-target='#<?= $editModalID1 ?>'>
-                                                    <i class='fa-regular fa-pen-to-square'></i>
-                                                </button>
-                                                <!-- Edit Modal -->
-                                                <div class='modal fade' id='<?= $editModalID1 ?>' tabindex='-1' aria-labelledby='Edit_CycleLabel_<?= $editModalID1 ?>' aria-hidden='true'>
-                                                    <div class='modal-dialog modal-lg modal-dialog-centered rounded-3'>
-                                                        <div class='modal-content' style='border: 2px solid #2B2B2B;'>
-                                                            <div class='modal-header border-dark border-2' style='background-color: #FCF4B9;'>
-                                                                <h5 class='modal-title fw-semibold mx-4' id='Edit_CycleLabel_<?= $editModalID1 ?>'>Edit Harvest Cycle</h5>
-                                                                <button name='close' type='button' class='btn-close' data-bs-dismiss='modal' aria-label='Close'></button>
-                                                            </div>
-                                                            <div class='modal-body m-5'>
-                                                                <form action='harvestCycle.php' method='post' class='row mt-2 g-3'>
-                                                                    <div class='col-md-4'>
-                                                                        <label for='cycleNumber_<?= $editModalID1 ?>' class='form-label d-flex justify-content-start' style='font-size: 13px;'>Cycle Number</label>
-                                                                        <input name='edit_cycle_num' type='text' class='form-control rounded-3 py-2' style='border: 1.8px solid #2B2B2B; font-size: 13px;' id='cycleNumber_<?= $editModalID1 ?>' value='<?= htmlspecialchars($row['userCycleNumber']) ?>' readonly>
-                                                                    </div>
-                                                                    <div class='col-md-4'>
-                                                                        <label for='cycleStart_<?= $editModalID1 ?>' class='form-label d-flex justify-content-start' style='font-size: 13px;'>Start of Cycle</label>
-                                                                        <input name='edit_start_date' type='date' class='form-control rounded-3 py-2' style='border: 1.8px solid #2B2B2B; font-size: 13px;' id='cycleStart_<?= $editModalID1 ?>' value='<?= htmlspecialchars($row['user_start_of_cycle']) ?>' required min='<?= $currentDate ?>'>
-                                                                    </div>
-                                                                    <div class='col-md-4'>
-                                                                        <label for='cycleEnd_<?= $editModalID1 ?>' class='form-label d-flex justify-content-start' style='font-size: 13px;'>End of Cycle</label>
-                                                                        <input name='edit_end_date' type='date' class='form-control rounded-3 py-2' style='border: 1.8px solid #2B2B2B; font-size: 13px;' id='cycleEnd_<?= $editModalID1 ?>' value='<?= htmlspecialchars($row['user_end_of_cycle']) ?>' required min='<?= $currentDate ?>'>
-                                                                    </div>
-                                                                    <div class='mt-4 d-flex justify-content-end'>
-                                                                        <input type='hidden' name='userCycleNumber' value='<?= $row['userCycleNumber'] ?>'>
-                                                                        <button name='btn_edit1' type='submit' class='save-button px-4 border border-1 border-black fw-semibold'>Save</button>
-                                                                    </div>
-                                                                </form>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <button class='btn delete-btn'><i class='fa-regular fa-trash-can' style='color: red;' data-bs-toggle='modal' type='button' data-bs-target='#<?= $deleteModalID1 ?>'></i></button>
-                                                <!-- Delete Modal -->
-                                                <div class='modal fade' id='<?= $deleteModalID1 ?>' tabindex='-1' aria-labelledby='Delete_CycleLabel_<?= $deleteModalID1 ?>' aria-hidden='true'>
-                                                    <div class='modal-dialog modal-lg modal-dialog-centered rounded d-flex justify-content-center'>
-                                                        <div class='modal-content' style='border: 2px solid #2B2B2B; width: 450px; height: 180px;'>
-                                                            <div class='modal-header border-dark border-2' style='background-color: #FCF4B9;'>
-                                                                <h5 class='modal-title fw-semibold mx-4' id='Delete_CycleLabel_<?= $deleteModalID1 ?>'>Are you sure you want to delete this cycle? </h5>
-                                                            </div>
-                                                            <div class='modal-body m-2 d-flex justify-content-center'>
-                                                                <form action='harvestCycle.php' method='post' class='row mt-2 g-1'>
-                                                                    <div class='col-md-4 me-5'>
-                                                                        <button type="button" class="btn btn-dark" data-bs-dismiss='modal' aria-label='Close'>No</button>
-                                                                    </div>
-                                                                    <div class='col-md-4'>
-                                                                        <button name='btn_delete' type="submit" class="btn btn-success">Yes</button>
-                                                                        <input type='hidden' name='userCycleNumber' value='<?= $row['userCycleNumber'] ?>'>
-                                                                    </div>
-                                                                </form>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
                                             </td>
                                         </tr>
                                     <?php endforeach; ?>
@@ -855,44 +456,44 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <!-- Side Bar Mobile View -->
     <div class="offcanvas offcanvas-start sidebar2 overflow-x-hidden overflow-y-hidden" tabindex="-1" id="offcanvasNav-Menu" aria-labelledby="staticBackdropLabel">
         <div class="d-flex align-items-center p-3 py-5">
-            <a href="/dashboard" class="sidebar-logo fw-bold text-dark text-decoration-none fs-4" data-bs-dismiss="offcanvas" aria-label="Close">
+            <a href="/userDashboard" class="sidebar-logo fw-bold text-dark text-decoration-none fs-4" data-bs-dismiss="offcanvas" aria-label="Close">
                 <img src="img/BeeMo Logo Side.png" width="173px" height="75px" alt="BeeMo Logo">
             </a>
             <button type="button" class="btn-close ms-auto" data-bs-dismiss="offcanvas" aria-label="Close"></button>
         </div>
         <ul class="sidebar-menu p-2 py-2 m-0 mb-0">
             <li class="sidebar-menu-item2">
-                <a href="/dashboard">
+                <a href="/userDashboard">
                     <i class="fa-solid fa-house sidebar-menu-item-icon2"></i>
                     Home
                 </a>
             </li>
             <li class="sidebar-menu-item2 py-1">
-                <a href="/parameterMonitoring">
+                <a href="/userParameterMonitoring">
                     <i class="fa-solid fa-temperature-three-quarters sidebar-menu-item-icon2"></i>
                     Parameters Monitoring
                 </a>
             </li>
             <li class="sidebar-menu-item2">
-                <a href="/reports">
+                <a href="javascript:void(0);" style="pointer-events: none; color: gray;">
                     <i class="fa-solid fa-newspaper sidebar-menu-item-icon2"></i>
                     Reports
                 </a>
             </li>
             <li class="sidebar-menu-item2 active">
-                <a href="/harvestCycle">
+                <a href="/userHarvestCycle">
                     <i class="fa-solid fa-arrows-spin sidebar-menu-item-icon2"></i>
                     Harvest Cycle
                 </a>
             </li>
             <li class="sidebar-menu-item2">
-                <a href="/beeGuide">
+                <a href="/userBeeGuide">
                     <i class="fa-solid fa-book-open sidebar-menu-item-icon2"></i>
                     Bee Guide
                 </a>
             </li>
             <li class="sidebar-menu-item2">
-                <a href="/Worker">
+                <a href="javascript:void(0);" style="pointer-events: none; color: gray;">
                     <i class="fa-solid fa-user sidebar-menu-item-icon2"></i>
                     Worker
                 </a>
@@ -924,13 +525,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         require_once './src/db.php';
                         $db = new Database();
                         $conn = $db->getConnection();
-                        $adminID = $_SESSION['adminID'];
-                        $get = "SELECT admin_name, email FROM admin_table WHERE adminID = '$adminID'";
+                        $userID = $_SESSION['userID'];
+                        $get = "SELECT user_name, email FROM user_table WHERE userID = '$userID'";
                         $getQuery = mysqli_query($conn, $get);
 
                         while ($row = $getQuery->fetch_assoc()) {
                             echo "
-                            <h5>" . $row['admin_name'] . "</h5>
+                            <h5>" . $row['user_name'] . "</h5>
                             <h6 style='text-decoration: underline; font-weight: 350;'><small class='text-body-secondary'>" . $row['email'] . "</small></h6>
                             ";
                         }
@@ -944,7 +545,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             <p><i class="fa-solid fa-user"></i> <span>My Profile</span><i class="fa-solid fa-angle-right"></i></p>
                         </button>
 
-                        <button type="button" id="edit-profile-button" data-bs-toggle="modal" data-bs-target="#Change-Pass-Modal" style="padding: 10px;">
+                        <button type="button" disabled id="edit-profile-button" data-bs-toggle="modal" data-bs-target="#Change-Pass-Modal" style="padding: 10px;">
                             <p><i class="fa-solid fa-lock"></i> <span>Change Password</span><i class="fa-solid fa-angle-right"></i></p>
                         </button>
 
@@ -986,12 +587,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         require_once './src/db.php';
                         $db = new Database();
                         $conn = $db->getConnection();
-                        $adminID = $_SESSION['adminID'];
-                        $get = "SELECT admin_name, email, number FROM admin_table WHERE adminID = '$adminID'";
+                        $userID = $_SESSION['userID'];
+                        $get = "SELECT user_name, email, number FROM user_table WHERE userID = '$userID'";
                         $getQuery = mysqli_query($conn, $get);
 
                         while ($row = $getQuery->fetch_assoc()) {
-                            $currentName = $row['admin_name'];
+                            $currentName = $row['user_name'];
                             $currentEmail = $row['email'];
                             $currentPhoneNumber = $row['number'];
                             echo "
@@ -1001,17 +602,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 <form method='POST' action=''>
 
                                 <div class='form-floating pb-4'>
-                                    <input name='editName' type='text' class='form-control' id='fullName' placeholder='Full Name' value='$currentName'>
+                                    <input name='editName' type='text' class='form-control' id='fullName' placeholder='Full Name' value='$currentName' readonly>
                                     <label for='fullName'><i class='fa-solid fa-user'></i> Full Name</label>
                                 </div>
 
                                 <div class='form-floating pb-4'>
-                                    <input name='editEmail' type='email' class='form-control' id='email' placeholder='name@example.com' value='$currentEmail'>
+                                    <input name='editEmail' type='email' class='form-control' id='email' placeholder='name@example.com' value='$currentEmail' readonly>
                                     <label for='email'><i class='fa-solid fa-envelope'></i> Email</label>
                                 </div>
 
                                 <div class='form-floating pb-4'>
-                                    <input name='editNumber' type='number' class='form-control' id='mobileNumber' placeholder='Mobile Number' value='$currentPhoneNumber'>
+                                    <input name='editNumber' type='number' class='form-control' id='mobileNumber' placeholder='Mobile Number' value='$currentPhoneNumber' readonly>
                                     <label for='mobileNumber'><i class='fa-solid fa-mobile'></i> Mobile Number</label>
                                 </div>
 
@@ -1058,13 +659,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         require_once './src/db.php';
                         $db = new Database();
                         $conn = $db->getConnection();
-                        $adminID = $_SESSION['adminID'];
-                        $get = "SELECT admin_name, email FROM admin_table WHERE adminID = '$adminID'";
+                        $userID = $_SESSION['userID'];
+                        $get = "SELECT user_name, email FROM user_table WHERE userID = '$userID'";
                         $getQuery = mysqli_query($conn, $get);
 
                         while ($row = $getQuery->fetch_assoc()) {
                             echo "
-                            <h5>" . $row['admin_name'] . "</h5>
+                            <h5>" . $row['user_name'] . "</h5>
                             <h6 style='text-decoration: underline; font-weight: 350;'><small class='text-body-secondary'>" . $row['email'] . "</small></h6>
                             ";
                         }
@@ -1114,7 +715,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             </div>
         </div>
 
-    </div>
+        
 
         <script>
             document.querySelectorAll('.filter-option').forEach(item => {
@@ -1141,7 +742,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 // Filter function
                 filterSelect.addEventListener('change', function() {
                     const filterValue = this.value;
-                    fetch('/harvestCycle', {
+                    fetch('/userHarvestCycle', {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/x-www-form-urlencoded',
@@ -1159,26 +760,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             function fetchDataAgain() {
                 location.reload(); // For simplicity, reload the page
             }
-
-
-            // JavaScript to toggle between tables
-            document.getElementById('showTable1').addEventListener('click', function() {
-                document.getElementById('table1Container').style.display = 'block';
-                document.getElementById('table2Container').style.display = 'none';
-            });
-
-            document.getElementById('showTable2').addEventListener('click', function() {
-                document.getElementById('table1Container').style.display = 'none';
-                document.getElementById('table2Container').style.display = 'block';
-            });
-
-            // Initially show only the first table
-            window.onload = function() {
-                document.getElementById('table1Container').style.display = 'block';  // Only Table 1 is visible on page load
-                document.getElementById('table2Container').style.display = 'none';   // Ensure Table 2 is hidden
-            };
         </script>
-        <script src="./js/notification.js"></script>
+        <script src="./js/userNotification.js"></script>
         <script src="./js/reusable.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>

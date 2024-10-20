@@ -56,51 +56,61 @@ class UserIndex {
     }
 
     public function authenticate() {
+        session_start();
+
         $email = $_POST['email'];
         $password = $_POST['password'];
 
-        $email = $this->conn->real_escape_string(filter_var($email, FILTER_SANITIZE_EMAIL));
+        // Sanitize and filter input
+        $email = filter_var($email, FILTER_SANITIZE_EMAIL);
 
         // Check in admin_table
-        $query = "SELECT * FROM admin_table WHERE email = '$email'";
-        $result = $this->conn->query($query);
+        $stmt = $this->conn->prepare("SELECT * FROM admin_table WHERE email = ?");
+        $stmt->bind_param("s", $email);
+        $stmt->execute();
+        $result = $stmt->get_result();
 
-        if ($result && $result->num_rows > 0) {
+        if ($result->num_rows > 0) {
             $row = $result->fetch_assoc();
             if (password_verify($password, $row['password'])) {
                 $_SESSION['email'] = $row['email'];
                 $_SESSION['adminID'] = $row['adminID'];
                 header('Location: /dashboard');
                 exit();
-            } 
-            else {
-                $_SESSION['error'] = 'Incorrect email or password';
+            } else {
+                $_SESSION['error'] = 'Incorrect password';
                 header('Location: /');
                 exit();
             }
         }
 
-        // // Check in user_table
-        // $query = "SELECT * FROM user_table WHERE email = '$email'";
-        // $result = $this->conn->query($query);
+        // Check in user_table
+        $stmt1 = $this->conn->prepare("SELECT * FROM user_table WHERE email = ?");
+        $stmt1->bind_param("s", $email);
+        $stmt1->execute();
+        $result1 = $stmt1->get_result();
 
-        // if ($result && $result->num_rows > 0) {
-        //     $row = $result->fetch_assoc();
-        //     if (password_verify($password, $row['password'])) {
-        //         $_SESSION['email'] = $row['email'];
-        //         $_SESSION['userID'] = $row['userID'];
-        //         header('Location: /user_page');
-        //         exit();
-        //     } else {
-        //         $_SESSION['error'] = 'Incorrect email or password';
-        //         header('Location: /');
-        //         exit();
-        //     }
-        // } else {
-        //     $_SESSION['error'] = 'Incorrect email or password';
-        //     header('Location: /');
-        //     exit();
-        // }
+        if ($result1->num_rows > 0) {
+            $row = $result1->fetch_assoc();
+
+            // Compare the plain-text password directly
+            if ($password === $row['password']) {
+                $_SESSION['email'] = $row['email'];
+                $_SESSION['userID'] = $row['userID'];
+                header('Location: /userDashboard');  // Redirect to dashboard
+                exit();
+            } else {
+                $_SESSION['error'] = 'Incorrect password';
+                header('Location: /');  // Redirect back to login
+                exit();
+            }
+        } else {
+            $_SESSION['error'] = 'Email not found';
+            header('Location: /');  // Redirect back to login
+            exit();
+        }
+
     }
 }
+
 ?>

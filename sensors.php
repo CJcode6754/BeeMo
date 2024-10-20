@@ -1,8 +1,13 @@
 <?php
 
-require './src/db.php';
-$db = new Database();
-$conn = $db->getConnection();
+// Database connection details
+$servername = 'localhost';
+$username = 'u497761604_BeeMo';
+$password = 'NewPassword@6789054321';
+$dbname = 'u497761604_BeeMo_db';
+
+// Create connection
+$conn = new mysqli($servername, $username, $password, $dbname);
 
 // Logging function
 function logMessage($message) {
@@ -12,38 +17,44 @@ function logMessage($message) {
 logMessage("Received request");
 
 // Check connection
-if (!$conn) {
-    $error_message = "Connection failed: " . mysqli_connect_error();
+if ($conn->connect_error) {
+    $error_message = "Connection failed: " . $conn->connect_error;
     logMessage($error_message);
     die($error_message);
+} else {
+    logMessage("Database connection successful.");
 }
 
-// If values sent by Arduino/NodeMCU are not empty then insert into MySQL database table
+// Log raw POST data to see what's being sent
+logMessage("Raw POST Data: " . file_get_contents('php://input'));
+
+// Check if POST data is received
 if (!empty($_POST['temperature']) && !empty($_POST['humidity']) && !empty($_POST['weight'])) {
-    $temperature = $_POST['temperature'];
-    $humidity = $_POST['humidity'];
-    $weight = $_POST['weight'];
+    $temperature = $conn->real_escape_string($_POST['temperature']);
+    $humidity = $conn->real_escape_string($_POST['humidity']);
+    $weight = $conn->real_escape_string($_POST['weight']);
 
     // Log the received values
     logMessage("Received data - Temperature: $temperature, Humidity: $humidity, Weight: $weight");
 
-    // Update your table name here
+    // Insert query to update your table
     $sql = "INSERT INTO hive1 (temperature, humidity, weight) VALUES ('$temperature', '$humidity', '$weight')";
 
     if ($conn->query($sql) === TRUE) {
-        logMessage("Values inserted in MySQL database table.");
-        echo "Values inserted in MySQL database table.";
+        logMessage("Values inserted into MySQL database table.");
+        echo "Values inserted into MySQL database table.";
     } else {
         $error_message = "Error: " . $sql . "<br>" . $conn->error;
-        logMessage($error_message);
+        logMessage("MySQL Error: " . $conn->error);
         echo $error_message;
     }
 } else {
-    logMessage("Received incomplete data");
+    logMessage("POST parameters missing or incomplete.");
     echo "Missing data";
 }
 
 // Close MySQL connection
 $conn->close();
 logMessage("Connection closed");
+
 ?>

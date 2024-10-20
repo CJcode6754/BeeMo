@@ -7,11 +7,16 @@ session_start(); // Start the session
 
 header('Content-Type: application/json');
 
-// Database connection setup
+
 $servername = 'localhost';
 $username = 'root';
 $password = '';
 $dbname = 'BeeMo_db';
+
+// $servername = "localhost";
+// $username = "u497761604_BeeMo";
+// $password = "NewPassword@6789054321";
+// $dbname = "u497761604_BeeMo_db";
 
 $conn = new mysqli($servername, $username, $password, $dbname);
 

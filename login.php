@@ -87,16 +87,16 @@
     });
 
     function handleBackNavigation() {
+        history.pushState(null, null, null);
+        window.addEventListener('popstate', function () {
             history.pushState(null, null, null);
-            window.addEventListener('popstate', function () {
-                history.pushState(null, null, null);
-                // Optionally redirect to a specific page if needed
-                window.location.replace('/'); // Redirect to login or another page
-            });
-        }
+            // Optionally redirect to a specific page if needed
+            window.location.replace('/'); // Redirect to login or another page
+        });
+    }
 
-        // Call the function to handle back navigation
-        handleBackNavigation();
+    // Call the function to handle back navigation
+    handleBackNavigation();
     </script>
 </body>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script> 
