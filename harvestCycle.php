@@ -379,7 +379,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                         <button name='closeBtn' type='button' class='btn-close' data-bs-dismiss='modal' aria-label='Close'></button>
                                     </div>
                                     <div class='modal-body m-5'>
-                                        <div class="table-responsive mt-2" style="max-height: 400px; overflow-y: auto;">
+                                        <div class="button-group my-3 text-center">
+                                            <!-- Button 1 to show Table 1 -->
+                                            <button id="showViewAllTable1" class="btn btn-primary">Show Table 1</button>
+                                            
+                                            <!-- Button 2 to show Table 2 -->
+                                            <button id="showViewAllTable2" class="btn btn-secondary">Show Table 2</button>
+                                        </div>
+
+
+                                        <div id="viewAllTable1" class="table-responsive mt-2" style="max-height: 400px; overflow-y: auto;">
                                             <table class="table cycle-table border-dark">
                                                 <thead>
                                                     <tr>
@@ -455,6 +464,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                     <?php endforeach; ?>
                                                 </tbody>
                                             </table>
+                                        </div>
+                                        <div id="viewAllTable2" class="table-responsive mt-2" style="max-height: 400px; overflow-y: auto;">
                                             <table class="table cycle-table1 border-dark">
                                                 <thead>
                                                     <tr>
@@ -470,7 +481,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                     </tr>
                                                 </thead>
                                                 <tbody id="viewAllTableBody">
-                                                    
                                                 <?php foreach ($filtered_cycles1 as $row): ?>
                                                         <?php
                                                         $start_date = new DateTime($row['user_start_of_cycle']);
@@ -1177,6 +1187,25 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 document.getElementById('table1Container').style.display = 'block';  // Only Table 1 is visible on page load
                 document.getElementById('table2Container').style.display = 'none';   // Ensure Table 2 is hidden
             };
+
+            /// JavaScript to toggle between tables when buttons are clicked
+            document.getElementById('showViewAllTable1').addEventListener('click', function() {
+                document.getElementById('viewAllTable1').style.display = 'block';
+                document.getElementById('viewAllTable2').style.display = 'none';
+            });
+
+            document.getElementById('showViewAllTable2').addEventListener('click', function() {
+                document.getElementById('viewAllTable1').style.display = 'none';
+                document.getElementById('viewAllTable2').style.display = 'block';
+            });
+
+            // Event listener to run when the modal opens
+            document.getElementById('viewAllModal').addEventListener('show.bs.modal', function() {
+                // Ensure the first table is shown by default
+                document.getElementById('viewAllTable1').style.display = 'block';
+                document.getElementById('viewAllTable2').style.display = 'none';
+            });
+
         </script>
         <script src="./js/notification.js"></script>
         <script src="./js/reusable.js"></script>

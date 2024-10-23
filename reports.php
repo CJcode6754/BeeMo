@@ -195,7 +195,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 <!-- Select Harvest Cycle -->
                                 <div class="dropdown">
                                     <button class="select-harvest-btn dropdown-toggle" type="button" id="harvestCycleDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                                        Select Harvest Cycle
+                                        Admin Harvest Cycle
                                     </button>
                                     <ul class="dropdown-menu" id="harvestCycleList">
                                         <!-- Options will be populated via JavaScript -->
@@ -208,6 +208,25 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                         Filter by Month
                                     </button>
                                     <ul class="dropdown-menu" id="monthDropdown" aria-labelledby="monthlyFilter">
+
+                                    </ul>
+                                </div>
+
+                                <div class="dropdown">
+                                    <button class="select-harvest-btn dropdown-toggle" type="button" id="userHarvestCycleDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                        Worker Harvest Cycle
+                                    </button>
+                                    <ul class="dropdown-menu" id="userHarvestCycleList">
+                                        <!-- Options will be populated via JavaScript -->
+                                    </ul>
+                                </div>
+
+                                <!-- Filter by Month -->
+                                <div class="dropdown">
+                                    <button class="filter-btn dropdown-toggle" type="button" id="userMonthlyFilter" data-bs-toggle="dropdown" aria-expanded="false">
+                                        Filter by Month
+                                    </button>
+                                    <ul class="dropdown-menu" id="userMonthDropdown" aria-labelledby="monthlyFilter">
                                     </ul>
                                 </div>
                             </div>

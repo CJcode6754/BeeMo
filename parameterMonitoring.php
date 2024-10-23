@@ -5,7 +5,7 @@
     error_reporting(E_ALL);
     
     // Start the session
-    session_start();  // Ensure this is at the top of your script
+    // session_start();  // Ensure this is at the top of your script
     
     // Check if session is active and session variables are set
     if (!isset($_SESSION['adminID'])) {
