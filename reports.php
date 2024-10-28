@@ -245,11 +245,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     </div>
 
                     <div class="descriptive-analytics-container d-flex justify-content-center mt-2 row row-cols-2 row-cols-lg-5 g-2 g-lg-3">
-                        <p>Type: <span id="date-range-label">-</span></p>
-                        <p>Average: <span id="average-value">-</span></p>
-                        <p>Minimum: <span id="min-value">-</span></p>
-                        <p>Maximum: <span id="max-value">-</span></p>
-                    </div>
+    <p>Type: <span id="date-range-label">-</span></p>
+    <p id="avgContainer">Average: <span id="average-value">-</span></p>
+    <p>Minimum: <span id="min-value">-</span></p>
+    <p>Maximum: <span id="max-value">-</span></p>
+    <p id="previousWeightContainer">Previous Max Weight: <span id="previousWeight">-</span></p>
+<p id="weightGainContainer">Weight Gain: <span id="weightGain">-</span></p>
+</div>
+
                 </div>
             </div>
             <div class="space mt-1 d-md-none p-0 m-0"></div>

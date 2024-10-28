@@ -459,7 +459,7 @@ document.addEventListener("DOMContentLoaded", function () {
         // Update the chart with weekly data
         myChart.data.labels = labels;
         myChart.data.datasets[0].data = dataset;
-  
+        updateDescriptiveAnalytics(data.stats);
         // Set the time unit to 'week' for the x-axis
         myChart.options.scales.x.time.unit = "week";
         myChart.update();
@@ -962,25 +962,50 @@ workerCycleDropdown.addEventListener("click", () => {
     });
   });
 
-  // Function to update descriptive analytics
-  function updateDescriptiveAnalytics(stats, isMonthly) {
+  function updateDescriptiveAnalytics(stats, isMonthly = false) {
     // Update the date range label based on the selected filter
     document.getElementById("date-range-label").textContent = isMonthly
-      ? "Monthly Average"
-      : "Daily Average";
+        ? "Monthly Average"
+        : "Daily Average";
 
-    // Update the average, min, and max values
+    // Update the average, min, and max values for the selected type
     document.getElementById("average-value").textContent =
-      stats[selectedType].average !== null
+    stats[selectedType]?.average !== null
         ? stats[selectedType].average.toFixed(2)
         : "-";
     document.getElementById("min-value").textContent =
-      stats[selectedType].min !== null
-        ? stats[selectedType].min.toFixed(2)
-        : "-";
+        stats[selectedType]?.min !== null
+            ? stats[selectedType].min.toFixed(2)
+            : "-";
     document.getElementById("max-value").textContent =
-      stats[selectedType].max !== null
-        ? stats[selectedType].max.toFixed(2)
-        : "-";
-  }
+        stats[selectedType]?.max !== null
+            ? stats[selectedType].max.toFixed(2)
+            : "-";
+
+    // Update previous weight and weight gain if available
+    const previousWeight = stats.weight?.previous || null; // Adjust this according to your data structure
+    const weightGain = stats.weight?.gain || null; // Adjust this according to your data structure
+
+    // Assuming selectedType is defined somewhere in your code
+    if (selectedType === 'temperature' || selectedType === 'humidity') {
+      // Hide the entire paragraphs for previous weight and weight gain
+      document.getElementById('previousWeightContainer').style.display = 'none';
+      document.getElementById('weightGainContainer').style.display = 'none';
+    } else if (selectedType === 'weight') {
+      // Show the paragraphs for previous weight and weight gain
+      document.getElementById('previousWeightContainer').style.display = 'block';
+      document.getElementById('weightGainContainer').style.display = 'block';
+
+      // Update the content if not hiding
+      document.getElementById('previousWeight').textContent = previousWeight !== null ? previousWeight.toFixed(2) : 'N/A';
+      document.getElementById('weightGain').textContent = weightGain !== null ? weightGain.toFixed(2) : 'N/A';
+    }
+
+    if(selectedType === 'weight'){
+      document.getElementById('avgContainer').style.display = 'none';
+    }else if(selectedType === 'temperature' || selectedType === 'humidity'){
+      document.getElementById(avgContainer).style.display = 'block';
+    }
+}
+
 });

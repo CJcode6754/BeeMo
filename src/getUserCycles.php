@@ -8,7 +8,6 @@ season_start();
 
 header('Content-Type: application/json');
 
-// Database connection
 // $servername = "localhost";
 // $username = "u497761604_BeeMo";
 // $password = "NewPassword@6789054321";

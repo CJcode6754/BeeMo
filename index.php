@@ -47,14 +47,6 @@ $router->get('/chooseHive', function() {
 });
 
 $router->get('/parameterMonitoring', function() {
-    function season_start() {
-        if (session_status() == PHP_SESSION_NONE) {
-            session_start();
-        }
-    }
-
-    season_start();
-
     if (!isset($_SESSION['adminID'])) {
         session_destroy();
         header('Location: /');

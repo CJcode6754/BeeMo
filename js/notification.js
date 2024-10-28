@@ -137,6 +137,22 @@ document.addEventListener('DOMContentLoaded', function() {
                             noti_message = 'Failed to add new cycle.';
                             noti_image = 'img/beemo-ico.ico';
                             break;
+                        case 'highTemp':
+                            noti_message = 'Temperature exceeds optimal range.';
+                            noti_image = 'img/beemo-ico.ico';
+                            break;
+                        case 'lowTemp':
+                            noti_message = 'Temperature below optimal range.';
+                            noti_image = 'img/beemo-ico.ico';
+                            break;
+                        case 'highHumid':
+                            noti_message = 'Humidity exceeds optimal range.';
+                            noti_image = 'img/beemo-ico.ico';
+                            break;
+                        case 'lowHumid':
+                            noti_message = 'Humidity below optimal range.';
+                            noti_image = 'img/beemo-ico.ico';
+                            break;
                         default:
                             noti_message = 'Notification';
                             noti_image = 'img/beemo-ico.ico';
