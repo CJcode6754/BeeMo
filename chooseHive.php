@@ -1,53 +1,55 @@
 <?php
-    // Enable error reporting for debugging
-    ini_set('display_errors', 1);
-    ini_set('display_startup_errors', 1);
-    error_reporting(E_ALL);
+// Enable error reporting for debugging
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 
-    function season_start() {
-        if (session_status() == PHP_SESSION_NONE) {
-            session_start();
-        }
+function season_start()
+{
+    if (session_status() == PHP_SESSION_NONE) {
+        session_start();
+    }
+}
+
+season_start();
+require_once './src/db.php';
+require_once './src/profileFunction.php';
+
+$db = new Database();
+$conn = $db->getConnection();
+$notificationHandler = new NotificationHandler($conn);
+
+if (isset($_POST['logout_btn'])) {
+    // Unset all session variables
+    $_SESSION = array();
+    session_destroy();
+    header('Location: /');
+    exit;
+}
+
+$profile = new Profile($conn, $_SESSION['adminID']);
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    if (isset($_POST['editProfile'])) {
+        $name = $_POST['editName'];
+        $email = $_POST['editEmail'];
+        $phoneNumber = $_POST['editNumber'];
+
+        $profile->updateProfile($name, $email, $phoneNumber);
     }
 
-    season_start();
-    require_once './src/db.php';
-    require_once './src/profileFunction.php';
-
-    $db = new Database();
-    $conn = $db->getConnection();
-    $notificationHandler = new NotificationHandler($conn);
-
-    if (isset($_POST['logout_btn'])) {
-        // Unset all session variables
-        $_SESSION = array();
-        session_destroy();
-        header('Location: /');
-        exit;
+    if (isset($_POST['changePass'])) {
+        $oldPass = $_POST['OldPass'];
+        $newPass = $_POST['newPass'];
+        $conNewPass = $_POST['conNewPass'];
+        $profile->changePassword($oldPass, $newPass, $conNewPass);
     }
-
-    $profile = new Profile($conn, $_SESSION['adminID']);
-
-    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-        if (isset($_POST['editProfile'])) {
-            $name = $_POST['editName'];
-            $email = $_POST['editEmail'];
-            $phoneNumber = $_POST['editNumber'];
-
-            $profile->updateProfile($name, $email, $phoneNumber);
-        }
-
-        if (isset($_POST['changePass'])) {
-            $oldPass = $_POST['OldPass'];
-            $newPass = $_POST['newPass'];
-            $conNewPass = $_POST['conNewPass'];
-            $profile->changePassword($oldPass, $newPass, $conNewPass);
-        }
-    }
+}
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -61,7 +63,7 @@
 </head>
 
 <body class="overflow-x-hidden ">
-  <!-- Sidebar -->
+    <!-- Sidebar -->
     <div id="sidebar" class="sidebar position-fixed top-0 bottom-0 bg-white border-end offcanvass">
         <div class="d-flex align-items-center p-3 py-5">
             <a href="/dashboard" class="sidebar-logo fw-bold text-dark text-decoration-none fs-4"><img src="img/BeeMo Logo Side.png" width="173px" height="75px" alt=""></a>
@@ -74,6 +76,12 @@
                 </a>
             </li>
             <li class="sidebar-menu-item active">
+                <a href="/chooseHive">
+                    <i class="fa-solid fa-box-archive sidebar-menu-item-icon"></i>
+                    Choose Hive
+                </a>
+            </li>
+            <li class="sidebar-menu-item">
                 <a href="/parameterMonitoring">
                     <i class="fa-solid fa-temperature-three-quarters sidebar-menu-item-icon"></i>
                     Parameter Monitoring
@@ -127,10 +135,10 @@
                         <i class="fa-solid fa-bell"></i>
                         <span id="nf-count"></span>
                     </div>
-                    <div class="dropdown-menu dropdown-menu-start border-dark border-2 rounded-3" style="width: 320px;">
+                    <div class="notif-container  dropdown-menu dropdown-menu-start border-dark border-2 rounded-3" style="width: 320px;">
                         <div class="d-flex justify-content-between dropdown-header border-dark border-2">
                             <div>
-                                <p class="fs-5 text-dark text-uppercase pt-3">Notifications
+                                <p class="fs-6 text-dark pt-3">Notifications
                                     <span class="badge text-dark bg-warning-subtle rounded-pill" id="nf-count-badge">0</span>
                                 </p>
                             </div>
@@ -179,34 +187,34 @@
                 <div class="px-4 py-2 my-4 text-center content-wrapper">
                     <div class="col-lg-6 mx-auto">
                         <p class="choosehive-text fs-4 mb-5 fw-bold choosehive-highlight">Choose Hive</p>
-                            <div class="mt-4 gap-2 d-block justify-content-sm-center">
-                                <!-- Form for Hive 1 -->
-                                <form method="post" action="/setHive">
-                                    <input type="hidden" name="hiveID" value="1">
-                                    <button type="submit" class="hive-button mt-4 px-5 fs-5 fw-semibold">Hive 1</button>
-                                </form>
+                        <div class="mt-4 gap-2 d-block justify-content-sm-center">
+                            <!-- Form for Hive 1 -->
+                            <form method="post" action="/setHive">
+                                <input type="hidden" name="hiveID" value="1">
+                                <button type="submit" class="hive-button mt-4 px-5 fs-5 fw-semibold">Hive 1</button>
+                            </form>
 
-                                <!-- Form for Hive 2 -->
-                                <form method="post" action="/setHive">
-                                    <input type="hidden" name="hiveID" value="2">
-                                    <button type="submit" class="hive-button mt-5 px-5 fs-5 fw-semibold">Hive 2</button>
-                                </form>
-                            </div>
+                            <!-- Form for Hive 2 -->
+                            <form method="post" action="/setHive">
+                                <input type="hidden" name="hiveID" value="2">
+                                <button type="submit" class="hive-button mt-5 px-5 fs-5 fw-semibold">Hive 2</button>
+                            </form>
+                        </div>
+                        <div class="mt-4 d-flex justify-content-end pe-3">
+                            <button class="edit-button mt-5 px-4 border border-1 border-black fw-semibold" type="button">
+                                <i class="fa-solid fa-pen edit-icon"></i> Edit
+                            </button>
                         </div>
                     </div>
-                    <div class="mt-4 d-flex justify-content-end pe-3">
-                        <button class="edit-button mt-5 px-4 border border-1 border-black fw-semibold" type="button">
-                            <i class="fa-solid fa-pen edit-icon"></i> Edit
-                        </button>
-                    </div>
                 </div>
+            </div>
             <div class="yellow mt-1 d-md-none fixed-bottom p-0 m-0"></div>
         </div>
     </main>
 
-     <!-- Side Bar Mobile View -->
+    <!-- Side Bar Mobile View -->
 
-     <div class="offcanvas offcanvas-start sidebar2 overflow-x-hidden overflow-y-hidden" tabindex="-1" id="offcanvasNav-Menu" aria-labelledby="staticBackdropLabel">
+    <div class="offcanvas offcanvas-start sidebar2 overflow-x-hidden overflow-y-hidden" tabindex="-1" id="offcanvasNav-Menu" aria-labelledby="staticBackdropLabel">
         <div class="d-flex align-items-center p-3 py-5">
             <a href="/dashboard" class="sidebar-logo fw-bold text-dark text-decoration-none fs-4" data-bs-dismiss="offcanvas" aria-label="Close">
                 <img src="img/BeeMo Logo Side.png" width="173px" height="75px" alt="">
@@ -221,6 +229,12 @@
                 </a>
             </li>
             <li class="sidebar-menu-item2 active">
+                <a href="/chooseHive">
+                    <i class="fa-solid fa-house sidebar-menu-item-icon2"></i>
+                    Choose Hive
+                </a>
+            </li>
+            <li class="sidebar-menu-item2">
                 <a href="/parameterMonitoring">
                     <i class="fa-solid fa-temperature-three-quarters sidebar-menu-item-icon2"></i>
                     Parameters Monitoring
@@ -259,8 +273,8 @@
         </ul>
     </div>
 
-        <!-- Profile Modal -->
-        <div class="modal fade " id="Profile-Modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <!-- Profile Modal -->
+    <div class="modal fade " id="Profile-Modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable profile-dialog">
 
             <div class="modal-content border-2 border-dark" style="border-radius: 20px; box-shadow: 0 7px #2B2B2B; max-width: 400px;">
@@ -273,7 +287,7 @@
                 <div class="modal-body" style="color: #292929;">
                     <div class="icon text-center my-3"><img src="img/Profile icon.png" alt="" width="80" height="80"></div>
                     <div class="text-center">
-                    <?php
+                        <?php
                         require_once './src/db.php';
                         $db = new Database();
                         $conn = $db->getConnection();
@@ -281,14 +295,14 @@
                         $get = "SELECT admin_name, email FROM admin_table WHERE adminID = '$adminID'";
                         $getQuery = mysqli_query($conn, $get);
 
-                        while($row = $getQuery->fetch_assoc()){
-                            echo"
-                            <h5>". $row['admin_name'] ."</h5>
-                            <h6 style='text-decoration: underline; font-weight: 350;'><small class='text-body-secondary'>". $row['email']."</small></h6>
+                        while ($row = $getQuery->fetch_assoc()) {
+                            echo "
+                            <h5>" . $row['admin_name'] . "</h5>
+                            <h6 style='text-decoration: underline; font-weight: 350;'><small class='text-body-secondary'>" . $row['email'] . "</small></h6>
                             ";
                         }
-                    ?>
-                    <hr class="mx-auto" width = "80%">
+                        ?>
+                        <hr class="mx-auto" width="80%">
                     </div>
 
                     <div class="Options mx-auto py-4">
@@ -297,7 +311,7 @@
                             <p><i class="fa-solid fa-user"></i> <span>My Profile</span><i class="fa-solid fa-angle-right"></i></p>
                         </button>
 
-                        <button type="button" id="edit-profile-button" data-bs-toggle="modal" data-bs-target="#Change-Pass-Modal" style="padding: 10px;" >
+                        <button type="button" id="edit-profile-button" data-bs-toggle="modal" data-bs-target="#Change-Pass-Modal" style="padding: 10px;">
                             <p><i class="fa-solid fa-lock"></i> <span>Change Password</span><i class="fa-solid fa-angle-right"></i></p>
                         </button>
 
@@ -315,27 +329,27 @@
 
     <!-- Edit Profile -->
 
-        <div class="modal fade " id="Edit-Profile-Modal" tabindex="0" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable profile-dialog">
+    <div class="modal fade " id="Edit-Profile-Modal" tabindex="0" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable profile-dialog">
 
-                <div class="modal-content border-2 border-dark" style="border-radius: 20px; box-shadow: 0 7px #2B2B2B; max-width: 450px;">
-                    <div class="modal-header profile-header" style="padding: 5px;">
+            <div class="modal-content border-2 border-dark" style="border-radius: 20px; box-shadow: 0 7px #2B2B2B; max-width: 450px;">
+                <div class="modal-header profile-header" style="padding: 5px;">
 
-                        <button type="button" class="btn" data-bs-toggle="modal" data-bs-target="#Profile-Modal" data-bs-dismiss="modal" aria-label="Back">
-                            <i class="fa-solid fa-angle-left fa-lg"></i>
-                        </button>
+                    <button type="button" class="btn" data-bs-toggle="modal" data-bs-target="#Profile-Modal" data-bs-dismiss="modal" aria-label="Back">
+                        <i class="fa-solid fa-angle-left fa-lg"></i>
+                    </button>
 
-                        <button type="button" class="btn" data-bs-dismiss="modal" aria-label="Close">
-                            <i class="fa-solid fa-xmark fa-lg" style="margin-left: 360px;"></i>
-                        </button>
+                    <button type="button" class="btn" data-bs-dismiss="modal" aria-label="Close">
+                        <i class="fa-solid fa-xmark fa-lg" style="margin-left: 360px;"></i>
+                    </button>
 
-                    </div>
+                </div>
 
-                    <!-- Modal Contents -->
-                    <div class="modal-body" style="color: #292929;">
+                <!-- Modal Contents -->
+                <div class="modal-body" style="color: #292929;">
                     <div class="icon text-center my-3"><img src="img/Profile icon.png" alt="" width="80" height="80"></div>
                     <div class="text-center">
-                    <?php
+                        <?php
                         require_once './src/db.php';
                         $db = new Database();
                         $conn = $db->getConnection();
@@ -343,11 +357,11 @@
                         $get = "SELECT admin_name, email, number FROM admin_table WHERE adminID = '$adminID'";
                         $getQuery = mysqli_query($conn, $get);
 
-                        while($row = $getQuery->fetch_assoc()){
+                        while ($row = $getQuery->fetch_assoc()) {
                             $currentName = $row['admin_name'];
                             $currentEmail = $row['email'];
                             $currentPhoneNumber = $row['number'];
-                            echo"
+                            echo "
                                 <h5>$currentName</h5>
                                 <h6 style='text-decoration: underline; font-weight: 350;'><small class='text-body-secondary'>$currentEmail</small></h6>
                                 <div class='Field-inputs mx-4' style='font-size: small;'>
@@ -375,13 +389,13 @@
                         </div>
                             ";
                         }
-                    ?>
+                        ?>
                     </div>
                 </div>
 
-                </div>
             </div>
         </div>
+    </div>
 
     <!-- ----------------------------------------------------------------------------------------------------------- -->
 
@@ -393,12 +407,12 @@
             <div class="modal-content border-2 border-dark" style="border-radius: 20px; box-shadow: 0 7px #2B2B2B; max-width: 450px;">
                 <div class="modal-header profile-header" style="padding: 5px;">
 
-                        <button type="button" data-bs-toggle="modal" data-bs-target="#Profile-Modal" class="btn" data-bs-dismiss="modal" aria-label="Back">
-                            <i class="fa-solid fa-angle-left fa-lg"></i>
-                        </button>
-                        <button type="button" class="btn" data-bs-dismiss="modal" aria-label="Close">
-                            <i class="fa-solid fa-xmark fa-lg" style="margin-left: 360px;"></i>
-                        </button>
+                    <button type="button" data-bs-toggle="modal" data-bs-target="#Profile-Modal" class="btn" data-bs-dismiss="modal" aria-label="Back">
+                        <i class="fa-solid fa-angle-left fa-lg"></i>
+                    </button>
+                    <button type="button" class="btn" data-bs-dismiss="modal" aria-label="Close">
+                        <i class="fa-solid fa-xmark fa-lg" style="margin-left: 360px;"></i>
+                    </button>
 
                 </div>
 
@@ -407,7 +421,7 @@
                     <div class="icon text-center my-3"><img src="img/Profile icon.png" alt="" width="80" height="80"></div>
 
                     <div class="text-center">
-                    <?php
+                        <?php
                         require_once './src/db.php';
                         $db = new Database();
                         $conn = $db->getConnection();
@@ -415,14 +429,14 @@
                         $get = "SELECT admin_name, email FROM admin_table WHERE adminID = '$adminID'";
                         $getQuery = mysqli_query($conn, $get);
 
-                        while($row = $getQuery->fetch_assoc()){
-                            echo"
-                            <h5>". $row['admin_name'] ."</h5>
-                            <h6 style='text-decoration: underline; font-weight: 350;'><small class='text-body-secondary'>". $row['email']."</small></h6>
+                        while ($row = $getQuery->fetch_assoc()) {
+                            echo "
+                            <h5>" . $row['admin_name'] . "</h5>
+                            <h6 style='text-decoration: underline; font-weight: 350;'><small class='text-body-secondary'>" . $row['email'] . "</small></h6>
                             ";
                         }
-                    ?>
-                    <hr class="mx-auto" width = "90%" >
+                        ?>
+                        <hr class="mx-auto" width="90%">
                     </div>
 
                     <div class="My-Profile text-center pb-4 pt-3">
@@ -436,7 +450,7 @@
                                 <input name="OldPass" type="password" class="form-control" id="password" placeholder="Password" required>
                                 <label for="password"><i class="fa-solid fa-lock"></i> Current Password</label>
                                 <div class="password-wrapper">
-                                <span id="togglePassword" class="toggle-password"><i class="fa-solid fa-eye-slash fa-lg"></i></span>
+                                    <span id="togglePassword" class="toggle-password"><i class="fa-solid fa-eye-slash fa-lg"></i></span>
                                 </div>
                             </div>
 
@@ -444,7 +458,7 @@
                                 <input name="newPass" type="password" class="form-control" id="new-password" placeholder="Password" required>
                                 <label for="password"><i class="fa-solid fa-lock"></i> New Password</label>
                                 <div class="password-wrapper">
-                                <span id="togglePassword" class="toggle-password"><i class="fa-solid fa-eye-slash fa-lg"></i></span>
+                                    <span id="togglePassword" class="toggle-password"><i class="fa-solid fa-eye-slash fa-lg"></i></span>
                                 </div>
                             </div>
 
@@ -452,7 +466,7 @@
                                 <input name="conNewPass" type="password" class="form-control" id="confirm-password" placeholder="Password" required>
                                 <label for="password"><i class="fa-solid fa-lock"></i> Confirm Password</label>
                                 <div class="password-wrapper">
-                                <span id="togglePassword" class="toggle-password"><i class="fa-solid fa-eye-slash fa-lg"></i></span>
+                                    <span id="togglePassword" class="toggle-password"><i class="fa-solid fa-eye-slash fa-lg"></i></span>
                                 </div>
                             </div>
 
@@ -463,9 +477,9 @@
                             </button>
                         </div>
                     </form>
+                </div>
             </div>
         </div>
-    </div>
     </div>
 
     <script src="./js/notification.js"></script>
@@ -474,4 +488,5 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 
 </body>
+
 </html>

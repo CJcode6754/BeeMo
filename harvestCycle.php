@@ -231,6 +231,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 </a>
             </li>
             <li class="sidebar-menu-item">
+                <a href="/chooseHive">
+                    <i class="fa-solid fa-box-archive sidebar-menu-item-icon"></i>
+                    Choose Hive
+                </a>
+            </li>
+            <li class="sidebar-menu-item">
                 <a href="/parameterMonitoring">
                     <i class="fa-solid fa-temperature-three-quarters sidebar-menu-item-icon"></i>
                     Parameters Monitoring
@@ -284,10 +290,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         <i class="fa-solid fa-bell"></i>
                         <span id="nf-count"></span>
                     </div>
-                    <div class="dropdown-menu dropdown-menu-start border-dark border-2 rounded-3" style="width: 320px;">
+                    <div class="notif-container dropdown-menu dropdown-menu-start border-dark border-2 rounded-3" style="width: 320px;">
                         <div class="d-flex justify-content-between dropdown-header border-dark border-2">
                             <div>
-                                <p class="fs-5 text-dark text-uppercase pt-3">Notifications
+                                <p class="fs-6 text-dark  pt-3">Notifications
                                     <span class="badge text-dark bg-warning-subtle rounded-pill" id="nf-count-badge">0</span>
                                 </p>
                             </div>
@@ -355,22 +361,41 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             </div>
                         </form>
 
-                        <!-- Filter -->
-                        <div class="mt-4 gap-2 d-flex justify-content-end mb-0" aria-expanded="false">
-                            <button class="filter-button dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                                Filter
-                            </button>
-                            <ul class=" dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                                <li><a class="dropdown-item filter-option" data-value="all" href="#">All Harvest Cycle</a></li>
-                                <li><a class="dropdown-item filter-option" data-value="pending" href="#">Pending</a></li>
-                                <li><a class="dropdown-item filter-option" data-value="complete" href="#">Complete</a></li>
-                            </ul>
-                            <form id="filterForm" action="harvestCycle.php" method="post" style="display: none;">
-                                <input type="hidden" name="filter_value" value="">
-                            </form>
 
-                            <button type="button" class="view-button px-4 mx-1" data-bs-toggle='modal' data-bs-target='#viewAllModal'>View All</button>
+                        <div class="container-btn d-flex flex-column flex-md-row justify-content-between align-items-center w-100 gap-0 gap-md-2 my-3">
+                            <!-- Show Tables (aligned with buttons on start and end) -->
+                            <div class="d-flex justify-content-start">
+                                <div class="show-table-container d-flex justify-content-center w-100 mb-2 mb-md-0">
+                                    <div class="show-container-one">
+                                    <button id="showTable1" class="show-table-one">Admin Cycle</button>
+                                    </div>
+                                    <div class="show-container-two">
+                                    <button id="showTable2" class="show-table-two">Worker Cycle</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Filter (aligned with filter on start and view all on end) -->
+
+                            <div class="d-flex justify-content-end">
+                                <div class="filter-container d-flex justify-content-center w-100">
+                                    <button class="filter-button dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                        Filter
+                                    </button>
+                                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                        <li><a class="dropdown-item filter-option" data-value="all" href="#">All Harvest Cycle</a></li>
+                                        <li><a class="dropdown-item filter-option" data-value="pending" href="#">Pending</a></li>
+                                        <li><a class="dropdown-item filter-option" data-value="complete" href="#">Complete</a></li>
+                                    </ul>
+                                    <form id="filterForm" action="/harvestCycle" method="post" style="display: none;">
+                                        <input type="hidden" name="filter_value" value="">
+                                    </form>
+
+                                    <button type="button" class="view-button px-4" data-bs-toggle="modal" data-bs-target="#viewAllModal">View All</button>
+                                </div>
+                            </div>
                         </div>
+
+
                         <div class='modal fade' id='viewAllModal' tabindex='-1' aria-labelledby='ViewAllLabel' aria-hidden='true'>
                             <div class='modal-dialog modal-lg modal-dialog-centered rounded-3'>
                                 <div class='modal-content' style='border: 2px solid #2B2B2B;'>
@@ -381,10 +406,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                     <div class='modal-body m-5'>
                                         <div class="button-group my-3 text-center">
                                             <!-- Button 1 to show Table 1 -->
-                                            <button id="showViewAllTable1" class="btn btn-primary">Show Table 1</button>
-                                            
+                                            <button id="showViewAllTable1"  class="show-table-one">Admin Cycle</button>
                                             <!-- Button 2 to show Table 2 -->
-                                            <button id="showViewAllTable2" class="btn btn-secondary">Show Table 2</button>
+                                            <button id="showViewAllTable2"  class="show-table-two">Worker Cycle</button>
                                         </div>
 
 
@@ -481,7 +505,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                                     </tr>
                                                 </thead>
                                                 <tbody id="viewAllTableBody">
-                                                <?php foreach ($filtered_cycles1 as $row): ?>
+                                                    <?php foreach ($filtered_cycles1 as $row): ?>
                                                         <?php
                                                         $start_date = new DateTime($row['user_start_of_cycle']);
                                                         $end_date = new DateTime($row['user_end_of_cycle']);
@@ -550,15 +574,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 </div>
                             </div>
                         </div>
-                        
-                        <div class="button-group my-3 text-center">
-                            <!-- Button 1 to show Table 1 -->
-                            <button id="showTable1" class="btn btn-primary">Show Table 1</button>
-                            
-                            <!-- Button 2 to show Table 2 -->
-                            <button id="showTable2" class="btn btn-secondary">Show Table 2</button>
-                        </div>
-                        
+
                         <!-- //TABLE 1 -->
                         <div id="table1Container" class="table-responsive mt-2" style="max-height: 130px; overflow-y: auto;">
                             <table class="table cycle-table border-dark">
@@ -698,7 +714,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 </tbody>
                             </table>
                         </div>
-                        
 
                         <!-- //TABLE 2 -->
                         <div id="table2Container" class="table-responsive mt-2" style="max-height: 130px; overflow-y: auto;">
@@ -875,6 +890,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <a href="/dashboard">
                     <i class="fa-solid fa-house sidebar-menu-item-icon2"></i>
                     Home
+                </a>
+            </li>
+            <li class="sidebar-menu-item2">
+                <a href="/chooseHive">
+                    <i class="fa-solid fa-house sidebar-menu-item-icon2"></i>
+                    Choose Hive
                 </a>
             </li>
             <li class="sidebar-menu-item2 py-1">
@@ -1126,91 +1147,90 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     </div>
 
-        <script>
-            document.querySelectorAll('.filter-option').forEach(item => {
-                item.addEventListener('click', function(event) {
-                    event.preventDefault(); // Prevent default link behavior
-                    const filterValue = this.getAttribute('data-value');
-                    const form = document.getElementById('filterForm');
-                    form.filter_value.value = filterValue;
-                    form.submit();
-                });
+    <script>
+        document.querySelectorAll('.filter-option').forEach(item => {
+            item.addEventListener('click', function(event) {
+                event.preventDefault(); // Prevent default link behavior
+                const filterValue = this.getAttribute('data-value');
+                const form = document.getElementById('filterForm');
+                form.filter_value.value = filterValue;
+                form.submit();
             });
+        });
 
-            const filterValue = "<?php echo $filter; ?>";
-            document.querySelectorAll('.filter-option').forEach(item => {
-                if (item.getAttribute('data-value') === filterValue) {
-                    document.querySelector('.dropdown-toggle').textContent = item.textContent;
-                }
-            });
-
-            document.addEventListener('DOMContentLoaded', function() {
-                const filterSelect = document.getElementById('filterSelect');
-                const viewAllTableBody = document.getElementById('viewAllTableBody');
-
-                // Filter function
-                filterSelect.addEventListener('change', function() {
-                    const filterValue = this.value;
-                    fetch('/harvestCycle', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/x-www-form-urlencoded',
-                            },
-                            body: `filter_value=${filterValue}`
-                        })
-                        .then(response => response.text())
-                        .then(data => {
-                            viewAllTableBody.innerHTML = data; // Update the View All modal table body with new data
-                        })
-                        .catch(error => console.error('Error:', error));
-                });
-            });
-
-            function fetchDataAgain() {
-                location.reload(); // For simplicity, reload the page
+        const filterValue = "<?php echo $filter; ?>";
+        document.querySelectorAll('.filter-option').forEach(item => {
+            if (item.getAttribute('data-value') === filterValue) {
+                document.querySelector('.dropdown-toggle').textContent = item.textContent;
             }
+        });
 
+        document.addEventListener('DOMContentLoaded', function() {
+            const filterSelect = document.getElementById('filterSelect');
+            const viewAllTableBody = document.getElementById('viewAllTableBody');
 
-            // JavaScript to toggle between tables
-            document.getElementById('showTable1').addEventListener('click', function() {
-                document.getElementById('table1Container').style.display = 'block';
-                document.getElementById('table2Container').style.display = 'none';
+            // Filter function
+            filterSelect.addEventListener('change', function() {
+                const filterValue = this.value;
+                fetch('/harvestCycle', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                        },
+                        body: `filter_value=${filterValue}`
+                    })
+                    .then(response => response.text())
+                    .then(data => {
+                        viewAllTableBody.innerHTML = data; // Update the View All modal table body with new data
+                    })
+                    .catch(error => console.error('Error:', error));
             });
+        });
 
-            document.getElementById('showTable2').addEventListener('click', function() {
-                document.getElementById('table1Container').style.display = 'none';
-                document.getElementById('table2Container').style.display = 'block';
-            });
+        function fetchDataAgain() {
+            location.reload(); // For simplicity, reload the page
+        }
 
-            // Initially show only the first table
-            window.onload = function() {
-                document.getElementById('table1Container').style.display = 'block';  // Only Table 1 is visible on page load
-                document.getElementById('table2Container').style.display = 'none';   // Ensure Table 2 is hidden
-            };
 
-            /// JavaScript to toggle between tables when buttons are clicked
-            document.getElementById('showViewAllTable1').addEventListener('click', function() {
-                document.getElementById('viewAllTable1').style.display = 'block';
-                document.getElementById('viewAllTable2').style.display = 'none';
-            });
+        // JavaScript to toggle between tables
+        document.getElementById('showTable1').addEventListener('click', function() {
+            document.getElementById('table1Container').style.display = 'block';
+            document.getElementById('table2Container').style.display = 'none';
+        });
 
-            document.getElementById('showViewAllTable2').addEventListener('click', function() {
-                document.getElementById('viewAllTable1').style.display = 'none';
-                document.getElementById('viewAllTable2').style.display = 'block';
-            });
+        document.getElementById('showTable2').addEventListener('click', function() {
+            document.getElementById('table1Container').style.display = 'none';
+            document.getElementById('table2Container').style.display = 'block';
+        });
 
-            // Event listener to run when the modal opens
-            document.getElementById('viewAllModal').addEventListener('show.bs.modal', function() {
-                // Ensure the first table is shown by default
-                document.getElementById('viewAllTable1').style.display = 'block';
-                document.getElementById('viewAllTable2').style.display = 'none';
-            });
+        // Initially show only the first table
+        window.onload = function() {
+            document.getElementById('table1Container').style.display = 'block'; // Only Table 1 is visible on page load
+            document.getElementById('table2Container').style.display = 'none'; // Ensure Table 2 is hidden
+        };
 
-        </script>
-        <script src="./js/notification.js"></script>
-        <script src="./js/reusable.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+        /// JavaScript to toggle between tables when buttons are clicked
+        document.getElementById('showViewAllTable1').addEventListener('click', function() {
+            document.getElementById('viewAllTable1').style.display = 'block';
+            document.getElementById('viewAllTable2').style.display = 'none';
+        });
+
+        document.getElementById('showViewAllTable2').addEventListener('click', function() {
+            document.getElementById('viewAllTable1').style.display = 'none';
+            document.getElementById('viewAllTable2').style.display = 'block';
+        });
+
+        // Event listener to run when the modal opens
+        document.getElementById('viewAllModal').addEventListener('show.bs.modal', function() {
+            // Ensure the first table is shown by default
+            document.getElementById('viewAllTable1').style.display = 'block';
+            document.getElementById('viewAllTable2').style.display = 'none';
+        });
+    </script>
+    <script src="./js/notification.js"></script>
+    <script src="./js/reusable.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>
 
 </html>

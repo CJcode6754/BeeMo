@@ -7,12 +7,10 @@ session_start(); // Start the session
 
 header('Content-Type: application/json');
 
-
-// $servername = 'localhost';
-// $username = 'root';
-// $password = '';
-// $dbname = 'BeeMo_db';
-
+// $servername = "localhost";
+// $username = "root";
+// $password = "";
+// $dbname = "BeeMo_db";
 $servername = "localhost";
 $username = "u497761604_BeeMo";
 $password = "NewPassword@6789054321";
@@ -21,14 +19,21 @@ $dbname = "u497761604_BeeMo_db";
 $conn = new mysqli($servername, $username, $password, $dbname);
 
 if ($conn->connect_error) {
-    die(json_encode(['error' => 'Connection failed: ' . $conn->connect_error]));
+    echo json_encode(['error' => 'Connection failed: ' . $conn->connect_error]);
+    exit;
 }
 
 $data = json_decode(file_get_contents('php://input'), true);
 $adminID = $_SESSION['adminID'] ?? null;  // Ensure adminID is set
+$hiveID = $_SESSION['hiveID'] ?? null; // Get hiveID from the session
 
 if (!$adminID) {
     echo json_encode(['error' => 'Admin ID not found']);
+    exit;
+}
+
+if (!$hiveID) {
+    echo json_encode(['error' => 'Hive ID is required']);
     exit;
 }
 
@@ -83,7 +88,7 @@ if (isset($data['start_date'], $data['end_date'], $data['cycle_id'])) {
         $endDate = $cycleEndDate; // Ensure end date is not after cycle end
     }
 
-    // Prepare SQL query for monthly data
+    // Prepare SQL query for monthly data including hiveID
     $sql = "
         SELECT
             DATE_FORMAT(timestamp, '%Y-%m-%d') AS period,
@@ -92,7 +97,7 @@ if (isset($data['start_date'], $data['end_date'], $data['cycle_id'])) {
             AVG(weight) AS avg_weight,
             adminID
         FROM subdata
-        WHERE timestamp >= ? AND timestamp <= ? AND adminID = ?
+        WHERE timestamp >= ? AND timestamp <= ? AND adminID = ? AND hiveID = ?
         GROUP BY period
         ORDER BY period
     ";
@@ -108,11 +113,12 @@ if (isset($data['start_date'], $data['end_date'], $data['cycle_id'])) {
     $startDateFormatted = $startDate->format('Y-m-d H:i:s');
     $endDateFormatted = $endDate->format('Y-m-d H:i:s');
 
-    // Ensure adminID is a valid integer
+    // Ensure adminID and hiveID are valid integers
     $adminID = (int)$adminID;
+    $hiveID = (int)$hiveID;
 
     // Bind the parameters
-    $stmt->bind_param("ssi", $startDateFormatted, $endDateFormatted, $adminID);
+    $stmt->bind_param("ssii", $startDateFormatted, $endDateFormatted, $adminID, $hiveID);
 
     // Execute the query and check for errors
     if (!$stmt->execute()) {
@@ -148,13 +154,52 @@ if (isset($data['start_date'], $data['end_date'], $data['cycle_id'])) {
         'weight' => [
             'average' => count($weight) ? array_sum($weight) / count($weight) : null,
             'min' => count($weight) ? min($weight) : null,
-            'max' => count($weight) ? max($weight) : null
+            'max' => count($weight) ? max($weight) : null,
+            'previous' => null,
+            'gain' => null
         ]
     ];
 
-    // Return data as JSON
-    echo json_encode(['data' => $data, 'stats' => $stats]);
+    // Get previous weight and calculate weight gain
+    $previousWeightSql = "
+        SELECT MAX(weight) AS previous_max_weight
+        FROM subdata
+        WHERE timestamp < ? AND adminID = ? AND hiveID = ?
+        GROUP BY DATE(timestamp)
+        ORDER BY DATE(timestamp) DESC
+        LIMIT 1
+    ";
 
+    // Prepare and execute the previous weight query
+    $previousWeightStmt = $conn->prepare($previousWeightSql);
+    if (!$previousWeightStmt) {
+        echo json_encode(['error' => 'SQL prepare error: ' . $conn->error]);
+        exit;
+    }
+
+    $previousWeightStmt->bind_param("sii", $startDateFormatted, $adminID, $hiveID);
+
+    // Execute the query and check for errors
+    if (!$previousWeightStmt->execute()) {
+        echo json_encode(['error' => 'SQL execute error: ' . $previousWeightStmt->error]);
+        exit;
+    }
+
+    $previousWeightResult = $previousWeightStmt->get_result();
+    $previousWeight = $previousWeightResult->fetch_assoc();
+    $previousMaxWeight = $previousWeight['previous_max_weight'] ?? null;
+
+    // Update stats with previous weight and calculate weight gain
+    $currentMaxWeight = $stats['weight']['max'] ?? 0;
+    $weightGain = $currentMaxWeight - ($previousMaxWeight ?? 0);
+    $stats['weight']['previous'] = $previousMaxWeight;
+    $stats['weight']['gain'] = $weightGain;
+
+    // Return data as JSON
+    echo json_encode([
+        'data' => $data,
+        'stats' => $stats
+    ]);
 } else {
     // Default case for daily data
     if (!isset($data['selected_date'])) {
@@ -164,7 +209,7 @@ if (isset($data['start_date'], $data['end_date'], $data['cycle_id'])) {
 
     $selectedDate = $data['selected_date'];
 
-    // Prepare SQL for daily data
+    // Prepare SQL for daily data including hiveID
     $sql = "
         SELECT
             DATE_FORMAT(timestamp, '%Y-%m-%d %H:00:00') AS hour,
@@ -173,7 +218,7 @@ if (isset($data['start_date'], $data['end_date'], $data['cycle_id'])) {
             AVG(weight) AS avg_weight,
             adminID
         FROM subdata
-        WHERE DATE(timestamp) = ? AND adminID = ?
+        WHERE DATE(timestamp) = ? AND adminID = ? AND hiveID = ?
         GROUP BY hour
         ORDER BY hour
     ";
@@ -184,11 +229,12 @@ if (isset($data['start_date'], $data['end_date'], $data['cycle_id'])) {
         exit;
     }
 
-    // Ensure adminID is a valid integer
+    // Ensure adminID and hiveID are valid integers
     $adminID = (int)$adminID; // Cast adminID to int
+    $hiveID = (int)$hiveID; // Cast hiveID to int
 
     // Bind the parameters
-    $stmt->bind_param("si", $selectedDate, $adminID);
+    $stmt->bind_param("sii", $selectedDate, $adminID, $hiveID);
 
     // Execute the query and check for errors
     if (!$stmt->execute()) {
@@ -224,15 +270,52 @@ if (isset($data['start_date'], $data['end_date'], $data['cycle_id'])) {
         'weight' => [
             'average' => count($weight) ? array_sum($weight) / count($weight) : null,
             'min' => count($weight) ? min($weight) : null,
-            'max' => count($weight) ? max($weight) : null
+            'max' => count($weight) ? max($weight) : null,
+            'previous' => null,
+            'gain' => null
         ]
     ];
 
-    // Close statement
-    $stmt->close();
+    // Get previous weight and calculate weight gain
+    $previousWeightSql = "
+        SELECT MAX(weight) AS previous_max_weight
+        FROM subdata
+        WHERE timestamp < ? AND adminID = ? AND hiveID = ?
+        GROUP BY DATE(timestamp)
+        ORDER BY DATE(timestamp) DESC
+        LIMIT 1
+    ";
 
-    // Return data and stats as JSON
-    echo json_encode(['data' => $data, 'stats' => $stats]);
+    // Prepare and execute the previous weight query
+    $previousWeightStmt = $conn->prepare($previousWeightSql);
+    if (!$previousWeightStmt) {
+        echo json_encode(['error' => 'SQL prepare error: ' . $conn->error]);
+        exit;
+    }
+
+    $previousWeightStmt->bind_param("sii", $selectedDate, $adminID, $hiveID);
+
+    // Execute the query and check for errors
+    if (!$previousWeightStmt->execute()) {
+        echo json_encode(['error' => 'SQL execute error: ' . $previousWeightStmt->error]);
+        exit;
+    }
+
+    $previousWeightResult = $previousWeightStmt->get_result();
+    $previousWeight = $previousWeightResult->fetch_assoc();
+    $previousMaxWeight = $previousWeight['previous_max_weight'] ?? null;
+
+    // Update stats with previous weight and calculate weight gain
+    $currentMaxWeight = $stats['weight']['max'] ?? 0;
+    $weightGain = $currentMaxWeight - ($previousMaxWeight ?? 0);
+    $stats['weight']['previous'] = $previousMaxWeight;
+    $stats['weight']['gain'] = $weightGain;
+
+    // Return data as JSON
+    echo json_encode([
+        'data' => $data,
+        'stats' => $stats
+    ]);
 }
 
 // Close the database connection

@@ -145,20 +145,38 @@ document.addEventListener("DOMContentLoaded", function () {
 
   let selectedCycleID; // Declare this variable at the top to make it accessible
   
-  // Function to reset the dropdown button text to default
-  function resetDropdown(dropdownButton, defaultText) {
-    dropdownButton.textContent = defaultText;
-    filterButton.textContent = "Filter by Month";
-    myChart.options.scales.x.time.unit = "hour"; // Set x-axis to use days
-    myChart.update(); // Update chart with new options
+// Function to reset the admin dropdown when switching to the worker cycle
+function resetDropdown(dropdownButton, defaultText) {
+  dropdownButton.textContent = defaultText;
+  filterButton.textContent = "Admin Filter";
+  
+  // Reset the admin month dropdown selection
+  const adminMonthDropdown = document.getElementById("monthDropdown");
+  if (adminMonthDropdown) {
+    adminMonthDropdown.innerHTML = ""; // Clear any selected value without removing options
   }
 
-  function resetUserDropdown(dropdownButton, defaultText) {
-    dropdownButton.textContent = defaultText;
-    userFilterButton.textContent = "Filter by Month";
-    myChart.options.scales.x.time.unit = "hour"; // Set x-axis to use days
-    myChart.update(); // Update chart with new options
+  myChart.options.scales.x.time.unit = "hour"; // Set x-axis to use hours
+  myChart.update(); // Update chart with new options
+}
+
+// Function to reset the worker dropdown when switching to the admin cycle
+function resetUserDropdown(dropdownButton, defaultText) {
+  dropdownButton.textContent = defaultText;
+  userFilterButton.textContent = "Worker Filter";
+  
+  // Reset the worker month dropdown selection
+  const workerMonthDropdown = document.getElementById("userMonthDropdown");
+  if (workerMonthDropdown) {
+    workerMonthDropdown.innerHTML = ""; // Clear any selected value without removing options
   }
+
+  myChart.options.scales.x.time.unit = "hour"; // Set x-axis to use hours
+  myChart.update(); // Update chart with new options
+}
+
+
+
 
   // Fetch harvest cycles from admin and populate dropdow
   fetch("./src/getCycles.php")
@@ -200,6 +218,8 @@ document.addEventListener("DOMContentLoaded", function () {
       // Set date picker range
       datePicker.datepicker("option", "minDate", startDate);
       datePicker.datepicker("option", "maxDate", endDate);
+
+      datePicker.datepicker("setDate", fetchDate);
 
       // Reset Worker Harvest Cycle to default
       resetUserDropdown(userHarvestCycleButton, defaultUserText);
@@ -253,6 +273,8 @@ document.addEventListener("DOMContentLoaded", function () {
       // Set date picker range
       datePicker.datepicker("option", "minDate", startDate);
       datePicker.datepicker("option", "maxDate", endDate);
+
+      datePicker.datepicker("setDate", fetchDate);
 
       // Reset Admin Harvest Cycle to default
       resetDropdown(harvestCycleButton, defaultAdminText);
@@ -822,7 +844,10 @@ workerCycleDropdown.addEventListener("click", () => {
           // Update the chart with weekly data
           myChart.data.labels = labels;
           myChart.data.datasets[0].data = dataset;
-    
+          
+          let isMonthlyFilter = true;
+          updateDescriptiveAnalytics(data.stats, isMonthlyFilter);
+
           // Set the time unit to 'week' for the x-axis
           myChart.options.scales.x.time.unit = "week";
           myChart.update();
@@ -1003,8 +1028,15 @@ workerCycleDropdown.addEventListener("click", () => {
 
     if(selectedType === 'weight'){
       document.getElementById('avgContainer').style.display = 'none';
+      document.getElementById('rangeContainer').style.display = 'none';
+      document.getElementById('rangeContainer1').style.display = 'none';
     }else if(selectedType === 'temperature' || selectedType === 'humidity'){
-      document.getElementById(avgContainer).style.display = 'block';
+      document.getElementById('avgContainer').style.display = 'block';
+
+      document.getElementById("min-value").textContent =
+        stats[selectedType]?.min !== null
+            ? stats[selectedType].min.toFixed(2)
+            : "-";
     }
 }
 

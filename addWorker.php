@@ -231,6 +231,12 @@
                 </a>
             </li>
             <li class="sidebar-menu-item">
+                <a href="/chooseHive">
+                    <i class="fa-solid fa-box-archive sidebar-menu-item-icon"></i>
+                    Choose Hive
+                </a>
+            </li>
+            <li class="sidebar-menu-item">
                 <a href="/parameterMonitoring">
                     <i class="fa-solid fa-temperature-three-quarters sidebar-menu-item-icon"></i>
                     Parameters Monitoring
@@ -284,10 +290,10 @@
                         <i class="fa-solid fa-bell"></i>
                         <span id="nf-count"></span>
                     </div>
-                    <div class="dropdown-menu dropdown-menu-start border-dark border-2 rounded-3" style="width: 320px;">
+                    <div class="notif-container dropdown-menu dropdown-menu-start border-dark border-2 rounded-3" style="width: 320px;">
                         <div class="d-flex justify-content-between dropdown-header border-dark border-2">
                             <div>
-                                <p class="fs-5 text-dark text-uppercase pt-3">Notifications
+                                <p class="fs-6 text-dark pt-3">Notifications
                                     <span class="badge text-dark bg-warning-subtle rounded-pill" id="nf-count-badge">0</span>
                                 </p>
                             </div>
@@ -510,6 +516,12 @@
                 <a href="/dashboard">
                     <i class="fa-solid fa-house sidebar-menu-item-icon2"></i>
                     Home
+                </a>
+            </li>
+            <li class="sidebar-menu-item2">
+                <a href="/chooseHive">
+                    <i class="fa-solid fa-house sidebar-menu-item-icon2"></i>
+                    Choose Hive
                 </a>
             </li>
             <li class="sidebar-menu-item2 py-1">

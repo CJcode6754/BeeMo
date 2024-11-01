@@ -6,10 +6,10 @@ main {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  height: 70vh;
+  height: 77vh;
 }
 .content-wrapper {
-  flex-grow: .5;
+  flex-grow: 0.5;
 }
 .monitoring-highlight {
   display: inline;
@@ -18,79 +18,80 @@ main {
   border-radius: 7px;
 }
 
-.container1{
+.container1 {
   border-radius: 10px;
   height: 260px;
   border: 1.8px solid #2b2b2b;
-  margin-left: 70px;
-  box-shadow: 0 5px #2B2B2B;
+  margin-left: 60px;
+  box-shadow: 0 5px #2b2b2b;
   background-image: linear-gradient(#f8f9fa 65%, #fcf4b9 35%);
 }
 
-.container2{
+.container2 {
   border-radius: 10px;
   height: 130px;
   border: 1.8px solid #2b2b2b;
-  margin-right: 70px;
-  box-shadow: 0 5px #2B2B2B;
+  margin-right: 60px;
+  box-shadow: 0 5px #2b2b2b;
   background-image: linear-gradient(#f8f9fa 75%, #fcf4b9 25%);
 }
-.container3{
+.container3 {
   border-radius: 10px;
   height: 115px;
   border: 1.8px solid #2b2b2b;
-  margin-right: 70px;
-  box-shadow: 0 5px #2B2B2B;
+  margin-right: 60px;
+  box-shadow: 0 5px #2b2b2b;
   background-color: #fcf4b9;
 }
-.fw-bold{
+.fw-bold {
   font-size: 20px;
   font-weight: 700;
 }
-.temp-degree{
+.temp-degree {
   margin-left: 5px;
   padding-right: 24px;
   font-size: 24px;
   font-weight: 700;
   color: green;
 }
-.humid, .humid-based{
+.humid,
+.humid-based {
   font-size: 13px;
 }
-.humid{
+.humid {
   margin-left: 5px;
   padding-right: 10px;
   font-size: 20px;
   font-weight: 700;
 }
-.humid-based{
+.humid-based {
   font-size: 12px;
   font-weight: 500;
 }
-.humid-percent{
+.humid-percent {
   padding-right: 15px;
   font-size: 20px;
   font-weight: 700;
   color: green;
 }
-.weight{
+.weight {
   padding-right: 97px;
   font-weight: 700;
   font-size: 16px;
 }
-.initial{
+.initial {
   font-size: 14px;
   font-weight: 500;
   padding-right: 20px;
   margin-left: 20px;
 }
-.weight-value{
+.weight-value {
   padding-right: 105px;
   font-size: 16px;
   font-weight: 700;
   color: green;
 }
-.weight-block p{
+.weight-block p {
   margin-left: 10px;
 }
 .auto-manual {
@@ -99,6 +100,50 @@ main {
 }
 .toggle-button {
   font-size: 20px;
+}
+.clearNotif {
+  font-size: 0.8rem !important; /* Smaller font size */
+  padding: 4px 5px !important; /* Reduce padding */
+}
+
+#nf-btn {
+  font-size: 0.9rem !important; /* Adjust as needed */
+  padding: 2px 4px !important; /* Reduce padding */
+}
+
+.notif-container {
+  max-width: 290px !important; /* Smaller width */
+  padding: 6px !important;
+  font-size: 0.75rem !important;
+}
+
+/* Smaller notification header */
+
+.notification-content {
+  font-size: 0.75rem !important;
+  line-height: 1.2 !important;
+}
+
+.notification-item {
+  max-width: 250px !important; /* Set a smaller width */
+  margin: 5px auto !important; /* Center and reduce margin */
+  padding: 4px 8px !important;
+  background-color: #f0f0f0; /* Light gray background */
+  border-radius: 5px !important; /* Slightly rounded corners */
+}
+
+.notification-icon {
+  width: 25px !important;
+  height: 25px !important;
+  margin-right: 4px !important;
+}
+
+.notif_message {
+  font-size: 0.8rem !important;
+}
+
+.notif_date {
+  font-size: 0.75rem !important;
 }
 
 /* --------------------------------------------End: Main Desktop View---------------------------------------------*/
@@ -124,59 +169,104 @@ main {
 @media (max-width: 767.98px) {
   .monitoring-page {
     height: 100%;
-    min-height: 74vh;
+    min-height: 78vh;
     padding: 10px;
     margin: 10px;
     box-shadow: 7px 7px rgba(0, 0, 0, 0.25);
   }
 
-  nav{
+  nav {
     padding: 10px;
     margin: 10px;
     box-shadow: 7px 7px rgba(0, 0, 0, 0.25);
-    
   }
   .navbar-link {
-    
     box-shadow: 3px 3px rgba(0, 0, 0, 0.4);
   }
   .navbar-link:hover {
     border-radius: 50%;
   }
-  .container1, .container2, .container3{
+  .container1,
+  .container2,
+  .container3 {
     margin: 0;
   }
 
-  .auto-manual{
+  .auto-manual {
     padding: 0%;
   }
+  .clearNotif {
+    font-size: 0.7rem !important; /* Smaller font size */
+    padding: 4px 5px !important; /* Reduce padding */
+  }
 
-  .space{
+  #nf-btn {
+    font-size: 0.8rem !important; /* Adjust as needed */
+    padding: 2px 4px !important; /* Reduce padding */
+  }
+
+  .notif-container {
+    max-width: 280px !important; /* Smaller width */
+    padding: 6px !important;
+    font-size: 0.75rem !important;
+  }
+
+  /* Smaller notification header */
+
+  .notification-content {
+    font-size: 0.75rem !important;
+    line-height: 1.2 !important;
+  }
+
+  .notification-item {
+    max-width: 240px !important; /* Set a smaller width */
+    margin: 5px auto !important; /* Center and reduce margin */
+    padding: 4px 8px !important;
+    background-color: #f3f8ff; /* Light gray background */
+    border-radius: 5px !important; /* Slightly rounded corners */
+  }
+
+  .notification-icon {
+    width: 20px !important;
+    height: 20px !important;
+    margin-right: 4px !important;
+  }
+
+  .notif_message {
+    font-size: 0.8rem !important;
+  }
+
+  .notif_date {
+    font-size: 0.7rem !important;
+  }
+
+  .space {
     min-height: 5vh;
     overflow-y: auto;
   }
-  
+
   .yellow {
     min-height: 5vh;
     background-color: #faef9b;
-    border: solid 1px #2B2B2B;
+    border: solid 1px #2b2b2b;
     overflow-y: auto;
   }
 }
 
-
 @media (max-width: 1024px) {
-  .container1, .container2, .container3 {
-      padding: 5px;
-      margin: 5px;
+  .container1,
+  .container2,
+  .container3 {
+    padding: 5px;
+    margin: 5px;
   }
 }
 
 @media (max-width: 768px) {
   .row {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
 }
 
@@ -186,6 +276,52 @@ main {
     padding-left: 2rem;
     padding-top: 2rem;
     padding-right: 2rem;
+  }
+}
+@media (max-width: 400px){
+  .clearNotif {
+    font-size: 0.7rem !important; /* Smaller font size */
+    padding: 4px 5px !important; /* Reduce padding */
+  }
+
+  #nf-btn {
+    font-size: 0.8rem !important; /* Adjust as needed */
+    padding: 2px 4px !important; /* Reduce padding */
+  }
+
+  .notif-container {
+    max-width: 265px !important; /* Smaller width */
+    padding: 6px !important;
+    font-size: 0.7rem !important;
+  }
+
+  /* Smaller notification header */
+
+  .notification-content {
+    font-size: 0.7rem !important;
+    line-height: 1.2 !important;
+  }
+
+  .notification-item {
+    max-width: 240px !important; /* Set a smaller width */
+    margin: 5px auto !important; /* Center and reduce margin */
+    padding: 4px 8px !important;
+    background-color: #f3f8ff; /* Light gray background */
+    border-radius: 5px !important; /* Slightly rounded corners */
+  }
+
+  .notification-icon {
+    width: 20px !important;
+    height: 20px !important;
+    margin-right: 4px !important;
+  }
+
+  .notif_message {
+    font-size: 0.8rem !important;
+  }
+
+  .notif_date {
+    font-size: 0.7rem !important;
   }
 }
 /* --------------------------------------------End: Main Responsive View---------------------------------------------*/
