@@ -1,0 +1,255 @@
+/* --------------------------------------------Start: Main Desktop View---------------------------------------------*/
+main {
+  min-height: 100vh;
+}
+.beeguide-page {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 77vh;
+}
+.content-wrapper {
+  flex-grow: 0.5;
+}
+.hardware,
+.web-system {
+  padding: 20px;
+  width: 80%;
+  height: 90px;
+  text-align: center;
+  max-width: 600px;
+}
+.beeguide-highlight {
+  display: inline;
+  background-color: #fef9d9;
+  padding: 0 5px;
+  border-radius: 7px;
+}
+.clearNotif {
+  font-size: 0.8rem !important; /* Smaller font size */
+  padding: 4px 5px !important; /* Reduce padding */
+}
+
+#nf-btn {
+  font-size: 0.9rem !important; /* Adjust as needed */
+  padding: 2px 4px !important; /* Reduce padding */
+}
+
+.notif-container {
+  max-width: 290px !important; /* Smaller width */
+  padding: 6px !important;
+  font-size: 0.75rem !important;
+}
+
+/* Smaller notification header */
+
+.notification-content {
+  font-size: 0.75rem !important;
+  line-height: 1.2 !important;
+}
+
+.notification-item {
+  max-width: 250px !important; /* Set a smaller width */
+  margin: 5px auto !important; /* Center and reduce margin */
+  padding: 4px 8px !important;
+  background-color: #f0f0f0; /* Light gray background */
+  border-radius: 5px !important; /* Slightly rounded corners */
+}
+
+.notification-icon {
+  width: 25px !important;
+  height: 25px !important;
+  margin-right: 4px !important;
+}
+
+.notif_message {
+  font-size: 0.8rem !important;
+}
+
+.notif_date {
+  font-size: 0.75rem !important;
+}
+.hardware h5,
+.web-system h5 {
+  padding-top: 3px;
+}
+.hardware i,
+.web-system i {
+  font-size: 30px;
+}
+.hardware a,
+  .web-system a {
+    border: 1.8px solid #2B2B2B;
+      border-radius: 11px;
+      width: 100%;
+      box-shadow: 0 6px #2B2B2B;
+      background-color: #FCF4B9;
+      transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+      display: flex; /* Ensure the link is a flex container */
+      align-items: center; /* Center items vertically */
+      padding: 15px; /* Adjust padding as needed */
+      transition: background-color 0.3s; /* Optional: transition effect */
+      text-decoration: none; /* Remove underline */
+      color: inherit; /* Make the text color inherit from the parent */
+  }
+
+  .hardware a:hover,
+  .web-system a:hover {
+    border: 1.8px solid #2B2B2B;
+    background-color: #FAEF9B;
+  }
+/* --------------------------------------------End: Main Desktop View---------------------------------------------*/
+/* --------------------------------------------Start: Main Responsive View---------------------------------------------*/
+
+@media (min-width: 768px) {
+  main {
+    transition: padding-left 0.2s;
+    padding-left: 22rem;
+    padding-top: 2rem;
+    padding-right: 4rem;
+  }
+  .beeguide-page {
+    box-shadow: 0 6px #2b2b2b;
+  }
+  .sidebar.collapsed ~ main {
+    padding-left: 4.75rem;
+  }
+}
+@media (max-width: 767.98px) {
+  .beeguide-page {
+    height: 100%;
+    min-height: 80vh;
+    padding: 10px;
+    margin: 10px;
+    box-shadow: 7px 7px rgba(0, 0, 0, 0.25);
+  }
+  .hardware,
+  .web-system {
+    width: 90%;
+    padding: 15px;
+  }
+  nav {
+    padding: 10px;
+    margin: 10px;
+    box-shadow: 7px 7px rgba(0, 0, 0, 0.25);
+  }
+  .navbar-link {
+    box-shadow: 3px 3px rgba(0, 0, 0, 0.4);
+  }
+  .navbar-link:hover {
+    border-radius: 50%;
+  }
+  .clearNotif {
+    font-size: 0.7rem !important; /* Smaller font size */
+    padding: 4px 5px !important; /* Reduce padding */
+  }
+
+  #nf-btn {
+    font-size: 0.8rem !important; /* Adjust as needed */
+    padding: 2px 4px !important; /* Reduce padding */
+  }
+
+  .notif-container {
+    max-width: 280px !important; /* Smaller width */
+    padding: 6px !important;
+    font-size: 0.75rem !important;
+  }
+
+  /* Smaller notification header */
+
+  .notification-content {
+    font-size: 0.75rem !important;
+    line-height: 1.2 !important;
+  }
+
+  .notification-item {
+    max-width: 240px !important; /* Set a smaller width */
+    margin: 5px auto !important; /* Center and reduce margin */
+    padding: 4px 8px !important;
+    background-color: #f3f8ff; /* Light gray background */
+    border-radius: 5px !important; /* Slightly rounded corners */
+  }
+
+  .notification-icon {
+    width: 20px !important;
+    height: 20px !important;
+    margin-right: 4px !important;
+  }
+
+  .notif_message {
+    font-size: 0.8rem !important;
+  }
+
+  .notif_date {
+    font-size: 0.7rem !important;
+  }
+
+  .yellow {
+    min-height: 5vh;
+    background-color: #faef9b;
+    border: solid 1px #2b2b2b;
+    overflow-y: auto;
+  }
+  
+  .space {
+    min-height: 5vh;
+    overflow-y: auto;
+  }
+}
+
+@media (max-width: 991px) and (min-width: 768px) {
+  main {
+    transition: padding-left 0.2s;
+    padding-left: 2rem;
+    padding-top: 2rem;
+    padding-right: 2rem;
+  }
+}
+
+@media (max-width: 400px){
+  .clearNotif {
+    font-size: 0.7rem !important; /* Smaller font size */
+    padding: 4px 5px !important; /* Reduce padding */
+  }
+
+  #nf-btn {
+    font-size: 0.8rem !important; /* Adjust as needed */
+    padding: 2px 4px !important; /* Reduce padding */
+  }
+
+  .notif-container {
+    max-width: 265px !important; /* Smaller width */
+    padding: 6px !important;
+    font-size: 0.7rem !important;
+  }
+
+  /* Smaller notification header */
+
+  .notification-content {
+    font-size: 0.7rem !important;
+    line-height: 1.2 !important;
+  }
+
+  .notification-item {
+    max-width: 240px !important; /* Set a smaller width */
+    margin: 5px auto !important; /* Center and reduce margin */
+    padding: 4px 8px !important;
+    background-color: #f3f8ff; /* Light gray background */
+    border-radius: 5px !important; /* Slightly rounded corners */
+  }
+
+  .notification-icon {
+    width: 20px !important;
+    height: 20px !important;
+    margin-right: 4px !important;
+  }
+
+  .notif_message {
+    font-size: 0.8rem !important;
+  }
+
+  .notif_date {
+    font-size: 0.7rem !important;
+  }
+}
+/* --------------------------------------------End: Main Responsive View---------------------------------------------*/
