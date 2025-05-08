@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BeeMo</title>
+    <link rel="stylesheet" href="./css/dashboard4.css">
+    <link rel="stylesheet" href="./css/reusable1.css">
+    <link rel="stylesheet" href="./css/profile.css">
+    <link rel="stylesheet" href="./css/choose_hive21.css">
+    <link rel="stylesheet" href="./css/parameter_monitoring38.css">
+    <link rel="stylesheet" href="./css/reports29.css">
+    <link rel="stylesheet" href="./css/harvest_cycle8.css">
+    <link rel="stylesheet" href="./css/webTutorial.css">
+    <link rel="stylesheet" href="./css/hardwareTutorial.css">
+    <link rel="stylesheet" href="./css/add_worker2.css">
+    <link rel="icon" href="img/beemo-ico.ico">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://kit.fontawesome.com/b4ce5ff90a.js" crossorigin="anonymous"></script>
+    <style>
+        /* Chrome, Safari, Edge, Opera */
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+          -webkit-appearance: none;
+          margin: 0;
+        }
+        
+    </style>
+</head>
+
+<body class="overflow-x-hidden">

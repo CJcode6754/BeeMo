@@ -1,28 +1,5 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BeeMo</title>
-    <link rel="stylesheet" href="./css/webTutorial.css">
-    <link rel="stylesheet" href="./css/hardwareTutorial.css">
-    <link rel="stylesheet" href="./css/reusable1.css">
-    <link rel="stylesheet" href="./css/profile.css">
-    <link rel="icon" href="img/beemo-ico.ico">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <script src="https://kit.fontawesome.com/b4ce5ff90a.js" crossorigin="anonymous"></script>
-    
-    <style>
-        /* Chrome, Safari, Edge, Opera */
-        input::-webkit-outer-spin-button,
-        input::-webkit-inner-spin-button {
-          -webkit-appearance: none;
-          margin: 0;
-        }
-    </style>
-</head>
-
-<body class="overflow-x-hidden">
+<!-- head -->
+<?php require 'views/partials/head.php' ?>
   <!-- Sidebar -->
     <?php require"views/partials/sidebar.php" ?>
 
@@ -371,11 +348,5 @@
     </div>
     </div>
     
-    <script src="./js/WebTutorial5.js"></script>
-    <script src="./js/reusable.js"></script>
-    <script src="./js/notification8.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-
-</body>
-</html>
+<!-- footer -->
+<?php require 'views/partials/footer.php' ?>

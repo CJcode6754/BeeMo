@@ -1,101 +1,5 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BeeMo</title>
-    <link rel="stylesheet" href="./css/reports29.css">
-    <link rel="stylesheet" href="./css/reusable1.css">
-    <link rel="stylesheet" href="./css/profile.css">
-    <link rel="icon" href="img/beemo-ico.ico">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <script src="https://kit.fontawesome.com/b4ce5ff90a.js" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@latest"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@latest"></script>
-    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-    
-<!-- <style>
-        /* Chrome, Safari, Edge, Opera */
-        input::-webkit-outer-spin-button,
-        input::-webkit-inner-spin-button {
-          -webkit-appearance: none;
-          margin: 0;
-        }
-#preloader {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: #FFFFFF;
-    display: flex;
-    align-items: center; /* Centers vertically within cycle-page */
-    justify-content: center;
-    z-index: 9999;
-    width: 100%;
-}
-
-.container {
-    --uib-size: 100%; /* Sets full width */
-    --uib-color: #F9E37F;
-    --uib-speed: 1.4s;
-    --uib-stroke: 5px;
-    --uib-bg-opacity: .1;
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: var(--uib-stroke);
-    width: 10%; /* Adjusts width for better fit within cycle-page */
-    border-radius: calc(var(--uib-stroke) / 2);
-    overflow: hidden;
-    transform: translate3d(0, 0, 0);
-}
-
-.container::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 100%;
-    width: 100%;
-    background-color: var(--uib-color);
-    opacity: var(--uib-bg-opacity);
-    transition: background-color 0.3s ease;
-}
-
-.container::after {
-    content: '';
-    height: 100%;
-    width: 100%;
-    border-radius: calc(var(--uib-stroke) / 2);
-    animation: zoom var(--uib-speed) ease-in-out infinite;
-    transform: translateX(-100%);
-    background-color: var(--uib-color);
-    transition: background-color 0.3s ease;
-}
-
-@keyframes zoom {
-    0% {
-        transform: translateX(-100%);
-    }
-    100% {
-        transform: translateX(100%);
-    }
-}
-
-input[type="date"]::-webkit-inner-spin-button,
-input[type="date"]::-webkit-calendar-picker-indicator {
-    display: none;
-    -webkit-appearance: none;
-}
-</style> -->
-</head>
-
-<body class="overflow-x-hidden">
+<!-- head -->
+<?php require 'views/partials/head.php' ?>
     <!-- Sidebar -->
     <?php require"views/partials/sidebar.php" ?>
 
@@ -456,17 +360,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
             }, 4200);
         });
     </script>
-    <script src="/js/notification9.js"></script>
-    <script src="./js/reusable.js"></script>
     <script src="/js/reports57.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
-        integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
-        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
-        crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
-    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
-</body>
-
-</html>
+    
+    <!-- footer -->
+     <?php require 'views/partials/footer.php' ?>
