@@ -360,7 +360,7 @@
             }, 4200);
         });
     </script>
-    <script src="/js/reports57.js"></script>
+    <script src="/js/reports.js"></script>
     
     <!-- footer -->
      <?php require 'views/partials/footer.php' ?>

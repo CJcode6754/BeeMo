@@ -1,6 +1,6 @@
 <nav class="px-3 py-3 rounded-4">
     <div>
-        <p class="d-none d-lg-block mt-3 mx-4 fw-bold" style="font-size: 17px;">Welcome to <?= $heading ?></p>
+        <p class="d-none d-lg-block mt-3 mx-4 fw-bold" style="font-size: 17px;"><?= URLS('/worker/create') ? "Create $heading" : "Welcome to $heading" ?></p>
     </div>
     <i class="fa-solid fa-bars sidebar-toggle me-3 d-block d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNav-Menu" aria-controls="offcanvasRight" aria-expanded="false" aria-label="Toggle navigation"></i>
     <h5 class="fw-bold mb-0 me-auto"></h5>

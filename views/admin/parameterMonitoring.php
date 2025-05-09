@@ -275,6 +275,6 @@
             </div>
         </div>
     </div>
-    <script src="./js/fetchdata18.js"></script>
+    <script src="/js/fetchdata.js"></script>
     <!-- footer -->
     <?php require 'views/partials/footer.php' ?>

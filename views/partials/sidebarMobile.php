@@ -42,8 +42,8 @@
                 Bee Guide
             </a>
         </li>
-        <li class="sidebar-menu-item2 <?= URLS('/addWorker') ? 'active' : '' ?>">
-            <a href="/worker">
+        <li class="sidebar-menu-item2 <?= URLS('/workers') ? 'active' : '' ?>">
+            <a href="/workers">
                 <i class="fs-5 fa-solid fa-person sidebar-menu-item-icon2"></i>
                 Worker
             </a>

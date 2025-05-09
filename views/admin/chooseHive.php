@@ -96,6 +96,6 @@
 
     <?php require"views/partials/sidebarMobile.php" ?>
 
-    <script src="./js/manage_hive2.js"></script>
+    <script src="/js/manage_hive.js"></script>
 <!-- footer -->
 <?php require 'views/partials/footer.php' ?>
