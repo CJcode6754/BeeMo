@@ -7,11 +7,11 @@ document.addEventListener("DOMContentLoaded", function () {
   const filterButton = document.getElementById("monthlyFilter");
   const userFilterButton = document.getElementById("userMonthlyFilter");
   const datePicker = $("#start-date-picker");
-  const defaultAdminText = "Admin Harvest Cycle";
-  const defaultUserText = "Worker Harvest Cycle";
+  const defaultAdminText = "Admin Cycle";
+  const defaultUserText = "Worker Cycle";
   let selectedType = "temperature"; // Default type
-  let time_unit = "hour"; // Default time unit for daily average
-
+  let time_unit = "day"; // Default time unit for daily average
+  let isFullCycle = false;
   // Initialize Chart.js
   const myChart = new Chart(ctx, {
     type: "line",
@@ -49,7 +49,10 @@ document.addEventListener("DOMContentLoaded", function () {
           type: "time",
           time: {
             unit: time_unit,
-            tooltipFormat: "MMM d, yyyy h:mm a",
+            tooltipFormat: isFullCycle ? "MMMMMMMM yyyy" : "MMMMMMMMM d, yyyy",
+            displayFormats: {
+              day: isFullCycle ? "MMMMMMMM yyyy" : "MMM d, yyyy"
+            }
           },
         },
       },
@@ -62,7 +65,7 @@ document.addEventListener("DOMContentLoaded", function () {
             temperatureOptimalRange: {
               type: "box",
               yMin: 32,
-              yMax: 34,
+              yMax: 36,
               backgroundColor: "rgba(0, 255, 0, 0.2)",
               borderColor: "rgba(0, 255, 0, 0.4)",
               borderWidth: 1,
@@ -81,7 +84,7 @@ document.addEventListener("DOMContentLoaded", function () {
             },
             temperatureHighRange: {
               type: "box",
-              yMin: 34,
+              yMin: 36,
               yMax: 50,
               backgroundColor: "rgba(255, 127, 127, 0.4)",
               borderColor: "rgba(255, 127, 127, 0.6)",
@@ -122,505 +125,651 @@ document.addEventListener("DOMContentLoaded", function () {
     },
   });
 
-  function formatDate(date) {
-    const d = new Date(date);
-    const year = d.getFullYear();
-    const month = String(d.getMonth() + 1).padStart(2, "0"); // Months are zero-based
-    const day = String(d.getDate()).padStart(2, "0");
-    return `${year}-${month}-${day}`;
-  }
+  // function formatDate(date) {
+  //   const d = new Date(date);
+  //   const year = d.getFullYear();
+  //   const month = String(d.getMonth() + 1).padStart(2, "0"); // Months are zero-based
+  //   const day = String(d.getDate()).padStart(2, "0");
+  //   return `${year}-${month}-${day}`;
+  // }
 
-  // Fetch initial data
-  const today = new Date();
-  datePicker
-    .datepicker({
-      dateFormat: "yy-mm-dd",
-      defaultDate: today,
-      onSelect: function (dateText) {
-        fetchDataForDate(dateText);
-      },
-    })
-    .datepicker("setDate", today)
-    .prop("disabled", true); // Initially disabled
+  // // Fetch initial data
+  // const today = new Date();
+  // datePicker
+  //   .datepicker({
+  //     dateFormat: "yy-mm-dd",
+  //     defaultDate: today,
+  //     onSelect: function (dateText) {
+  //       fetchDataForDate(dateText);
+  //     },
+  //   })
+  //   .datepicker("setDate", today)
+  //   .prop("disabled", true); // Initially disabled
 
-  let selectedCycleID; // Declare this variable at the top to make it accessible
-  
-// Function to reset the admin dropdown when switching to the worker cycle
-function resetDropdown(dropdownButton, defaultText) {
-  dropdownButton.textContent = defaultText;
-  filterButton.textContent = "Admin Filter";
-  
-  // Reset the admin month dropdown selection
-  const adminMonthDropdown = document.getElementById("monthDropdown");
-  if (adminMonthDropdown) {
-    adminMonthDropdown.innerHTML = ""; // Clear any selected value without removing options
-  }
+  // Global variables to track current state
+let selectedCycleID = null;
+let userSelectedCycleID = null;
+let currentView = null;
 
-  myChart.options.scales.x.time.unit = "hour"; // Set x-axis to use hours
-  myChart.update(); // Update chart with new options
+// Constants for default text
+const DEFAULT_ADMIN_TEXT = 'Admin Cycle';
+const DEFAULT_WORKER_TEXT = 'Worker Cycle';
+
+// Function to reset dropdowns
+function resetDropdown(button, defaultText) {
+  button.textContent = defaultText;
 }
 
-// Function to reset the worker dropdown when switching to the admin cycle
-function resetUserDropdown(dropdownButton, defaultText) {
-  dropdownButton.textContent = defaultText;
-  userFilterButton.textContent = "Worker Filter";
-  
-  // Reset the worker month dropdown selection
-  const workerMonthDropdown = document.getElementById("userMonthDropdown");
-  if (workerMonthDropdown) {
-    workerMonthDropdown.innerHTML = ""; // Clear any selected value without removing options
-  }
+// Admin cycles fetch and setup
+fetch("./src/getCycles.php")
+  .then((response) => response.json())
+  .then((data) => {
+    let currentCycle = null;
+    const currentDate = new Date();
 
-  myChart.options.scales.x.time.unit = "hour"; // Set x-axis to use hours
-  myChart.update(); // Update chart with new options
-}
+    // Find the current cycle and populate dropdown
+    data.forEach((cycle) => {
+      const cycleEndDate = new Date(cycle.end_of_cycle);
+      if (currentCycle === null || cycleEndDate > new Date(currentCycle.end_of_cycle)) {
+        currentCycle = cycle;
+      }
 
+      const li = document.createElement("li");
+      li.classList.add("dropdown-item");
+      li.textContent = `Cycle ${cycle.cycle_number}`;
+      li.dataset.id = cycle.id;
+      li.dataset.start = cycle.start_of_cycle;
+      li.dataset.end = cycle.end_of_cycle;
+      harvestDropdown.appendChild(li);
+    });
 
+    // Set default cycle
+    if (currentCycle) {
+      currentView = 'admin';
+      selectedCycleID = currentCycle.id;
+      
+      const startDate = new Date(currentCycle.start_of_cycle);
+      const endDate = new Date(currentCycle.end_of_cycle);
 
-
-  // Fetch harvest cycles from admin and populate dropdow
-  fetch("./src/getCycles.php")
-    .then((response) => response.json())
-    .then((data) => {
-      data.forEach((cycle) => {
-        const li = document.createElement("li");
-        li.classList.add("dropdown-item");
-        li.textContent = `Cycle ${cycle.cycle_number}`;
-        li.dataset.id = cycle.id;
-        li.dataset.start = cycle.start_of_cycle;
-        li.dataset.end = cycle.end_of_cycle;
-        li.dataset.cycleId = cycle.id;
-        harvestDropdown.appendChild(li);
-      });
-      fetchDataForDate(formatDate(today)); // Fetch data for the current day by default
-    })
-    .catch((error) => console.error("Error fetching harvest cycles:", error));
-
-  harvestDropdown.addEventListener("click", function (event) {
-    if (event.target && event.target.matches("li.dropdown-item")) {
-      const selectedCycle = event.target.textContent;
-      const startDate = new Date(event.target.dataset.start);
-      const endDate = new Date(event.target.dataset.end);
-
-      // Set the selected cycle ID
-      selectedCycleID = event.target.dataset.id; // Set the selected cycle ID
-
-      // Set the current date
-      const currentDate = new Date();
-
-      // Determine which date to use for fetching data
-      const fetchDate = currentDate > endDate ? endDate : currentDate;
-
-      // Update button text and enable the date picker
-      harvestCycleButton.textContent = selectedCycle;
+      harvestCycleButton.textContent = `Cycle ${currentCycle.cycle_number}`;
       datePicker.prop("disabled", false);
-
+      
       // Set date picker range
       datePicker.datepicker("option", "minDate", startDate);
       datePicker.datepicker("option", "maxDate", endDate);
 
-      datePicker.datepicker("setDate", fetchDate);
+      // Set initial data
+      if (endDate < currentDate) {
+        const lastMonth = new Date(endDate);
+        fetchDataForMonth(lastMonth.getMonth() + 1, lastMonth.getFullYear(), startDate, endDate, currentCycle.id);
+      } else {
+        fetchDataForMonth(currentDate.getMonth() + 1, currentDate.getFullYear(), startDate, endDate, currentCycle.id);
+      }
 
-      // Reset Worker Harvest Cycle to default
-      resetUserDropdown(userHarvestCycleButton, defaultUserText);
+      populateMonthDropdown(startDate, endDate, currentCycle.id);
+    }
+  })
+  .catch((error) => console.error("Error fetching harvest cycles:", error));
 
-      // Fetch and display data for the determined date
-      fetchDataForDate(formatDate(fetchDate));
+// Worker cycles fetch and setup
+fetch("./src/getUserCycles.php")
+  .then((response) => response.json())
+  .then((data) => {
+    data.forEach((cycle) => {
+      const li = document.createElement("li");
+      li.classList.add("dropdown-item");
+      li.textContent = `${cycle.user_name} - Cycle ${cycle.userCycleNumber}`;
+      li.dataset.id = cycle.userCycleID;
+      li.dataset.start = cycle.user_start_of_cycle;
+      li.dataset.end = cycle.user_end_of_cycle;
+      userHarvestDropdown.appendChild(li);
+    });
 
-      // Populate the month dropdown based on the cycle's date range
-      populateMonthDropdown(startDate, endDate, selectedCycleID); // Pass selectedCycleID
+    userHarvestCycleButton.textContent = DEFAULT_WORKER_TEXT;
+  })
+  .catch((error) => console.error("Error fetching user cycles:", error));
+
+// Admin cycle selection handler
+harvestDropdown.addEventListener("click", function (event) {
+  if (event.target && event.target.matches("li.dropdown-item")) {
+    currentView = 'admin';
+    userSelectedCycleID = null; // Reset worker selection
+    resetDropdown(userHarvestCycleButton, DEFAULT_WORKER_TEXT);
+    
+    const startDate = new Date(event.target.dataset.start);
+    const endDate = new Date(event.target.dataset.end);
+    selectedCycleID = event.target.dataset.id;
+
+    harvestCycleButton.textContent = event.target.textContent;
+    datePicker.prop("disabled", false);
+
+    // Update date picker
+    datePicker.datepicker("option", "minDate", startDate);
+    datePicker.datepicker("option", "maxDate", endDate);
+
+    // Fetch appropriate data
+    const currentDate = new Date();
+    if (endDate < currentDate) {
+      const lastMonth = new Date(endDate);
+      fetchDataForMonth(lastMonth.getMonth() + 1, lastMonth.getFullYear(), startDate, endDate, selectedCycleID);
+    } else {
+      fetchDataForMonth(currentDate.getMonth() + 1, currentDate.getFullYear(), startDate, endDate, selectedCycleID);
+    }
+
+    populateMonthDropdown(startDate, endDate, selectedCycleID);
+  }
+});
+
+// Worker cycle selection handler
+userHarvestDropdown.addEventListener("click", function (event) {
+  if (event.target && event.target.matches("li.dropdown-item")) {
+    currentView = 'worker';
+    selectedCycleID = null; // Reset admin selection
+    resetDropdown(harvestCycleButton, DEFAULT_ADMIN_TEXT);
+    
+    const startDate = new Date(event.target.dataset.start);
+    const endDate = new Date(event.target.dataset.end);
+    userSelectedCycleID = event.target.dataset.id;
+
+    userHarvestCycleButton.textContent = event.target.textContent;
+
+    // Fetch appropriate data
+    const currentDate = new Date();
+    if (endDate < currentDate) {
+      const lastMonth = new Date(endDate);
+      fetchUserDataForMonth(
+        lastMonth.getMonth() + 1,
+        lastMonth.getFullYear(),
+        startDate,
+        endDate,
+        userSelectedCycleID
+      );
+    } else {
+      fetchUserDataForMonth(
+        currentDate.getMonth() + 1,
+        currentDate.getFullYear(),
+        startDate,
+        endDate,
+        userSelectedCycleID
+      );
+    }
+
+    populateUserMonthDropdown(startDate, endDate, userSelectedCycleID);
+  }
+});
+
+// Type selection handler (weight, boxes, etc.)
+document.querySelectorAll(".btn-label").forEach((button) => {
+  button.addEventListener("click", function (event) {
+    event.preventDefault();
+    selectedType = this.dataset.type;
+
+    // Update button styles
+    document.querySelectorAll(".btn-label").forEach((btn) => {
+      btn.classList.remove("label-current");
+    });
+    this.classList.add("label-current");
+
+    // Update chart
+    myChart.options.scales.x.time.unit = "day";
+    myChart.update();
+
+    // Refresh data based on current view
+    if (currentView === 'worker' && userSelectedCycleID) {
+      const selectedItem = userHarvestDropdown.querySelector(`li[data-id="${userSelectedCycleID}"]`);
+      if (selectedItem) {
+        const startDate = new Date(selectedItem.dataset.start);
+        const endDate = new Date(selectedItem.dataset.end);
+        const currentDate = new Date();
+        
+        if (endDate < currentDate) {
+          const lastMonth = new Date(endDate);
+          fetchUserDataForMonth(
+            lastMonth.getMonth() + 1,
+            lastMonth.getFullYear(),
+            startDate,
+            endDate,
+            userSelectedCycleID
+          );
+        } else {
+          fetchUserDataForMonth(
+            currentDate.getMonth() + 1,
+            currentDate.getFullYear(),
+            startDate,
+            endDate,
+            userSelectedCycleID
+          );
+        }
+      }
+    } else if (currentView === 'admin' && selectedCycleID) {
+      const selectedItem = harvestDropdown.querySelector(`li[data-id="${selectedCycleID}"]`);
+      if (selectedItem) {
+        const startDate = new Date(selectedItem.dataset.start);
+        const endDate = new Date(selectedItem.dataset.end);
+        const currentDate = new Date();
+        
+        if (endDate < currentDate) {
+          const lastMonth = new Date(endDate);
+          fetchDataForMonth(
+            lastMonth.getMonth() + 1,
+            lastMonth.getFullYear(),
+            startDate,
+            endDate,
+            selectedCycleID
+          );
+        } else {
+          fetchDataForMonth(
+            currentDate.getMonth() + 1,
+            currentDate.getFullYear(),
+            startDate,
+            endDate,
+            selectedCycleID
+          );
+        }
+      }
     }
   });
+});
+  
+  // fetch("./src/getCycles.php")
+  // .then((response) => response.json())
+  // .then((data) => {
+  //   let currentCycle = null;
+  //   const currentDate = new Date();
+
+  //   // Find the current cycle
+  //   data.forEach((cycle) => {
+  //     const cycleEndDate = new Date(cycle.end_of_cycle);
+  //     if (currentCycle === null || cycleEndDate > new Date(currentCycle.end_of_cycle)) {
+  //       currentCycle = cycle;  // Set current cycle as the latest one
+  //     }
+
+  //     const li = document.createElement("li");
+  //     li.classList.add("dropdown-item");
+  //     li.textContent = `Cycle ${cycle.cycle_number}`;
+  //     li.dataset.id = cycle.id;
+  //     li.dataset.start = cycle.start_of_cycle;
+  //     li.dataset.end = cycle.end_of_cycle;
+  //     li.dataset.cycleId = cycle.id;
+  //     harvestDropdown.appendChild(li);
+  //   });
+
+  //   // Set the default cycle to the current cycle
+  //   if (currentCycle) {
+  //     const startDate = new Date(currentCycle.start_of_cycle);
+  //     const endDate = new Date(currentCycle.end_of_cycle);
+
+  //     harvestCycleButton.textContent = `Cycle ${currentCycle.cycle_number}`;
+  //     datePicker.prop("disabled", false);
+
+  //     // Set date picker range
+  //     datePicker.datepicker("option", "minDate", startDate);
+  //     datePicker.datepicker("option", "maxDate", endDate);
+
+  //     // Determine the current month based on the current cycle's range
+  //     const currentMonth = currentDate.getMonth(); // Current month (0-11)
+  //     const currentYear = currentDate.getFullYear(); // Current year
+
+  //     // Check if the cycle is completed or spans the current month
+  //     if (endDate < currentDate) {
+  //       // If cycle is completed, show data for the last month of the cycle
+  //       const lastMonth = new Date(endDate);
+  //       fetchDataForMonth(lastMonth.getMonth() + 1, lastMonth.getFullYear(), startDate, endDate, currentCycle.id);
+  //     } else {
+  //       // Show current month data
+  //       fetchDataForMonth(currentMonth + 1, currentYear, startDate, endDate, currentCycle.id);
+  //     }
+
+  //     // Populate the month dropdown based on the cycle's date range
+  //     populateMonthDropdown(startDate, endDate, currentCycle.id);
+  //   }
+  // })
+  // .catch((error) => console.error("Error fetching harvest cycles:", error));
 
 
-    // Fetch harvest cycles from worker and populate dropdow
-    fetch("./src/getUserCycles.php")
-    .then((response) => response.json())
-    .then((data) => {
-      data.forEach((cycle) => {
-        const li = document.createElement("li");
-        li.classList.add("dropdown-item");
-        li.textContent = `Cycle ${cycle.userCycleNumber}`;
-        li.dataset.id = cycle.userCycleID;
-        li.dataset.start = cycle.user_start_of_cycle;
-        li.dataset.end = cycle.user_end_of_cycle;
-        li.dataset.cycleId = cycle.userCycleID;
-        userHarvestDropdown.appendChild(li);
-      });
-      fetchDataForDate(formatDate(today)); // Fetch data for the current day by default
-    })
-    .catch((error) => console.error("Error fetching harvest cycles:", error));
 
-  userHarvestDropdown.addEventListener("click", function (event) {
-    if (event.target && event.target.matches("li.dropdown-item")) {
-      const selectedCycle = event.target.textContent;
-      const startDate = new Date(event.target.dataset.start);
-      const endDate = new Date(event.target.dataset.end);
+  // harvestDropdown.addEventListener("click", function (event) {
+  //   if (event.target && event.target.matches("li.dropdown-item")) {
+  //     const selectedCycle = event.target.textContent;
+  //     const startDate = new Date(event.target.dataset.start);
+  //     const endDate = new Date(event.target.dataset.end);
+  
+  //     // Set the selected cycle ID
+  //     selectedCycleID = event.target.dataset.id;
+  
+  //     // Update button text and enable the date picker
+  //     harvestCycleButton.textContent = selectedCycle;
+  //     datePicker.prop("disabled", false);
+  
+  //     // Set date picker range
+  //     datePicker.datepicker("option", "minDate", startDate);
+  //     datePicker.datepicker("option", "maxDate", endDate);
+  
+  //     // Populate the month dropdown based on the cycle's date range
+  //     populateMonthDropdown(startDate, endDate, selectedCycleID);
+  //     resetUserDropdown(userHarvestCycleButton, defaultUserText);
+  //     // Determine the current month based on the selected cycle's range
+  //     const currentDate = new Date();
+  //     const currentMonth = currentDate.getMonth();
+  //     const currentYear = currentDate.getFullYear();
+  
+  //     if (endDate < currentDate) {
+  //       // If cycle is completed, show data for the last month of the cycle
+  //       const lastMonth = new Date(endDate);
+  //       fetchDataForMonth(lastMonth.getMonth() + 1, lastMonth.getFullYear(), startDate, endDate, selectedCycleID);
+  //     } else {
+  //       // Show current month data
+  //       fetchDataForMonth(currentMonth + 1, currentYear, startDate, endDate, selectedCycleID);
+  //     }
+  //   }
+  // });
 
-      // Set the selected cycle ID
-      userSelectedCycleID = event.target.dataset.id; // Set the selected cycle ID
+// Function to populate month dropdown
+function populateMonthDropdown(startOfCycle, endOfCycle, cycleID) {
+  const monthDropdown = document.getElementById("monthDropdown");
+  monthDropdown.innerHTML = ""; // Clear previous options
+  
+  const months = [];
+  const startYear = startOfCycle.getFullYear();
+  const endYear = endOfCycle.getFullYear();
 
-      // Set the current date
-      const currentDate = new Date();
+  // Loop through years and months between start and end dates
+  for (let year = startYear; year <= endYear; year++) {
+    const startMonth = year === startYear ? startOfCycle.getMonth() : 0; // Start month for the start year
+    const endMonth = year === endYear ? endOfCycle.getMonth() : 11; // End month for the end year
 
-      // Determine which date to use for fetching data
-      const fetchDate = currentDate > endDate ? endDate : currentDate;
-
-      // Update button text and enable the date picker
-      userHarvestCycleButton.textContent = selectedCycle;
-      datePicker.prop("disabled", false);
-
-      // Set date picker range
-      datePicker.datepicker("option", "minDate", startDate);
-      datePicker.datepicker("option", "maxDate", endDate);
-
-      datePicker.datepicker("setDate", fetchDate);
-
-      // Reset Admin Harvest Cycle to default
-      resetDropdown(harvestCycleButton, defaultAdminText);
-
-      // Fetch and display data for the determined date
-      fetchUserDataForDate(formatDate(fetchDate));
-
-      // // Populate the month dropdown based on the cycle's date range
-      populateUserMonthDropdown(startDate, endDate, userSelectedCycleID);
+    for (let m = startMonth; m <= endMonth; m++) {
+      months.push(new Date(year, m, 1));
     }
+  }
+
+  months.forEach((month) => {
+    const li = document.createElement("li");
+    li.classList.add("dropdown-item");
+    li.textContent = month.toLocaleString("default", { month: "long" });
+    li.dataset.month = month.getMonth() + 1; // Get month number (1-12)
+    li.dataset.year = month.getFullYear(); // Get year
+    li.dataset.start = startOfCycle.toISOString().split("T")[0]; // Add cycle start date for dropdown items
+    li.dataset.end = endOfCycle.toISOString().split("T")[0]; // Add cycle end date for dropdown items
+    li.dataset.cycleId = cycleID; // Set cycle ID for dropdown items
+    monthDropdown.appendChild(li);
   });
 
+  // Add "Full Cycle" option at the bottom of the dropdown
+  const fullCycleOption = document.createElement("li");
+  fullCycleOption.classList.add("dropdown-item");
+  fullCycleOption.textContent = "Full Cycle";
+  fullCycleOption.dataset.fullCycle = true; // Flag for full cycle selection
+  fullCycleOption.dataset.start = startOfCycle.toISOString().split("T")[0]; // Add cycle start date
+  fullCycleOption.dataset.end = endOfCycle.toISOString().split("T")[0]; // Add cycle end date
+  fullCycleOption.dataset.cycleId = cycleID; // Set cycle ID for dropdown items
+  monthDropdown.appendChild(fullCycleOption); // Add to dropdown
+}
 
-  // Function to fetch data for the selected date
-  function fetchDataForDate(selectedDate = null) {
-    const requestData = { type: selectedType, time_unit: "hour" }; // Use hourly time unit
 
-    if (selectedDate) {
-      requestData.selected_date = selectedDate;
-    }
+// Fetch data for the selected month
+function fetchDataForMonth(month, year, cycleStartDate, cycleEndDate, selectedCycleID) {
+  const cycleStart = new Date(cycleStartDate);
+  const cycleEnd = new Date(cycleEndDate);
 
-    fetch("./src/reportsData.php", {
-      method: "POST",
-      body: JSON.stringify(requestData),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
-      .then((response) => response.json())
-      .then((result) => {
-        const labels = result.data.map((row) => row.hour);
-        const data = result.data.map((row) => row[`avg_${selectedType}`]); // Ensure we access the correct key
+  // Create the start and end dates for the selected month
+  let startOfMonth = new Date(Date.UTC(year, month - 1, 1));
+  let endOfMonth = new Date(Date.UTC(year, month, 0));
 
+  const cycleStartTimestamp = cycleStart.getTime();
+  const cycleEndTimestamp = cycleEnd.getTime();
+  const startOfMonthTimestamp = startOfMonth.getTime();
+  const endOfMonthTimestamp = endOfMonth.getTime();
+
+  // Adjust the start and end dates based on the cycle's range
+  const adjustedStart = startOfMonthTimestamp < cycleStartTimestamp ? cycleStart : startOfMonth;
+  const adjustedEnd = endOfMonthTimestamp > cycleEndTimestamp ? cycleEnd : endOfMonth;
+
+  // Ensure the adjusted start is not after the adjusted end
+  if (adjustedStart.getTime() > adjustedEnd.getTime()) {
+    console.error("Selected month is outside the cycle's range");
+    return;
+  }
+
+  const requestData = {
+    type: selectedType,
+    time_unit: "month",
+    start_date: adjustedStart.toISOString().split("T")[0],
+    end_date: adjustedEnd.toISOString().split("T")[0],
+    month,
+    cycle_id: selectedCycleID,
+  };
+
+  fetch("./src/reportsData.php", {
+    method: "POST",
+    body: JSON.stringify(requestData),
+    headers: {
+      "Content-Type": "application/json",
+    },
+  })
+    .then((response) => response.text())
+    .then((text) => {
+      if (!text || text.trim() === "") {
+        console.error("Received empty response from the server");
+        return;
+      }
+
+      try {
+        const result = JSON.parse(text);
+        const labels = result.data.map((row) => row.period);
+        const data = result.data.map((row) => row[`avg_${selectedType}`]);
+
+        // Set the full cycle flag first
+        isFullCycle = false;
+        
+        // Update chart options before setting data
+        myChart.options.scales.x.time.tooltipFormat = isFullCycle ? "MMMMMMMM yyyy" : "MMMMMMMM d, yyyy";
+        myChart.options.scales.x.time.displayFormats = {
+          day: isFullCycle ? "MMMMMMMM yyyy" : "MMM d, yyyy"
+        };
+
+        // Update chart data
         myChart.data.labels = labels;
         myChart.data.datasets[0].data = data;
-
-        // Update the dataset label based on selected type
-        myChart.data.datasets[0].label =
-          selectedType.charAt(0).toUpperCase() + selectedType.slice(1);
-
+        myChart.data.datasets[0].label = selectedType.charAt(0).toUpperCase() + selectedType.slice(1);
+        
+        // Single update after all changes
         myChart.update();
-        updateDescriptiveAnalytics(result.stats);
-      })
-      .catch((error) => console.error("Error fetching data:", error));
-  }
 
-    // Function to fetch data for the selected date
-    function fetchUserDataForDate(selectedDate = null) {
-      const requestData = { type: selectedType, time_unit: "hour" }; // Use hourly time unit
-  
-      if (selectedDate) {
-        requestData.selected_date = selectedDate;
+        updateDescriptiveAnalytics(result.stats, true, false, result.insights);
+      } catch (error) {
+        console.error("Error parsing JSON:", error);
+        document.getElementById("error-display").textContent = "Server Error: " + text;
       }
-  
-      fetch("./src/usersReportData.php", {
-        method: "POST",
-        body: JSON.stringify(requestData),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      })
-        .then((response) => response.json())
-        .then((result) => {
-          const labels = result.data.map((row) => row.hour);
-          const data = result.data.map((row) => row[`avg_${selectedType}`]); // Ensure we access the correct key
-  
-          myChart.data.labels = labels;
-          myChart.data.datasets[0].data = data;
-  
-          // Update the dataset label based on selected type
-          myChart.data.datasets[0].label =
-            selectedType.charAt(0).toUpperCase() + selectedType.slice(1);
-  
-          myChart.update();
-          updateDescriptiveAnalytics(result.stats);
-        })
-        .catch((error) => console.error("Error fetching data:", error));
-    }
-
-  // Function to fetch data for a specific month within the cycle date range
-  function fetchDataForMonth(
-    month,
-    year,
-    cycleStartDate,
-    cycleEndDate,
-    selectedCycleID
-  ) {
-    // Ensure the month is between 1 and 12, and the year is valid
-    if (month < 1 || month > 12 || isNaN(year)) {
-      console.error("Invalid month or year provided");
-      return;
-    }
-
-    // Get the first day of the selected month
-    let startOfMonth = new Date(year, month - 1, 1);
-    let endOfMonth = new Date(year, month, 0);
-
-    // Convert cycle dates to Date objects
-    cycleStartDate = new Date(cycleStartDate);
-    cycleEndDate = new Date(cycleEndDate);
-
-    // Trim the startOfMonth and endOfMonth to the cycle boundaries
-    if (startOfMonth < cycleStartDate) {
-      startOfMonth = cycleStartDate;
-    }
-    if (endOfMonth > cycleEndDate) {
-      endOfMonth = cycleEndDate;
-    }
-
-    // Check if the adjusted date range is valid
-    if (startOfMonth > endOfMonth) {
-      console.error("Start date cannot be after end date");
-      return;
-    }
-
-    const requestData = {
-      type: selectedType,
-      time_unit: "day",
-      start_date: startOfMonth.toISOString().split("T")[0],
-      end_date: endOfMonth.toISOString().split("T")[0],
-      month: month,
-      cycle_id: selectedCycleID,
-    };
-
-    // console.log("Request data:", requestData);
-
-    fetch("./src/reportsData.php", {
-      method: "POST",
-      body: JSON.stringify(requestData),
-      headers: {
-        "Content-Type": "application/json",
-      },
     })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-        return response.text(); // Get the raw text response first
-      })
-      .then((text) => {
-        // console.log("Raw response text:", text); // Log the raw response
-        if (!text || text.trim() === "") {
-          throw new Error("Received empty response from the server");
-        }
-        try {
-          const result = JSON.parse(text);
-        //   console.log("Parsed JSON:", result);
+    .catch((error) => {
+      console.error("Error fetching data:", error);
+    });
+}
 
-          const labels = result.data.map((row) => row.period);
-          const data = result.data.map((row) => row[`avg_${selectedType}`]);
-          myChart.data.labels = labels;
-          myChart.data.datasets[0].data = data;
+function fetchFullCycleData(cycleStartDate, cycleEndDate, selectedCycleID) {
+  const requestData = {
+    type: selectedType,
+    time_unit: "day",
+    start_date: cycleStartDate.toISOString().split("T")[0],
+    end_date: cycleEndDate.toISOString().split("T")[0],
+    cycle_id: selectedCycleID,
+  };
 
-          myChart.data.datasets[0].label =
-            selectedType.charAt(0).toUpperCase() + selectedType.slice(1);
-          myChart.update();
-
-          let isMonthlyFilter = true;
-          updateDescriptiveAnalytics(result.stats, isMonthlyFilter);
-
-          myChart.options.scales.x.time.unit = "day"; // Set x-axis to use days
-          myChart.update(); // Update chart with new options
-        } catch (error) {
-          console.error("Error parsing JSON:", error);
-          document.getElementById("error-display").textContent =
-            "Server Error: " + text;
-        }
-      })
-      .catch((error) => {
-        console.error("Error fetching data:", error); // Display error message
-      });
-  }
-
-  function fetchFullCycleData(cycleStartDate, cycleEndDate, selectedCycleID) {
-    const requestData = {
-      type: selectedType,
-      time_unit: "day", // Still fetching daily data from the server
-      start_date: cycleStartDate.toISOString().split("T")[0],
-      end_date: cycleEndDate.toISOString().split("T")[0],
-      cycle_id: selectedCycleID,
-    };
-
-    fetch("./src/reportsData.php", {
-      method: "POST",
-      body: JSON.stringify(requestData),
-      headers: {
-        "Content-Type": "application/json",
-      },
+  fetch("./src/reportsData.php", {
+    method: "POST",
+    body: JSON.stringify(requestData),
+    headers: {
+      "Content-Type": "application/json",
+    },
+  })
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      return response.json();
     })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-        return response.json();
-      })
-      .then((data) => {
-        // Aggregate daily data into weekly intervals
-        const weeklyData = aggregateDataToWeekly(data.data);
-  
-        // Set weekly labels and dataset
-        const labels = weeklyData.map((row) => row.week);
-        const dataset = weeklyData.map((row) => row[`avg_${selectedType}`]);
-  
-        // Update the chart with weekly data
-        myChart.data.labels = labels;
-        myChart.data.datasets[0].data = dataset;
-        updateDescriptiveAnalytics(data.stats);
-        // Set the time unit to 'week' for the x-axis
-        myChart.options.scales.x.time.unit = "week";
-        myChart.update();
-      })
-      .catch((error) => {
-        console.error("Error fetching full cycle data:", error);
-      });
-  }
-  
-  // Function to aggregate daily data into weekly
-  function aggregateDataToWeekly(dailyData) {
-    const weeklyData = [];
-    let currentWeekStart = null;
-    let currentWeekData = {
-      temperature: 0,
-      humidity: 0,
-      weight: 0,
-      count: 0,
-      week: "",
-    };
-  
-    dailyData.forEach((day) => {
-      const date = new Date(day.period);
-      const weekStart = getWeekStartDate(date);
-  
-      if (!currentWeekStart || weekStart.getTime() !== currentWeekStart.getTime()) {
-        // If moving to a new week, push the accumulated data of the previous week
-        if (currentWeekStart) {
-          weeklyData.push({
-            week: currentWeekStart.toISOString().split("T")[0],
-            avg_temperature: currentWeekData.temperature / currentWeekData.count,
-            avg_humidity: currentWeekData.humidity / currentWeekData.count,
-            avg_weight: currentWeekData.weight / currentWeekData.count,
-          });
-        }
-  
-        // Start accumulating data for the new week
-        currentWeekStart = weekStart;
-        currentWeekData = {
+    .then((data) => {
+      // Aggregate daily data into monthly intervals
+      const monthlyData = aggregateDataToMonthly(data.data, cycleStartDate, cycleEndDate);
+
+      let dataset;
+      // Only include weight data if selectedType is 'weight'
+      if (selectedType === 'weight') {
+        const startCycleWeight = findWeightForExactDate(data.data, cycleStartDate);
+        const endCycleWeight = findWeightForExactDate(data.data, cycleEndDate);
+
+        dataset = [
+          startCycleWeight,
+          ...monthlyData.slice(1, monthlyData.length - 1).map((row) => row.avg_weight),
+          endCycleWeight,
+        ];
+      } else {
+        // For temperature or humidity, use the average values directly
+        const metricKey = selectedType === 'temperature' ? 'avg_temperature' : 'avg_humidity';
+        dataset = monthlyData.map(row => row[metricKey]);
+      }
+
+      // Labels: Include all months for temperature/humidity, or exact dates for weight
+      const labels = selectedType === 'weight' 
+        ? [
+            cycleStartDate.toISOString().split("T")[0],
+            ...monthlyData.slice(1, monthlyData.length - 1).map((row) => row.month),
+            `${cycleEndDate.getFullYear()}-${String(cycleEndDate.getMonth() + 1).padStart(2, '0')}`,
+          ]
+        : monthlyData.map(row => row.month);
+
+      // Update the chart with the correct data
+      myChart.data.labels = labels;
+      myChart.data.datasets[0].data = dataset;
+
+      // Set the time unit to 'month' for the x-axis
+      myChart.options.scales.x.time.unit = "month";
+      myChart.update();
+    
+      isFullCycle = true;
+      myChart.options.scales.x.time.tooltipFormat = isFullCycle ? "MMMMMMMM yyyy" : "MMMMMMMM d, yyyy";
+      myChart.options.scales.x.time.displayFormats = {
+        day: isFullCycle ? "MMMMMMMM yyyy" : "MMM d, yyyy"
+      };
+      
+      updateFullCycleDescriptiveAnalytics(data.stats, false, true, data.fullInsights);
+    })
+    .catch((error) => {
+      console.error("Error fetching full cycle data:", error);
+    });
+}
+
+// Function to find the weight on the exact start or end date (unchanged)
+function findWeightForExactDate(dailyData, targetDate) {
+  const targetDateObj = new Date(targetDate);
+
+  const targetDayData = dailyData.find(day => {
+    const dayDate = new Date(day.period);
+    return dayDate.toISOString().split("T")[0] === targetDateObj.toISOString().split("T")[0];
+  });
+
+  return targetDayData ? parseFloat(targetDayData.avg_weight) : 0;
+}
+
+function aggregateDataToMonthly(dailyData, cycleStartDate, cycleEndDate) {
+  const monthlyData = [];
+  const endDate = new Date(cycleEndDate);
+  const startDate = new Date(cycleStartDate);
+
+  // Group data by month
+  const monthGroups = {};
+
+  dailyData.forEach((day) => {
+    const date = new Date(day.period);
+
+    if (date >= startDate && date <= endDate) {
+      const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+
+      if (!monthGroups[monthKey]) {
+        monthGroups[monthKey] = {
           temperature: 0,
           humidity: 0,
           weight: 0,
           count: 0,
-          week: weekStart.toISOString().split("T")[0],
         };
       }
-  
-      // Accumulate the data
-      currentWeekData.temperature += parseFloat(day.avg_temperature);
-      currentWeekData.humidity += parseFloat(day.avg_humidity);
-      currentWeekData.weight += parseFloat(day.avg_weight);
-      currentWeekData.count += 1;
-    });
-  
-    // Push the last week's data
-    if (currentWeekStart) {
-      weeklyData.push({
-        week: currentWeekStart.toISOString().split("T")[0],
-        avg_temperature: currentWeekData.temperature / currentWeekData.count,
-        avg_humidity: currentWeekData.humidity / currentWeekData.count,
-        avg_weight: currentWeekData.weight / currentWeekData.count,
-      });
+
+      monthGroups[monthKey].temperature += parseFloat(day.avg_temperature);
+      monthGroups[monthKey].humidity += parseFloat(day.avg_humidity);
+      monthGroups[monthKey].weight += parseFloat(day.avg_weight);
+      monthGroups[monthKey].count += 1;
     }
-  
-    return weeklyData;
-  }
-  
-  // Function to get the start date of the week for a given date
-  function getWeekStartDate(date) {
-    const dayOfWeek = date.getDay(); // Get the day of the week (0 is Sunday, 6 is Saturday)
-    const startDate = new Date(date);
-    startDate.setDate(date.getDate() - dayOfWeek + 1); // Set to Monday of the current week
-    startDate.setHours(0, 0, 0, 0); // Set time to the start of the day
-    return startDate;
-  }
+  });
+
+  Object.keys(monthGroups).forEach(monthKey => {
+    const monthData = monthGroups[monthKey];
+
+    monthlyData.push({
+      month: monthKey,
+      avg_temperature: monthData.temperature / monthData.count,
+      avg_humidity: monthData.humidity / monthData.count,
+      avg_weight: monthData.weight / monthData.count
+    });
+  });
+
+  monthlyData.sort((a, b) => new Date(a.month + '-01') - new Date(b.month + '-01'));
+
+  return monthlyData;
+}
+
 
   function resetFilterToDaily() {
     const today = new Date();
     fetchDataForDate(today.toISOString().split("T")[0]); // Fetch daily data
 
-    filterButton.textContent = "Filter by Month";
-    myChart.options.scales.x.time.unit = "hour"; // Set the time unit back to 'hour'
+    filterButton.textContent = "Admin Filter";
+    myChart.options.scales.x.time.unit = "day";
     myChart.update();
-  }
-
-  // Function to populate month dropdown
-  function populateMonthDropdown(startOfCycle, endOfCycle, cycleID) {
-    const monthDropdown = document.getElementById("monthDropdown");
-    monthDropdown.innerHTML = ""; // Clear previous options
-    const months = [];
-
-    for (let m = startOfCycle.getMonth(); m <= endOfCycle.getMonth(); m++) {
-      months.push(new Date(startOfCycle.getFullYear(), m, 1));
-    }
-
-    months.forEach((month) => {
-      const li = document.createElement("li");
-      li.classList.add("dropdown-item");
-      li.textContent = month.toLocaleString("default", { month: "long" });
-      li.dataset.month = month.getMonth() + 1; // Get month number (1-12)
-      li.dataset.year = month.getFullYear(); // Get year
-      li.dataset.start = startOfCycle.toISOString().split("T")[0]; // Add cycle start date for dropdown items
-      li.dataset.end = endOfCycle.toISOString().split("T")[0]; // Add cycle end date for dropdown items
-      li.dataset.cycleId = cycleID; // Set cycle ID for dropdown items
-      monthDropdown.appendChild(li);
-    });
-
-    const fullCycleOption = document.createElement("li");
-    fullCycleOption.classList.add("dropdown-item");
-    fullCycleOption.textContent = "Full Cycle";
-    fullCycleOption.dataset.fullCycle = true; // Flag for full cycle selection
-    fullCycleOption.dataset.start = startOfCycle.toISOString().split("T")[0]; // Add cycle start date
-    fullCycleOption.dataset.end = endOfCycle.toISOString().split("T")[0]; // Add cycle end date
-    fullCycleOption.dataset.cycleId = cycleID; // Set cycle ID for dropdown items
-    monthDropdown.appendChild(fullCycleOption); // Add to dropdown
-
-    const resetOption = document.createElement("li");
-    resetOption.classList.add("dropdown-item");
-    resetOption.textContent = "Reset to Daily";
-    resetOption.addEventListener("click", () => {
-      resetFilterToDaily(); // Reset to daily and update the flag
-    });
-
-    monthDropdown.appendChild(resetOption);
   }
 
   // Function to reset the month dropdown when switching to the worker cycle
 function resetMonthDropdown() {
   const monthDropdown = document.getElementById("monthDropdown");
   monthDropdown.innerHTML = ""; // Clear previous options when worker cycle is selected
-  filterButton.textContent = "Filter by Month";
+  filterButton.textContent = "Admin Filter";
 }
 
 function resetUserMonthDropdown() {
   const monthDropdown = document.getElementById("userMonthDropdown");
   userMonthDropdown.innerHTML = ""; // Clear previous options when worker cycle is selected
-  userFilterButton.textContent = "Filter by Month";
+  userFilterButton.textContent = "Worker Filter";
 }
 
+// Function to reset the admin dropdown when switching to the worker cycle
+    function resetDropdown(dropdownButton, defaultText) {
+      dropdownButton.textContent = defaultText;
+      filterButton.textContent = "Admin Filter";
+      
+      // Reset the admin month dropdown selection
+      const adminMonthDropdown = document.getElementById("monthDropdown");
+      if (adminMonthDropdown) {
+        adminMonthDropdown.innerHTML = ""; // Clear any selected value without removing options
+      }
+    
+      myChart.options.scales.x.time.unit = "day"; // Set x-axis to use hours
+      myChart.update(); // Update chart with new options
+    }
+    
+    // Function to reset the worker dropdown when switching to the admin cycle
+    function resetUserDropdown(dropdownButton, defaultText) {
+      dropdownButton.textContent = defaultText;
+      userFilterButton.textContent = "Worker Filter";
+      
+      // Reset the worker month dropdown selection
+      const workerMonthDropdown = document.getElementById("userMonthDropdown");
+      if (workerMonthDropdown) {
+        workerMonthDropdown.innerHTML = ""; // Clear any selected value without removing options
+      }
+        
+      myChart.options.scales.x.time.unit = "day"; // Set x-axis to use hours
+      myChart.update(); // Update chart with new options
+    }
 // Event listener to reset the month dropdown when the worker cycle dropdown is clicked
 const workerCycleDropdown = document.getElementById("userHarvestCycleDropdown"); // Assuming you have this element
 workerCycleDropdown.addEventListener("click", () => {
@@ -669,18 +818,101 @@ workerCycleDropdown.addEventListener("click", () => {
   function resetUserFilterToDaily() {
     const today = new Date();
     fetchDataForDate(today.toISOString().split("T")[0]); // Fetch daily data
-    userFilterButton.textContent = "Filter by Month";
-    myChart.options.scales.x.time.unit = "hour"; // Set the time unit back to 'hour'
+    userFilterButton.textContent = "Worker Filter";
+    myChart.options.scales.x.time.unit = "day";
     myChart.update();
   }
+  
+//   fetch("./src/getUserCycles.php")
+//   .then((response) => response.json())
+//   .then((data) => {
+//     let currentCycle = null;
+
+//     // Find the current cycle
+//     data.forEach((cycle) => {
+//       const cycleEndDate = new Date(cycle.user_end_of_cycle);
+//       if (currentCycle === null || cycleEndDate > new Date(currentCycle.user_end_of_cycle)) {
+//         currentCycle = cycle;  // Set current cycle as the latest one
+//       }
+
+//       const li = document.createElement("li");
+//       li.classList.add("dropdown-item");
+//       li.textContent = `${cycle.user_name} - Cycle ${cycle.userCycleNumber}`;
+//       li.dataset.id = cycle.userCycleID;
+//       li.dataset.start = cycle.user_start_of_cycle;
+//       li.dataset.end = cycle.user_end_of_cycle;
+//       li.dataset.cycleId = cycle.userCycleID;
+//       userHarvestDropdown.appendChild(li);
+//     });
+
+//     // Set the default cycle to the current cycle
+//     if (currentCycle) {
+//       userHarvestCycleButton.textContent = `Worker Cycle`;
+//     }
+//   })
+//   .catch((error) => console.error("Error fetching user cycles:", error));
+
+// // Event listener for cycle selection
+// userHarvestDropdown.addEventListener("click", function (event) {
+//   if (event.target && event.target.matches("li.dropdown-item")) {
+//     const selectedCycle = event.target.textContent;
+//     const startDate = new Date(event.target.dataset.start);
+//     const endDate = new Date(event.target.dataset.end);
+
+//     // Set the selected cycle ID
+//     userSelectedCycleID = event.target.dataset.id;
+
+//     // Update button text and enable the date picker
+//     userHarvestCycleButton.textContent = selectedCycle;
+
+//     // Populate the month dropdown based on the cycle's date range
+//     populateUserMonthDropdown(startDate, endDate, userSelectedCycleID);
+//     resetDropdown(harvestCycleButton, defaultAdminText);
+//     // Determine the current month based on the selected cycle's range
+//     const currentDate = new Date();
+//     const currentMonth = currentDate.getMonth();
+//     const currentYear = currentDate.getFullYear();
+
+//     if (endDate < currentDate) {
+//       // If cycle is completed, show data for the last month of the cycle
+//       const lastMonth = new Date(endDate);
+//       fetchUserDataForMonth(
+//         lastMonth.getMonth() + 1,
+//         lastMonth.getFullYear(),
+//         startDate,
+//         endDate,
+//         userSelectedCycleID
+//       );
+//     } else {
+//       // Show current month data
+//       fetchUserDataForMonth(
+//         currentMonth + 1,
+//         currentYear,
+//         startDate,
+//         endDate,
+//         userSelectedCycleID
+//       );
+//     }
+//   }
+// });
+
 
   function populateUserMonthDropdown(startOfCycle, endOfCycle, cycleID) {
     const userMonthDropdown = document.getElementById("userMonthDropdown");
     userMonthDropdown.innerHTML = ""; // Clear previous options
+    
     const months = [];
+    const startYear = startOfCycle.getFullYear();
+    const endYear = endOfCycle.getFullYear();
 
-    for (let m = startOfCycle.getMonth(); m <= endOfCycle.getMonth(); m++) {
-      months.push(new Date(startOfCycle.getFullYear(), m, 1));
+    // Loop through years and months between start and end dates
+    for (let year = startYear; year <= endYear; year++) {
+      const startMonth = year === startYear ? startOfCycle.getMonth() : 0; // Start month for the start year
+      const endMonth = year === endYear ? endOfCycle.getMonth() : 11; // End month for the end year
+
+      for (let m = startMonth; m <= endMonth; m++) {
+        months.push(new Date(year, m, 1));
+      }
     }
 
     months.forEach((month) => {
@@ -695,6 +927,7 @@ workerCycleDropdown.addEventListener("click", () => {
       userMonthDropdown.appendChild(li);
     });
 
+    // Add "Full Cycle" option at the bottom of the dropdown
     const fullCycleOption = document.createElement("li");
     fullCycleOption.classList.add("dropdown-item");
     fullCycleOption.textContent = "Full Cycle";
@@ -703,123 +936,96 @@ workerCycleDropdown.addEventListener("click", () => {
     fullCycleOption.dataset.end = endOfCycle.toISOString().split("T")[0]; // Add cycle end date
     fullCycleOption.dataset.cycleId = cycleID; // Set cycle ID for dropdown items
     userMonthDropdown.appendChild(fullCycleOption); // Add to dropdown
-
-    const resetOption = document.createElement("li");
-    resetOption.classList.add("dropdown-item");
-    resetOption.textContent = "Reset to Daily";
-    resetOption.addEventListener("click", () => {
-      resetUserFilterToDaily(); // Reset to daily and update the flag
-    });
-
-    userMonthDropdown.appendChild(resetOption);
   }
 
-    // Function to fetch data for a specific month within the cycle date range
-    function fetchUserDataForMonth(
-      month,
-      year,
-      cycleStartDate,
-      cycleEndDate,
-      userSelectedCycleID
-    ) {
-      // Ensure the month is between 1 and 12, and the year is valid
-      if (month < 1 || month > 12 || isNaN(year)) {
-        console.error("Invalid month or year provided");
-        return;
-      }
-    
-      // Get the first day of the selected month
-      let startOfMonth = new Date(year, month - 1, 1);
-      let endOfMonth = new Date(year, month, 0);
-    
-      // Convert cycle dates to Date objects
-      cycleStartDate = new Date(cycleStartDate);
-      cycleEndDate = new Date(cycleEndDate);
-    
-      // Trim the startOfMonth and endOfMonth to the cycle boundaries
-      if (startOfMonth < cycleStartDate) {
-        startOfMonth = cycleStartDate;
-      }
-      if (endOfMonth > cycleEndDate) {
-        endOfMonth = cycleEndDate;
-      }
-    
-      // Check if the adjusted date range is valid
-      if (startOfMonth > endOfMonth) {
-        console.error("Start date cannot be after end date");
-        return;
-      }
-    
-      const requestData = {
-        type: selectedType, // Ensure `selectedType` is properly set
-        time_unit: "day",
-        start_date: startOfMonth.toISOString().split("T")[0], // Ensure ISO format date
-        end_date: endOfMonth.toISOString().split("T")[0],      // Ensure ISO format date
-        month: month,
-        cycle_id: userSelectedCycleID,
-      };
-    
-      // console.log("Request data:", requestData); // Log the request data to verify it's correct
-    
-      fetch("./src/usersReportData.php", {
-        method: "POST",
-        body: JSON.stringify(requestData),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      })
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error("Network response was not ok");
-          }
-          return response.text(); // Get the raw text response first
-        })
-        .then((text) => {
-          // console.log("Raw response text:", text); // Log the raw response
-          if (!text || text.trim() === "") {
-            throw new Error("Received empty response from the server");
-          }
-          try {
-            const result = JSON.parse(text);
-            if (result.error) {
-              throw new Error(result.error);
-            }
-    
-            const labels = result.data.map((row) => row.period);
-            const data = result.data.map((row) => row[`avg_${selectedType}`]);
-            myChart.data.labels = labels;
-            myChart.data.datasets[0].data = data;
-    
-            myChart.data.datasets[0].label =
-              selectedType.charAt(0).toUpperCase() + selectedType.slice(1);
-            myChart.update();
-    
-            let isMonthlyFilter = true;
-            updateDescriptiveAnalytics(result.stats, isMonthlyFilter);
-    
-            myChart.options.scales.x.time.unit = "day"; // Set x-axis to use days
-            myChart.update(); // Update chart with new options
-          } catch (error) {
-            console.error("Error parsing JSON:", error);
-            document.getElementById("error-display").textContent =
-              "Server Error: " + text;
-          }
-        })
-        .catch((error) => {
-          console.error("Error fetching data:", error); // Display error message
-        });
+  function fetchUserDataForMonth(month, year, cycleStartDate, cycleEndDate, userSelectedCycleID) {
+    const cycleStart = new Date(cycleStartDate);
+    const cycleEnd = new Date(cycleEndDate);
+
+    // Create the start and end dates for the selected month
+    let startOfMonth = new Date(Date.UTC(year, month - 1, 1));
+    let endOfMonth = new Date(Date.UTC(year, month, 0));
+
+    const cycleStartTimestamp = cycleStart.getTime();
+    const cycleEndTimestamp = cycleEnd.getTime();
+    const startOfMonthTimestamp = startOfMonth.getTime();
+    const endOfMonthTimestamp = endOfMonth.getTime();
+
+    // Adjust the start and end dates based on the cycle's range
+    const adjustedStart = startOfMonthTimestamp < cycleStartTimestamp ? cycleStart : startOfMonth;
+    const adjustedEnd = endOfMonthTimestamp > cycleEndTimestamp ? cycleEnd : endOfMonth;
+
+    // Ensure the adjusted start is not after the adjusted end
+    if (adjustedStart.getTime() > adjustedEnd.getTime()) {
+      console.error("Selected month is outside the cycle's range");
+      return;
     }
-    
-  
+
+    const requestData = {
+      type: selectedType,
+      time_unit: "month",
+      start_date: adjustedStart.toISOString().split("T")[0],
+      end_date: adjustedEnd.toISOString().split("T")[0],
+      month,
+      cycle_id: userSelectedCycleID,
+    };
+
+    fetch("./src/usersReportData.php", {
+      method: "POST", 
+      body: JSON.stringify(requestData),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => response.text())
+      .then((text) => {
+        if (!text || text.trim() === "") {
+          console.error("Received empty response from the server");
+          return;
+        }
+
+        try {
+          const result = JSON.parse(text);
+          const labels = result.data.map((row) => row.period);
+          const data = result.data.map((row) => row[`avg_${selectedType}`]);
+
+          // Set the full cycle flag first
+          isFullCycle = false;
+          
+          // Update chart options before setting data
+          myChart.options.scales.x.time.tooltipFormat = isFullCycle ? "MMMMMMMM yyyy" : "MMMMMMMM d, yyyy";
+          myChart.options.scales.x.time.displayFormats = {
+            day: isFullCycle ? "MMMMMMMM yyyy" : "MMM d, yyyy"
+          };
+
+          // Update chart data
+          myChart.data.labels = labels;
+          myChart.data.datasets[0].data = data;
+          myChart.data.datasets[0].label = selectedType.charAt(0).toUpperCase() + selectedType.slice(1);
+          
+          // Single update after all changes
+          myChart.update();
+
+          updateDescriptiveAnalytics(result.stats, true, false, result.insights);
+        } catch (error) {
+          console.error("Error parsing JSON:", error);
+          document.getElementById("error-display").textContent = "Server Error: " + text;
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching data:", error);
+      });
+  }
+
     function fetchUserFullCycleData(cycleStartDate, cycleEndDate, selectedCycleID) {
-      const requestData = {
+     const requestData = {
         type: selectedType,
-        time_unit: "day", // Still fetching daily data from the server
+        time_unit: "day",
         start_date: cycleStartDate.toISOString().split("T")[0],
         end_date: cycleEndDate.toISOString().split("T")[0],
         cycle_id: selectedCycleID,
       };
-
+    
       fetch("./src/usersReportData.php", {
         method: "POST",
         body: JSON.stringify(requestData),
@@ -834,95 +1040,113 @@ workerCycleDropdown.addEventListener("click", () => {
           return response.json();
         })
         .then((data) => {
-          // Aggregate daily data into weekly intervals
-          const weeklyData = aggregateDataToWeekly(data.data);
+          // Aggregate daily data into monthly intervals
+          const monthlyData = aggregateDataToMonthly(data.data, cycleStartDate, cycleEndDate);
     
-          // Set weekly labels and dataset
-          const labels = weeklyData.map((row) => row.week);
-          const dataset = weeklyData.map((row) => row[`avg_${selectedType}`]);
+          let dataset;
+          // Only include weight data if selectedType is 'weight'
+          if (selectedType === 'weight') {
+            const startCycleWeight = findWeightForExactDate(data.data, cycleStartDate);
+            const endCycleWeight = findWeightForExactDate(data.data, cycleEndDate);
     
-          // Update the chart with weekly data
+            dataset = [
+              startCycleWeight,
+              ...monthlyData.slice(1, monthlyData.length - 1).map((row) => row.avg_weight),
+              endCycleWeight,
+            ];
+          } else {
+            // For temperature or humidity, use the average values directly
+            const metricKey = selectedType === 'temperature' ? 'avg_temperature' : 'avg_humidity';
+            dataset = monthlyData.map(row => row[metricKey]);
+          }
+    
+          // Labels: Include all months for temperature/humidity, or exact dates for weight
+          const labels = selectedType === 'weight' 
+            ? [
+                cycleStartDate.toISOString().split("T")[0],
+                ...monthlyData.slice(1, monthlyData.length - 1).map((row) => row.month),
+                `${cycleEndDate.getFullYear()}-${String(cycleEndDate.getMonth() + 1).padStart(2, '0')}`,
+              ]
+            : monthlyData.map(row => row.month);
+    
+          // Update the chart with the correct data
           myChart.data.labels = labels;
           myChart.data.datasets[0].data = dataset;
-          
-          let isMonthlyFilter = true;
-          updateDescriptiveAnalytics(data.stats, isMonthlyFilter);
-
-          // Set the time unit to 'week' for the x-axis
-          myChart.options.scales.x.time.unit = "week";
+    
+          isFullCycle = true;
+          myChart.options.scales.x.time.tooltipFormat = isFullCycle ? "MMMMMMMM yyyy" : "MMMMMMMM d, yyyy";
+          myChart.options.scales.x.time.displayFormats = {
+            day: isFullCycle ? "MMMMMMMM yyyy" : "MMM d, yyyy"
+          };
+    
+          // Set the time unit to 'month' for the x-axis
+          myChart.options.scales.x.time.unit = "month";
           myChart.update();
+    
+          updateFullCycleDescriptiveAnalytics(data.stats, false, true, data.fullInsights);
         })
         .catch((error) => {
           console.error("Error fetching full cycle data:", error);
         });
     }
     
-    // Function to aggregate daily data into weekly
-    function aggregateDataToWeekly(dailyData) {
-      const weeklyData = [];
-      let currentWeekStart = null;
-      let currentWeekData = {
-        temperature: 0,
-        humidity: 0,
-        weight: 0,
-        count: 0,
-        week: "",
-      };
+    // Function to find the weight on the exact start or end date
+    function findWeightForExactDate(dailyData, targetDate) {
+      const targetDateObj = new Date(targetDate);
+    
+      const targetDayData = dailyData.find(day => {
+        const dayDate = new Date(day.period);
+        return dayDate.toISOString().split("T")[0] === targetDateObj.toISOString().split("T")[0];
+      });
+    
+      return targetDayData ? parseFloat(targetDayData.avg_weight) : 0;
+    }
+    
+    function aggregateDataToMonthly(dailyData, cycleStartDate, cycleEndDate) {
+      const monthlyData = [];
+      const endDate = new Date(cycleEndDate);
+      const startDate = new Date(cycleStartDate);
+    
+      // Group data by month
+      const monthGroups = {};
     
       dailyData.forEach((day) => {
         const date = new Date(day.period);
-        const weekStart = getWeekStartDate(date);
     
-        if (!currentWeekStart || weekStart.getTime() !== currentWeekStart.getTime()) {
-          // If moving to a new week, push the accumulated data of the previous week
-          if (currentWeekStart) {
-            weeklyData.push({
-              week: currentWeekStart.toISOString().split("T")[0],
-              avg_temperature: currentWeekData.temperature / currentWeekData.count,
-              avg_humidity: currentWeekData.humidity / currentWeekData.count,
-              avg_weight: currentWeekData.weight / currentWeekData.count,
-            });
+        if (date >= startDate && date <= endDate) {
+          const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+    
+          if (!monthGroups[monthKey]) {
+            monthGroups[monthKey] = {
+              temperature: 0,
+              humidity: 0,
+              weight: 0,
+              count: 0,
+            };
           }
     
-          // Start accumulating data for the new week
-          currentWeekStart = weekStart;
-          currentWeekData = {
-            temperature: 0,
-            humidity: 0,
-            weight: 0,
-            count: 0,
-            week: weekStart.toISOString().split("T")[0],
-          };
+          monthGroups[monthKey].temperature += parseFloat(day.avg_temperature);
+          monthGroups[monthKey].humidity += parseFloat(day.avg_humidity);
+          monthGroups[monthKey].weight += parseFloat(day.avg_weight);
+          monthGroups[monthKey].count += 1;
         }
-    
-        // Accumulate the data
-        currentWeekData.temperature += parseFloat(day.avg_temperature);
-        currentWeekData.humidity += parseFloat(day.avg_humidity);
-        currentWeekData.weight += parseFloat(day.avg_weight);
-        currentWeekData.count += 1;
       });
     
-      // Push the last week's data
-      if (currentWeekStart) {
-        weeklyData.push({
-          week: currentWeekStart.toISOString().split("T")[0],
-          avg_temperature: currentWeekData.temperature / currentWeekData.count,
-          avg_humidity: currentWeekData.humidity / currentWeekData.count,
-          avg_weight: currentWeekData.weight / currentWeekData.count,
+      Object.keys(monthGroups).forEach(monthKey => {
+        const monthData = monthGroups[monthKey];
+    
+        monthlyData.push({
+          month: monthKey,
+          avg_temperature: monthData.temperature / monthData.count,
+          avg_humidity: monthData.humidity / monthData.count,
+          avg_weight: monthData.weight / monthData.count
         });
-      }
+      });
     
-      return weeklyData;
-    }
+      monthlyData.sort((a, b) => new Date(a.month + '-01') - new Date(b.month + '-01'));
     
-    // Function to get the start date of the week for a given date
-    function getWeekStartDate(date) {
-      const dayOfWeek = date.getDay(); // Get the day of the week (0 is Sunday, 6 is Saturday)
-      const startDate = new Date(date);
-      startDate.setDate(date.getDate() - dayOfWeek + 1); // Set to Monday of the current week
-      startDate.setHours(0, 0, 0, 0); // Set time to the start of the day
-      return startDate;
-    }
+      return monthlyData;
+    } 
   
     const adminCycleDropdown = document.getElementById("harvestCycleDropdown"); // Assuming you have this element
     adminCycleDropdown.addEventListener("click", () => {
@@ -968,76 +1192,324 @@ workerCycleDropdown.addEventListener("click", () => {
 });
 
   // Add event listeners for buttons to change data type
-  document.querySelectorAll(".btn-label").forEach((button) => {
-    button.addEventListener("click", function (event) {
-      event.preventDefault();
-      selectedType = this.dataset.type; // Get the selected type from the button's data attribute
+// document.querySelectorAll(".btn-label").forEach((button) => {
+//   button.addEventListener("click", function (event) {
+//     event.preventDefault();
+//     selectedType = this.dataset.type;
 
-      // Update button styles
-      document.querySelectorAll(".btn-label").forEach((btn) => {
-        btn.classList.remove("label-current");
-      });
-      this.classList.add("label-current"); // Highlight the selected button
+//     // Update button styles 
+//     document.querySelectorAll(".btn-label").forEach((btn) => {
+//       btn.classList.remove("label-current");
+//     });
+//     this.classList.add("label-current");
 
-      myChart.options.scales.x.time.unit = "hour";
-      myChart.update();
-    
-      // Fetch new data for the currently selected type
-      fetchDataForDate(formatDate(datePicker.datepicker("getDate"))); // Fetch data for the selected date
-    });
-  });
+//     myChart.options.scales.x.time.unit = "day";
+//     myChart.update();
 
-  function updateDescriptiveAnalytics(stats, isMonthly = false) {
+//     // Check which view is currently active by looking for active cycles
+//     const userCycleButton = document.getElementById("userHarvestCycleButton");
+//     const adminCycleButton = document.getElementById("harvestCycleButton");
+
+//     // First try worker view
+//     if (userCycleButton && userCycleButton.textContent) {
+//       const selectedUserCycle = Array.from(userHarvestDropdown.children)
+//         .find(item => item.textContent === userCycleButton.textContent);
+
+//       if (selectedUserCycle) {
+//         const startDate = new Date(selectedUserCycle.dataset.start);
+//         const endDate = new Date(selectedUserCycle.dataset.end);
+//         const cycleId = selectedUserCycle.dataset.id;
+
+//         const currentDate = new Date();
+//         if (endDate < currentDate) {
+//           const lastMonth = new Date(endDate);
+//           fetchUserDataForMonth(
+//             lastMonth.getMonth() + 1,
+//             lastMonth.getFullYear(),
+//             startDate,
+//             endDate,
+//             cycleId
+//           );
+//         } else {
+//           fetchUserDataForMonth(
+//             currentDate.getMonth() + 1,
+//             currentDate.getFullYear(),
+//             startDate,
+//             endDate,
+//             cycleId
+//           );
+//         }
+//       }
+//     } 
+//     // If not worker view, try admin view
+//     else if (adminCycleButton && adminCycleButton.textContent) {
+//       const selectedAdminCycle = Array.from(harvestDropdown.children)
+//         .find(item => item.textContent === adminCycleButton.textContent);
+
+//       if (selectedAdminCycle) {
+//         const startDate = new Date(selectedAdminCycle.dataset.start);
+//         const endDate = new Date(selectedAdminCycle.dataset.end);
+//         const cycleId = selectedAdminCycle.dataset.id;
+
+//         const currentDate = new Date();
+//         if (endDate < currentDate) {
+//           const lastMonth = new Date(endDate);
+//           fetchDataForMonth(
+//             lastMonth.getMonth() + 1,
+//             lastMonth.getFullYear(),
+//             startDate,
+//             endDate,
+//             cycleId
+//           );
+//         } else {
+//           fetchDataForMonth(
+//             currentDate.getMonth() + 1,
+//             currentDate.getFullYear(),
+//             startDate,
+//             endDate,
+//             cycleId
+//           );
+//         }
+//       }
+//     }
+//   });
+// });
+  
+function updateDescriptiveAnalytics(stats, isMonthly = false, isFullCycle = false, insights = null) {
     // Update the date range label based on the selected filter
-    document.getElementById("date-range-label").textContent = isMonthly
-        ? "Monthly Average"
-        : "Daily Average";
+    const dateRangeLabel = document.getElementById("date-range-label");
+    if (isFullCycle) {
+        dateRangeLabel.textContent = "Full Cycle";
+    } else if (isMonthly) {
+        dateRangeLabel.textContent = "Monthly";
+    } else {
+        dateRangeLabel.textContent = "Daily";
+    }
+    
+    // Define units based on the selected type
+    let unit;
+    switch (selectedType) {
+        case 'temperature':
+            unit = '°C';
+            break;
+        case 'humidity':
+            unit = '%';
+            break;
+        case 'weight':
+            unit = 'g';
+            break;
+        default:
+            unit = '';
+    }
 
-    // Update the average, min, and max values for the selected type
+    // Update the average, min, and max values for the selected type with units
     document.getElementById("average-value").textContent =
-    stats[selectedType]?.average !== null
-        ? stats[selectedType].average.toFixed(2)
-        : "-";
+        stats[selectedType]?.average !== null
+            ? `${stats[selectedType].average.toFixed(2)} ${unit}`
+            : "-";
     document.getElementById("min-value").textContent =
         stats[selectedType]?.min !== null
-            ? stats[selectedType].min.toFixed(2)
+            ? `${stats[selectedType].min.toFixed(2)} ${unit}`
             : "-";
     document.getElementById("max-value").textContent =
         stats[selectedType]?.max !== null
-            ? stats[selectedType].max.toFixed(2)
+            ? `${stats[selectedType].max.toFixed(2)} ${unit}`
             : "-";
 
-    // Update previous weight and weight gain if available
-    const previousWeight = stats.weight?.previous || null; // Adjust this according to your data structure
-    const weightGain = stats.weight?.gain || null; // Adjust this according to your data structure
+    // Update weight-specific values based on cycle type
+    if (selectedType === 'weight') {
+        const previousWeight = isFullCycle 
+            ? stats.weight?.fullcycle_previous 
+            : stats.weight?.previous;
+        
+        const weightGain = isFullCycle 
+            ? stats.weight?.fullcycle_gain 
+            : stats.weight?.gain;
 
-    // Assuming selectedType is defined somewhere in your code
-    if (selectedType === 'temperature' || selectedType === 'humidity') {
-      // Hide the entire paragraphs for previous weight and weight gain
-      document.getElementById('previousWeightContainer').style.display = 'none';
-      document.getElementById('weightGainContainer').style.display = 'none';
-    } else if (selectedType === 'weight') {
-      // Show the paragraphs for previous weight and weight gain
-      document.getElementById('previousWeightContainer').style.display = 'block';
-      document.getElementById('weightGainContainer').style.display = 'block';
-
-      // Update the content if not hiding
-      document.getElementById('previousWeight').textContent = previousWeight !== null ? previousWeight.toFixed(2) : 'N/A';
-      document.getElementById('weightGain').textContent = weightGain !== null ? weightGain.toFixed(2) : 'N/A';
+        // Show weight-specific containers
+        document.getElementById('previousWeightContainer').style.display = 'block';
+        document.getElementById('weightGainContainer').style.display = 'block';
+        
+        // Update weight values
+        document.getElementById('previousWeight').textContent = 
+            previousWeight !== null ? `${previousWeight.toFixed(2)} g` : 'N/A';
+        document.getElementById('weightGain').textContent = 
+            weightGain !== null ? `${weightGain.toFixed(2)} g` : 'N/A';
+            
+        // Hide non-weight containers
+        document.getElementById('avgContainer').style.display = 'none';
+        document.getElementById('rangeContainer').style.display = 'none';
+        document.getElementById('rangeContainer1').style.display = 'none';
+    } else {
+        // Show containers for temperature and humidity
+        document.getElementById('previousWeightContainer').style.display = 'none';
+        document.getElementById('weightGainContainer').style.display = 'none';
+        document.getElementById('avgContainer').style.display = 'block';
+        document.getElementById('rangeContainer').style.display = 'block';
+        document.getElementById('rangeContainer1').style.display = 'block';
     }
 
-    if(selectedType === 'weight'){
-      document.getElementById('avgContainer').style.display = 'none';
-      document.getElementById('rangeContainer').style.display = 'none';
-      document.getElementById('rangeContainer1').style.display = 'none';
-    }else if(selectedType === 'temperature' || selectedType === 'humidity'){
-      document.getElementById('avgContainer').style.display = 'block';
-
-      document.getElementById("min-value").textContent =
-        stats[selectedType]?.min !== null
-            ? stats[selectedType].min.toFixed(2)
-            : "-";
+    // Display insights if available
+    if (insights) {
+        displayInsights(insights, selectedType);
     }
 }
 
+function displayInsights(insights, selectedType) {
+    document.getElementById('insights-container').innerHTML = ''; // Clear monthly insights
+    document.getElementById('fullcycle_insights').innerHTML = ''; // Clear full cycle insights
+    const insightsContainer = document.getElementById('insights-container');
+    if (!insightsContainer) {
+        console.warn('Insights container not found');
+        return;
+    }
+
+    // Clear previous insights
+    //insightsContainer.innerHTML = '';
+
+    // Get relevant insights based on type
+    let relevantInsights = [];
+    
+    // Add type-specific insights
+    if (insights[selectedType]) {
+        relevantInsights = relevantInsights.concat(insights[selectedType]);
+    }
+
+    // Add overall insights if available
+    if (insights.overall) {
+        relevantInsights = relevantInsights.concat(insights.overall);
+    }
+
+    // Display insights if available
+    if (relevantInsights.length > 0) {
+        const insightsTitle = document.createElement('h6');
+        insightsTitle.classList.add('mt-3', 'mb-2');
+        insightsContainer.appendChild(insightsTitle);
+
+        relevantInsights.forEach(insight => {
+            const insightElement = document.createElement('p');
+            insightElement.textContent = insight;
+            insightElement.classList.add('small', 'text-muted');
+            insightsContainer.appendChild(insightElement);
+        });
+    }
+}	
+
+function updateFullCycleDescriptiveAnalytics(stats, isMonthly = false, isFullCycle = false, fullInsights = null) {
+  // Update the date range label based on the selected filter
+  const dateRangeLabel = document.getElementById("date-range-label");
+  if (isFullCycle) {
+      dateRangeLabel.textContent = "Full Cycle";
+  } else if (isMonthly) {
+      dateRangeLabel.textContent = "Monthly";
+  } else {
+      dateRangeLabel.textContent = "Daily";
+  }
+
+  // Define units based on the selected type
+  let unit;
+  switch (selectedType) {
+      case 'temperature':
+          unit = '°C';
+          break;
+      case 'humidity':
+          unit = '%';
+          break;
+      case 'weight':
+          unit = 'g';
+          break;
+      default:
+          unit = '';
+  }
+
+  // Update the average, min, and max values for the selected type with units
+  document.getElementById("average-value").textContent =
+      stats[selectedType]?.average !== null
+          ? `${stats[selectedType].average.toFixed(2)} ${unit}`
+          : "-";
+  document.getElementById("min-value").textContent =
+      stats[selectedType]?.min !== null
+          ? `${stats[selectedType].min.toFixed(2)} ${unit}`
+          : "-";
+  document.getElementById("max-value").textContent =
+      stats[selectedType]?.max !== null
+          ? `${stats[selectedType].max.toFixed(2)} ${unit}`
+          : "-";
+
+  // Update weight-specific values based on cycle type
+  if (selectedType === 'weight') {
+      const previousWeight = isFullCycle 
+          ? stats.weight?.fullcycle_previous 
+          : stats.weight?.previous;
+      
+      const weightGain = isFullCycle 
+          ? stats.weight?.fullcycle_gain 
+          : stats.weight?.gain;
+
+      // Show weight-specific containers
+      document.getElementById('previousWeightContainer').style.display = 'block';
+      document.getElementById('weightGainContainer').style.display = 'block';
+      
+      // Update weight values
+      document.getElementById('previousWeight').textContent = 
+          previousWeight !== null ? `${previousWeight.toFixed(2)} g` : 'N/A';
+      document.getElementById('weightGain').textContent = 
+          weightGain !== null ? `${weightGain.toFixed(2)} g` : 'N/A';
+          
+      // Hide non-weight containers
+      document.getElementById('avgContainer').style.display = 'none';
+      document.getElementById('rangeContainer').style.display = 'none';
+      document.getElementById('rangeContainer1').style.display = 'none';
+  } else {
+      // Show containers for temperature and humidity
+      document.getElementById('previousWeightContainer').style.display = 'none';
+      document.getElementById('weightGainContainer').style.display = 'none';
+      document.getElementById('avgContainer').style.display = 'block';
+      document.getElementById('rangeContainer').style.display = 'block';
+      document.getElementById('rangeContainer1').style.display = 'block';
+  }
+
+  if(fullInsights){
+    displayFullInsights(fullInsights, selectedType);
+  }
+}
+
+function displayFullInsights(fullInsights, selectedType) {
+  document.getElementById('insights-container').innerHTML = ''; // Clear monthly insights
+  document.getElementById('fullcycle_insights').innerHTML = ''; // Clear full cycle insights
+  const fullInsightsContainer = document.getElementById('fullcycle_insights');
+  if (!fullInsightsContainer) {
+      console.warn('Insights container not found');
+      return;
+  }
+
+  // Clear previous insights
+  fullInsightsContainer.innerHTML = '';
+  // Get relevant insights based on type
+  let relevantFullInsights = [];
+  
+  // Add type-specific insights for temperature, humidity, and weight
+  if (fullInsights[selectedType]) {
+    relevantFullInsights = relevantFullInsights.concat(fullInsights[selectedType]);
+  }
+
+  // Add full-cycle or monthly insights if available
+  if (fullInsights['overall']) {
+    relevantFullInsights = relevantFullInsights.concat(fullInsights['overall']);
+  }
+
+  // Display insights if available
+  if (relevantFullInsights.length > 0) {
+      const fullInsightsTitle = document.createElement('h6');
+      fullInsightsTitle.classList.add('mt-3', 'mb-2');
+      fullInsightsContainer.appendChild(fullInsightsTitle);
+
+      relevantFullInsights.forEach(fullInsights => {
+          const fullInsightElement = document.createElement('p');
+          fullInsightElement.textContent = fullInsights;
+          fullInsightElement.classList.add('small', 'text-muted');
+          fullInsightsContainer.appendChild(fullInsightElement);
+      });
+  }
+}
 });

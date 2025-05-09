@@ -55,7 +55,6 @@ html, body {
 }
 
 
-
 .nav-container {
     display: flex;
     align-items: center;
@@ -72,15 +71,22 @@ html, body {
 }
 
 .about-us .contact-us h4 {
-    margin: 0;
-    padding: 0 10px;
+    display: inline;
+    background-color: #fef9d9;
+    padding: 0 5px;
+    border-radius: 7px;
 }
 
+
+ .space {
+    min-height: 5vh;
+    overflow-y: auto;
+  }
 h4{
-    display: inline-block;
-    box-shadow: inset 0 -30px 0 rgba(255,229,119), 0 2px 0 rgba(255,229,119);
-    border-radius: 10px;
-    overflow: hidden;
+    display: inline;
+    background-color: #fef9d9;
+    padding: 0 10px;
+    border-radius: 7px;
     font-size: 32px;
 }
 
@@ -221,8 +227,8 @@ h4{
     font-optical-sizing: auto;
     font-weight: 300;
     font-style: italic;
-    font-size: 20px;
-    line-height: 42px;
+    font-size: 17px;
+    line-height: 40px;
     color: #333;
     text-align: justify;
     margin: 0;
@@ -235,7 +241,7 @@ h4{
 }
 
 .image-section img {
-    width: 90%;
+    width: 70%;
     height: auto;
     max-width: 100%;
     border-radius: 10px;
@@ -256,11 +262,15 @@ h4{
     padding-top: 0; /* Ensure no padding on top */
 }
 
+.container-4{
+    padding-top: 80px;
+}
+
 
 @media (max-width: 992px){
     .text-section p{
-        font-size: 18px;
-        line-height: 32px;
+        font-size: 16px;
+        line-height: 30px;
     }
     .image-section img{
         width: 90%;
@@ -279,7 +289,7 @@ h4{
         padding: 0 30px;
     }
     .image-section img{
-        width: 85%;
+        width: 75%;
     }
     .mapswrapper{
         width: 100vh;
@@ -289,7 +299,7 @@ h4{
         justify-content: center;
         margin: auto;
         padding: 20px 0;
-        font-size: 12px;
+        font-size: 11px;
     }
 }
 
@@ -297,7 +307,7 @@ h4{
     color: #fff;
     text-decoration: none;
     align-content: center;
-    font-size: 18px;
+    font-size: 14px;
 }
 
 .mapswrapper {
@@ -306,4 +316,98 @@ h4{
 
 .facebook-link{
     padding-left: 20px;
+}
+
+
+
+.container-footer{
+    margin: auto;
+    padding: 2.5rem 8rem 2rem;
+    background-color: #F3F8FF;
+}
+
+.all-rights{
+    background-color: #2b2b2b;
+    color: white;
+}
+.img-container img {
+    max-width: 100%;
+    height: auto;
+}
+
+.img-container h5 {
+    font-size: 1rem;
+}
+
+.nav a{
+    text-decoration: none;
+    color: black;
+}
+
+.nav a:hover{
+    color: #393E46;
+}
+.title{
+    display: inline;
+    background-color: #fef9d9;
+    padding: 0 5px;
+    border-radius: 7px;
+    font-size: 20px;
+}
+.contacts{
+    font-size: 20px;
+  }
+
+
+@media (max-width: 768px) {
+    .img-container h5 {
+        font-size: 0.9rem;
+    }
+
+    .container-footer .row{
+        flex-direction: column;
+        text-align: center;
+        align-items: center;
+    }
+    .col-md-4, .col-md-2, .col-md-3 {
+        margin-bottom: 20px; 
+ 
+    }
+    .title{
+        font-size: 15px;
+    }
+    .nav-item a {
+        font-size: 11px;
+      }
+      .contacts{
+        font-size: 14px;
+      }
+
+
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+    .container-footer .row {
+        text-align: center;
+        align-items: center;
+    }
+
+    .col-md-2, .col-md-3 {
+        margin-bottom: 20px; 
+   
+    }
+
+    .img-container img {
+        margin-bottom: 20px;
+    }
+}
+
+@media (max-width: 576px) {
+    .img-container img {
+        max-width: 120px;
+    }
+
+    .img-container h5 {
+        font-size: 0.8rem;
+    }
 }

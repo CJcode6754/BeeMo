@@ -16,7 +16,7 @@ main {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  height: 70vh;
+  height: 77vh;
 }
 .content-wrapper {
   flex-grow: 0.5;

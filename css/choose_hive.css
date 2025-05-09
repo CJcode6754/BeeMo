@@ -6,7 +6,7 @@ main {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  height: 78vh;
+  height: 77vh;
 }
 .content-wrapper {
   flex-grow: 0.5;
@@ -20,7 +20,7 @@ main {
 .hive-button {
   width: 100%;
   height: 50px;
-  max-width: 500px;
+  max-width: 525px;
   box-shadow: 0 5px #2b2b2b;
   border-radius: 11px;
   background-color: #fcf4b9;
@@ -30,14 +30,13 @@ main {
 .hive-button:hover {
   background-color: #faef9b;
 }
-
 .add-hive-btn {
   background-color: #fcf4b9;
-  font-size: 13px;
+  font-size: 12px;
   border-radius: 20px;
   width: 100%;
   padding: 7px;
-  max-width: 100px;
+  max-width: 80px;
   transition: background-color 0.3s ease, box-shadow 0.3s ease,
     transform 0.3s ease;
 }
@@ -48,11 +47,11 @@ main {
 
 .delete-btn {
   background-color: #fcf4b9;
-  font-size: 13px;
+  font-size: 12px;
   border-radius: 20px;
   width: 100%;
   padding: 7px;
-  max-width: 100px;
+  max-width: 80px;
   transition: background-color 0.3s ease, box-shadow 0.3s ease,
     transform 0.3s ease;
 }
@@ -60,7 +59,6 @@ main {
   background-color: #faef9b;
   box-shadow: 0 5px #2b2b2b;
 }
-
 .edit-icon {
   font-size: 13px;
   padding-right: 3px;
@@ -70,7 +68,7 @@ main {
   background-color: #fcf4b9;
   font-size: 15px;
   text-transform: uppercase;
-  border-radius: 20px;
+  border-radius: 15px;
   width: 100%;
   padding: 7px;
   max-width: 180px;
@@ -125,6 +123,11 @@ main {
 .notif_date {
   font-size: 0.75rem !important;
 }
+
+ .space2 {
+    min-height: 2vh;
+    overflow-y: auto;
+  }
 /* --------------------------------------------End: Main Desktop View---------------------------------------------*/
 /* --------------------------------------------Start: Main Responsive View---------------------------------------------*/
 @media (min-width: 768px) {
@@ -203,10 +206,30 @@ main {
   .notif_date {
     font-size: 0.7rem !important;
   }
+  
+  
+.edit-button {
+  background-color: #fcf4b9;
+  font-size: 13px;
+  border-radius: 16px;
+  text-transform: uppercase;
+  width: 100%;
+  padding: 6px;
+  max-width: 130px;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease,
+    transform 0.3s ease;
+}
+  
+  
   .yellow {
     min-height: 5vh;
     background-color: #faef9b;
     border: solid 1px #2b2b2b;
+    overflow-y: auto;
+  }
+  
+   .space {
+    min-height: 5vh;
     overflow-y: auto;
   }
 }
@@ -220,7 +243,7 @@ main {
   }
 }
 
-@media (max-width: 400px) {
+@media (max-width: 400px){
   .clearNotif {
     font-size: 0.7rem !important; /* Smaller font size */
     padding: 4px 5px !important; /* Reduce padding */
@@ -267,4 +290,3 @@ main {
   }
 }
 /* --------------------------------------------End: Main Responsive View---------------------------------------------*/
-

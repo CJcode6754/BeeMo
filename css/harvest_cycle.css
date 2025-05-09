@@ -40,6 +40,11 @@ main {
   padding: 2px 4px !important; /* Reduce padding */
 }
 
+#nf-btn1 {
+  font-size: 0.9rem !important; /* Adjust as needed */
+  padding: 2px 4px !important; /* Reduce padding */
+}
+
 .notif-container {
   max-width: 290px !important; /* Smaller width */
   padding: 6px !important;
@@ -235,7 +240,11 @@ th {
   align-items: center;
 }
 
-
+.complete {
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+}
 
 .pending {
   display: flex;
@@ -251,7 +260,7 @@ th {
   margin-top: 10px;
 }
 
-.complete {
+.complete i {
   background-color: #4caf50;
   border-radius: 100%;
   color: whitesmoke;
@@ -407,6 +416,13 @@ th {
     background-color: #faef9b;
     overflow-y: auto;
   }
+}
+
+.btn.edit-btn:disabled {
+    background-color: #d3d3d3;  /* Light gray */
+    color: #a9a9a9;            /* Darker gray text */
+    cursor: not-allowed;       /* Change cursor to indicate disabled */
+    opacity: 0.6;              /* Reduce opacity for the disabled state */
 }
 
 @media (max-width: 991px) and (min-width: 768px) {
@@ -602,7 +618,10 @@ th {
   }
 }
 
+
 /* --------------------------------------------End: Main Responsive View---------------------------------------------*/
+
+
 .col-md-12 {
   display: flex;
   align-items: center;

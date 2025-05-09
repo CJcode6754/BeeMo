@@ -2,15 +2,18 @@
 main {
   min-height: 100vh;
 }
+
 .monitoring-page {
   display: flex;
   flex-direction: column;
   justify-content: center;
   height: 77vh;
 }
+
 .content-wrapper {
-  flex-grow: 0.5;
+  flex-grow: .5;
 }
+
 .monitoring-highlight {
   display: inline;
   background-color: #fef9d9;
@@ -18,133 +21,118 @@ main {
   border-radius: 7px;
 }
 
+.column-container {
+  padding-left: 50px;
+  padding-right: 50px;
+}
+
 .container1 {
-  border-radius: 10px;
-  height: 260px;
+  border-radius: 13px;
+  height: 390px;
   border: 1.8px solid #2b2b2b;
-  margin-left: 60px;
   box-shadow: 0 5px #2b2b2b;
-  background-image: linear-gradient(#f8f9fa 65%, #fcf4b9 35%);
+  background-image: linear-gradient(#f8f9fa 80%, #fcf4b9 20%);
 }
 
 .container2 {
-  border-radius: 10px;
-  height: 130px;
+  border-radius: 13px;
+  height: 390px;
   border: 1.8px solid #2b2b2b;
-  margin-right: 60px;
   box-shadow: 0 5px #2b2b2b;
-  background-image: linear-gradient(#f8f9fa 75%, #fcf4b9 25%);
+  background-image: linear-gradient(#f8f9fa 80%, #fcf4b9 20%);
 }
+
 .container3 {
-  border-radius: 10px;
-  height: 115px;
+  border-radius: 13px;
+  height: 390px;
   border: 1.8px solid #2b2b2b;
-  margin-right: 60px;
   box-shadow: 0 5px #2b2b2b;
-  background-color: #fcf4b9;
+  background-image: linear-gradient(#f8f9fa 80%, #fcf4b9 20%);
 }
-.fw-bold {
-  font-size: 20px;
+
+
+.d-block p {
+  margin: 10px;
+  text-align: left;
+}
+
+.temp {
+  font-size: 22px;
+
   font-weight: 700;
+  padding-top: 15px;
 }
+
+.temp-based {
+
+  font-size: 18px;
+  font-weight: 500;
+}
+
 .temp-degree {
-  margin-left: 5px;
-  padding-right: 24px;
-  font-size: 24px;
+  padding-top: 10px;
+  font-size: 30px;
   font-weight: 700;
   color: green;
 }
-.humid,
-.humid-based {
-  font-size: 13px;
+
+.temp-interpretation {
+  padding-top: 10px;
+  font-size: 20px;
+  font-weight: 700;
 }
+
 .humid {
-  margin-left: 5px;
-  padding-right: 10px;
-  font-size: 20px;
+  font-size: 22px;
+
   font-weight: 700;
+  padding-top: 15px;
 }
+
 .humid-based {
-  font-size: 12px;
+
+  font-size: 18px;
   font-weight: 500;
 }
+
 .humid-percent {
-  padding-right: 15px;
-  font-size: 20px;
+  padding-top: 10px;
+
+  font-size: 30px;
   font-weight: 700;
   color: green;
 }
+
+.humid-interpretation {
+  padding-top: 10px;
+  font-size: 20px;
+  font-weight: 700;
+}
+
 .weight {
-  padding-right: 97px;
+  font-size: 22px;
+
   font-weight: 700;
-  font-size: 16px;
+  padding-top: 15px;
 }
-.initial {
-  font-size: 14px;
+
+.initial-weight {
+
+  font-size: 18px;
   font-weight: 500;
-  padding-right: 20px;
-  margin-left: 20px;
 }
+
 .weight-value {
-  padding-right: 105px;
-  font-size: 16px;
+  padding-top: 10px;
+  font-size: 30px;
   font-weight: 700;
   color: green;
 }
-.weight-block p {
-  margin-left: 10px;
-}
-.auto-manual {
-  padding-right: 63px;
-  font-size: 15px;
-}
-.toggle-button {
-  font-size: 20px;
-}
-.clearNotif {
-  font-size: 0.8rem !important; /* Smaller font size */
-  padding: 4px 5px !important; /* Reduce padding */
+
+.param-icon {
+  font-size: 40px;
 }
 
-#nf-btn {
-  font-size: 0.9rem !important; /* Adjust as needed */
-  padding: 2px 4px !important; /* Reduce padding */
-}
-
-.notif-container {
-  max-width: 290px !important; /* Smaller width */
-  padding: 6px !important;
-  font-size: 0.75rem !important;
-}
-
-/* Smaller notification header */
-
-.notification-content {
-  font-size: 0.75rem !important;
-  line-height: 1.2 !important;
-}
-
-.notification-item {
-  max-width: 250px !important; /* Set a smaller width */
-  margin: 5px auto !important; /* Center and reduce margin */
-  padding: 4px 8px !important;
-  background-color: #f0f0f0; /* Light gray background */
-  border-radius: 5px !important; /* Slightly rounded corners */
-}
-
-.notification-icon {
-  width: 25px !important;
-  height: 25px !important;
-  margin-right: 4px !important;
-}
-
-.notif_message {
-  font-size: 0.8rem !important;
-}
-
-.notif_date {
-  font-size: 0.75rem !important;
-}
 
 /* --------------------------------------------End: Main Desktop View---------------------------------------------*/
 
@@ -157,11 +145,12 @@ main {
     padding-top: 2rem;
     padding-right: 4rem;
   }
+
   .monitoring-page {
     box-shadow: 0 6px #2b2b2b;
   }
 
-  .sidebar.collapsed ~ main {
+  .sidebar.collapsed~main {
     padding-left: 4.75rem;
   }
 }
@@ -179,65 +168,115 @@ main {
     padding: 10px;
     margin: 10px;
     box-shadow: 7px 7px rgba(0, 0, 0, 0.25);
+
   }
+
+  .column-container {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+
   .navbar-link {
+
     box-shadow: 3px 3px rgba(0, 0, 0, 0.4);
   }
+
   .navbar-link:hover {
     border-radius: 50%;
   }
+
   .container1,
   .container2,
   .container3 {
     margin: 0;
   }
 
-  .auto-manual {
-    padding: 0%;
-  }
-  .clearNotif {
-    font-size: 0.7rem !important; /* Smaller font size */
-    padding: 4px 5px !important; /* Reduce padding */
-  }
 
-  #nf-btn {
-    font-size: 0.8rem !important; /* Adjust as needed */
-    padding: 2px 4px !important; /* Reduce padding */
+  .container1 {
+    border-radius: 13px;
+    height: 300px;
+    border: 1.8px solid #2b2b2b;
+    box-shadow: 0 5px #2b2b2b;
+    background-image: linear-gradient(#f8f9fa 85%, #fcf4b9 15%);
   }
 
-  .notif-container {
-    max-width: 280px !important; /* Smaller width */
-    padding: 6px !important;
-    font-size: 0.75rem !important;
+  .container2 {
+    border-radius: 13px;
+    height: 300px;
+    border: 1.8px solid #2b2b2b;
+    box-shadow: 0 5px #2b2b2b;
+    background-image: linear-gradient(#f8f9fa 85%, #fcf4b9 15%);
   }
 
-  /* Smaller notification header */
-
-  .notification-content {
-    font-size: 0.75rem !important;
-    line-height: 1.2 !important;
+  .container3 {
+    border-radius: 13px;
+    height: 270px;
+    border: 1.8px solid #2b2b2b;
+    box-shadow: 0 5px #2b2b2b;
+    background-image: linear-gradient(#f8f9fa 85%, #fcf4b9 15%);
   }
 
-  .notification-item {
-    max-width: 240px !important; /* Set a smaller width */
-    margin: 5px auto !important; /* Center and reduce margin */
-    padding: 4px 8px !important;
-    background-color: #f3f8ff; /* Light gray background */
-    border-radius: 5px !important; /* Slightly rounded corners */
+  .temp {
+    font-size: 20px;
+    margin-left: 5px;
+    font-weight: 700;
   }
 
-  .notification-icon {
-    width: 20px !important;
-    height: 20px !important;
-    margin-right: 4px !important;
+  .temp-based {
+    margin-left: 10px;
+    font-size: 15px;
+    font-weight: 500;
   }
 
-  .notif_message {
-    font-size: 0.8rem !important;
+  .temp-degree {
+    margin-right: 15px;
+    font-size: 25px;
+    font-weight: 700;
+    color: green;
   }
 
-  .notif_date {
-    font-size: 0.7rem !important;
+  .humid {
+    font-size: 20px;
+    margin-right: 5px;
+    font-weight: 700;
+  }
+
+  .humid-based {
+    margin-left: 15px;
+    font-size: 15px;
+    font-weight: 500;
+  }
+
+
+  .humid-percent {
+    margin-right: 15px;
+    font-size: 25px;
+    font-weight: 700;
+    color: green;
+  }
+
+  .weight {
+    font-size: 20px;
+    margin-left: 10px;
+    font-weight: 700;
+  }
+
+  .initial-weight {
+    margin-left: 25px;
+    font-size: 15px;
+    font-weight: 500;
+  }
+
+  .weight-value {
+    margin-left: 22px;
+    font-size: 25px;
+    font-weight: 700;
+    color: green;
+  }
+
+  .param-icon {
+    font-size: 35px;
+    margin-right: 5px;
   }
 
   .space {
@@ -248,12 +287,14 @@ main {
   .yellow {
     min-height: 5vh;
     background-color: #faef9b;
-    border: solid 1px #2b2b2b;
+    border: solid 1px #2B2B2B;
     overflow-y: auto;
   }
 }
 
+
 @media (max-width: 1024px) {
+
   .container1,
   .container2,
   .container3 {
@@ -263,12 +304,268 @@ main {
 }
 
 @media (max-width: 768px) {
-  .row {
+  .column-container {
+    padding-left: 0px;
+    padding-right: 0px;
+  }
+
+
+}
+
+@media (max-width: 910px) and (min-width: 768px) {
+  .monitoring-page {
+    height: 100%;
+    min-height: 78vh;
+  }
+
+  .two-column .col-md-4 {
+    flex: 0 0 50%;
+    max-width: 50%;
+  }
+
+  .two-column {
     display: flex;
-    flex-direction: column;
-    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .two-column .col-md-4:nth-child(3) {
+    flex: 0 0 100%;
+    /* The weight column spans full width */
+    max-width: 100%;
+  }
+
+  .column-container {
+    padding-left: 30px;
+    padding-right: 30px;
+  }
+
+  .container1 {
+    border-radius: 13px;
+    height: 330px;
+    border: 1.8px solid #2b2b2b;
+    box-shadow: 0 5px #2b2b2b;
+    background-image: linear-gradient(#f8f9fa 80%, #fcf4b9 20%);
+  }
+
+  .container2 {
+    border-radius: 13px;
+    height: 330px;
+    border: 1.8px solid #2b2b2b;
+    box-shadow: 0 5px #2b2b2b;
+    background-image: linear-gradient(#f8f9fa 80%, #fcf4b9 20%);
+  }
+
+  .container3 {
+    border-radius: 13px;
+    height: 280px;
+    border: 1.8px solid #2b2b2b;
+    box-shadow: 0 5px #2b2b2b;
+    background-image: linear-gradient(#f8f9fa 80%, #fcf4b9 20%);
+  }
+
+  .temp {
+    font-size: 20px;
+    margin-left: 5px;
+    font-weight: 700;
+    padding-top: 15px;
+  }
+
+  .temp-based {
+    margin-left: 10px;
+    font-size: 15px;
+    font-weight: 500;
+  }
+
+  .temp-degree {
+    padding-top: 10px;
+    margin-right: 15px;
+    font-size: 25px;
+    font-weight: 700;
+    color: green;
+  }
+
+  .humid {
+    font-size: 20px;
+    margin-right: 5px;
+    font-weight: 700;
+    padding-top: 15px;
+  }
+
+  .humid-based {
+    margin-left: 15px;
+    font-size: 15px;
+    font-weight: 500;
+  }
+
+
+  .humid-percent {
+    padding-top: 10px;
+    margin-right: 15px;
+    font-size: 25px;
+    font-weight: 700;
+    color: green;
+  }
+
+  .weight {
+    font-size: 20px;
+    margin-left: 10px;
+    font-weight: 700;
+    padding-top: 15px;
+  }
+
+  .initial-weight {
+    margin-left: 25px;
+    font-size: 15px;
+    font-weight: 500;
+  }
+
+  .weight-value {
+    padding-top: 10px;
+    margin-left: 22px;
+    font-size: 25px;
+    font-weight: 700;
+    color: green;
+  }
+
+  .param-icon {
+    font-size: 35px;
+    margin-right: 5px;
+  }
+
+  .space2 {
+    min-height: 5vh;
+    overflow-y: auto;
   }
 }
+
+
+
+@media (max-width: 1240px) and (min-width: 991px) {
+  .monitoring-page {
+    height: 100%;
+    min-height: 80vh;
+  }
+
+  .space2 {
+    min-height: 3vh;
+    overflow-y: auto;
+  }
+
+  .two-column .col-md-4 {
+    flex: 0 0 50%;
+    max-width: 50%;
+  }
+
+  .two-column {
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  .two-column .col-md-4:nth-child(3) {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+
+  .column-container {
+    padding-left: 30px;
+    padding-right: 30px;
+  }
+
+  .container1 {
+    border-radius: 13px;
+    height: 320px;
+    border: 1.8px solid #2b2b2b;
+    box-shadow: 0 5px #2b2b2b;
+    background-image: linear-gradient(#f8f9fa 80%, #fcf4b9 20%);
+  }
+
+  .container2 {
+    border-radius: 13px;
+    height: 320px;
+    border: 1.8px solid #2b2b2b;
+    box-shadow: 0 5px #2b2b2b;
+    background-image: linear-gradient(#f8f9fa 80%, #fcf4b9 20%);
+  }
+
+  .container3 {
+    border-radius: 13px;
+    height: 250px;
+    border: 1.8px solid #2b2b2b;
+    box-shadow: 0 5px #2b2b2b;
+    background-image: linear-gradient(#f8f9fa 80%, #fcf4b9 20%);
+  }
+
+  .temp {
+    font-size: 20px;
+    margin-left: 5px;
+    font-weight: 700;
+    padding-top: 5px;
+  }
+
+  .temp-based {
+    margin-left: 10px;
+    font-size: 15px;
+    font-weight: 500;
+  }
+
+  .temp-degree {
+    padding-top: 10px;
+    margin-right: 15px;
+    font-size: 25px;
+    font-weight: 700;
+    color: green;
+  }
+
+  .humid {
+    font-size: 20px;
+    margin-right: 5px;
+    font-weight: 700;
+    padding-top: 5px;
+  }
+
+  .humid-based {
+    margin-left: 15px;
+    font-size: 15px;
+    font-weight: 500;
+  }
+
+
+  .humid-percent {
+    padding-top: 10px;
+    margin-right: 15px;
+    font-size: 25px;
+    font-weight: 700;
+    color: green;
+  }
+
+  .weight {
+    font-size: 20px;
+    margin-left: 10px;
+    font-weight: 700;
+    padding-top: 5px;
+  }
+
+  .initial-weight {
+    margin-left: 25px;
+    font-size: 15px;
+    font-weight: 500;
+  }
+
+  .weight-value {
+    padding-top: 10px;
+    margin-left: 22px;
+    font-size: 25px;
+    font-weight: 700;
+    color: green;
+  }
+
+  .param-icon {
+    font-size: 35px;
+    margin-right: 5px;
+  }
+
+}
+
 
 @media (max-width: 991px) and (min-width: 768px) {
   main {
@@ -277,51 +574,11 @@ main {
     padding-top: 2rem;
     padding-right: 2rem;
   }
-}
-@media (max-width: 400px){
-  .clearNotif {
-    font-size: 0.7rem !important; /* Smaller font size */
-    padding: 4px 5px !important; /* Reduce padding */
-  }
 
-  #nf-btn {
-    font-size: 0.8rem !important; /* Adjust as needed */
-    padding: 2px 4px !important; /* Reduce padding */
-  }
-
-  .notif-container {
-    max-width: 265px !important; /* Smaller width */
-    padding: 6px !important;
-    font-size: 0.7rem !important;
-  }
-
-  /* Smaller notification header */
-
-  .notification-content {
-    font-size: 0.7rem !important;
-    line-height: 1.2 !important;
-  }
-
-  .notification-item {
-    max-width: 240px !important; /* Set a smaller width */
-    margin: 5px auto !important; /* Center and reduce margin */
-    padding: 4px 8px !important;
-    background-color: #f3f8ff; /* Light gray background */
-    border-radius: 5px !important; /* Slightly rounded corners */
-  }
-
-  .notification-icon {
-    width: 20px !important;
-    height: 20px !important;
-    margin-right: 4px !important;
-  }
-
-  .notif_message {
-    font-size: 0.8rem !important;
-  }
-
-  .notif_date {
-    font-size: 0.7rem !important;
+  .column-container {
+    padding-left: 0px;
+    padding-right: 0px;
   }
 }
+
 /* --------------------------------------------End: Main Responsive View---------------------------------------------*/
