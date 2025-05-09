@@ -1,6 +1,6 @@
 <div id="sidebar" class="sidebar position-fixed top-0 bottom-0 bg-white border-end offcanvass">
     <div class="d-flex align-items-center p-3 py-5">
-        <a href="/" class="sidebar-logo fw-bold text-dark text-decoration-none fs-4"><img src="img/BeeMo Logo Side.png" width="173px" height="75px" alt="BeeMo Logo"></a>
+        <a href="/" class="sidebar-logo fw-bold text-dark text-decoration-none fs-4"><img src="/img/BeeMo Logo Side.png" width="173px" height="75px" alt="BeeMo Logo"></a>
     </div>
     <ul class="sidebar-menu p-3 py-1 m-0 mb-0">
         <li class="sidebar-menu-item <?= URLS('/') ? 'active' : '' ?>">
@@ -39,8 +39,8 @@
                 Bee Guide
             </a>
         </li>
-        <li class="sidebar-menu-item <?= URLS('/worker') ? 'active' : '' ?>">
-            <a href="/worker">
+        <li class="sidebar-menu-item <?= (strpos($_SERVER['REQUEST_URI'], '/worker') !== false) ? 'active' : '' ?>">
+            <a href="/workers">
                 <i class="fs-4 fa-solid fa-person sidebar-menu-item-icon"></i>
                 Worker
             </a>
