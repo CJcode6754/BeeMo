@@ -137,10 +137,6 @@
 
                                                         // Use prepared statements to prevent SQL injection
                                                         $stmt = $conn->prepare($weightSql);
-                                                        if (!$stmt) {
-                                                            echo json_encode(['error' => 'SQL prepare error: ' . $conn->error]);
-                                                            exit;
-                                                        }
 
                                                         $adminID = $_SESSION['adminID'];
                                                         $hiveID = $_SESSION['hiveID'];
@@ -280,10 +276,6 @@
 
                                                         // Use prepared statements to prevent SQL injection
                                                         $stmt = $conn->prepare($weightSql);
-                                                        if (!$stmt) {
-                                                            echo json_encode(['error' => 'SQL prepare error: ' . $conn->error]);
-                                                            exit;
-                                                        }
 
                                                         $adminID = $_SESSION['adminID'];
                                                         $hiveID = $_SESSION['hiveID'];
@@ -442,10 +434,6 @@
 
                                         // Use prepared statements to prevent SQL injection
                                         $stmt = $conn->prepare($weightSql);
-                                        if (!$stmt) {
-                                            echo json_encode(['error' => 'SQL prepare error: ' . $conn->error]);
-                                            exit;
-                                        }
 
                                         $adminID = $_SESSION['adminID'];
                                         $hiveID = $_SESSION['hiveID'];
@@ -699,10 +687,6 @@
 
                                         // Use prepared statements to prevent SQL injection
                                         $stmt = $conn->prepare($weightSql);
-                                        if (!$stmt) {
-                                            echo json_encode(['error' => 'SQL prepare error: ' . $conn->error]);
-                                            exit;
-                                        }
 
                                         $adminID = $_SESSION['adminID'];
                                         $hiveID = $_SESSION['hiveID'];

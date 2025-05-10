@@ -1,5 +1,5 @@
 <?php
-$heading = "BeeMo";
-
-require views("dashboard.php");
+view("dashboard.php", [
+    'heading' => 'BeeMo'
+]);
 

@@ -1,4 +1,4 @@
 <?php
-$heading = "Harvest Cycle";
-
-require views("harvestCycle.php");
+view("harvestCycle.php", [
+    'heading' => 'Harvest Cycle'
+]);

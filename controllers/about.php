@@ -1,3 +1,3 @@
 <?php
 $heading = "About";
-require views("/about.php");
+require view("/about.php");

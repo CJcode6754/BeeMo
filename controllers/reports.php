@@ -1,4 +1,4 @@
 <?php
-$heading = "Reports";
-
-require views("reports.php");
+view("reports.php", [
+    'heading' => 'Reports'
+]);

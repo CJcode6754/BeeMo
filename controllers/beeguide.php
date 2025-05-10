@@ -1,4 +1,4 @@
 <?php
-$heading = "BeeGuide";
-
-require views("beeguide.php");
+view("beeguide.php", [
+    'heading' => 'Bee Guide'
+]);
