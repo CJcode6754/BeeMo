@@ -1,16 +1,16 @@
     <!-- head -->
-    <?php require 'views/partials/head.php' ?>
+    <?php require base_path('views/partials/head.php') ?>
     <!-- Nav -->
-     <?php require"views/partials/sidebar.php" ?>
+    <?php require base_path('views/partials/sidebar.php') ?>
     <!-- Main -->
     <main class="bg-light">
         <div class="p-2">
             <!-- Navbar -->
-            <?php require"views/partials/nav.php" ?>
+            <?php require base_path("views/partials/nav.php") ?>
             <!-- Content -->
             <div class="home-page py-3 mt-4 border border-2 rounded-4 border-dark">
                 <div class="px-4 py-4 my-4 text-center content-wrapper">
-                    <img src="img/BeeMo Logo.png" class="img-responsive" alt="BeeMo Logo">
+                    <img src="/img/BeeMo Logo.png" class="img-responsive" alt="BeeMo Logo">
                     <div class="col-lg-6 mx-auto">
                         <p class="Beemo-text py-3 mb-5">BeeMo: An IoT-Enabled Web-Based Stingless Beehive Management System with Real-Time Temperature, Humidity, Weight Monitoring</p>
                     </div>
@@ -21,7 +21,7 @@
             <div class="yellow mt-1 d-md-none fixed-bottom p-0 m-0"></div>
     </main>
 
-    <?php require"views/partials/sidebarMobile.php" ?>
+    <?php require base_path("views/partials/sidebarMobile.php") ?>
     
     <script>
         // history.pushState(null, null, null);
@@ -42,7 +42,7 @@
         handleBackNavigation();
     </script>
 <!-- footer -->
-<?php require 'views/partials/footer.php' ?>
+<?php require base_path('views/partials/footer.php') ?>
 
       
 

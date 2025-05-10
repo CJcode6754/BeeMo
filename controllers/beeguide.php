@@ -1,4 +1,4 @@
 <?php
 $heading = "BeeGuide";
 
-require"views/admin/beeguide.php";
+require views("beeguide.php");

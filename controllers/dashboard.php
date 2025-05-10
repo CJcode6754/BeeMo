@@ -1,5 +1,5 @@
 <?php
 $heading = "BeeMo";
 
-require"views/admin/dashboard.php";
+require views("dashboard.php");
 

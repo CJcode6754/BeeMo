@@ -1,13 +1,13 @@
 <!-- head -->
-<?php require 'views/partials/head.php' ?>
+<?php require base_path('views/partials/head.php') ?>
     <!-- Sidebar -->
-    <?php require"views/partials/sidebar.php" ?>
+    <?php require base_path("views/partials/sidebar.php") ?>
 
     <!-- Main -->
     <main class="bg-light">
         <div class="p-2">
             <!-- Navbar -->
-            <?php require"views/partials/nav.php" ?>
+            <?php require base_path("views/partials/nav.php") ?>
             
             <!-- Content -->
             <div class="choosehive-page py-4 mt-4 border border-2 rounded-4 border-dark">
@@ -94,8 +94,8 @@
 
     <!-- Side Bar Mobile View -->
 
-    <?php require"views/partials/sidebarMobile.php" ?>
+    <?php require base_path("views/partials/sidebarMobile.php") ?>
 
     <script src="/js/manage_hive.js"></script>
 <!-- footer -->
-<?php require 'views/partials/footer.php' ?>
+<?php require base_path('views/partials/footer.php') ?>

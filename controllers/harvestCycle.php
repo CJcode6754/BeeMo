@@ -1,4 +1,4 @@
 <?php
 $heading = "Harvest Cycle";
 
-require"views/admin/harvestCycle.php";
+require views("harvestCycle.php");
