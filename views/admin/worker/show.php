@@ -16,11 +16,6 @@
         transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
 
-    .bee-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 14px 30px rgba(0, 0, 0, 0.15);
-    }
-
     .text-bee-dark {
         color: #5c4b00;
     }
@@ -58,8 +53,6 @@
 <!-- Main -->
 <main class="bg-bee main-container">
     <div class="container content-wrapper">
-        <!-- Navbar -->
-        <?php require base_path("views/partials/nav.php") ?>
 
         <!-- Centered Content -->
         <div class="text-center mb-4">
@@ -98,15 +91,6 @@
                         <div class="form-control-plaintext"><?= $worker['password'] ?></div>
                     </div>
 
-                    <div class="d-flex justify-content-between">
-                        <button class="btn btn-bee px-4 rounded-pill" data-bs-toggle="modal" data-bs-target="#<?= $editModalID ?>">
-                            <i class="fa-regular fa-pen-to-square me-2"></i>Edit
-                        </button>
-                        <button class="btn btn-danger px-4 rounded-pill" data-bs-toggle="modal" data-bs-target="#<?= $deleteModalID ?>">
-                            <i class="fa-regular fa-trash-can me-2"></i>Delete
-                        </button>
-                    </div>
-
                     <!-- Back Button -->
                     <div class="text-end mt-4">
                         <a href="/workers" class="btn btn-dark px-4 rounded-pill">
@@ -120,22 +104,24 @@
 </main>
 
 <!-- Notification -->
-<div id="notification" class="position-fixed top-0 end-0 m-4 p-3 bg-warning text-dark rounded shadow d-none"></div>
+<div id=" notification" class="position-fixed top-0 end-0 m-4 p-3 bg-warning text-dark rounded shadow d-none">
+                                        </div>
 
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const notification = document.getElementById('notification');
-        function showNotification(message) {
-            notification.textContent = message;
-            notification.classList.remove('d-none');
-            setTimeout(() => {
-                notification.classList.add('d-none');
-            }, 6000);
-        }
-    });
-</script>
+                                        <script>
+                                            document.addEventListener('DOMContentLoaded', () => {
+                                                const notification = document.getElementById('notification');
 
-<script src="/js/worker.js"></script>
+                                                function showNotification(message) {
+                                                    notification.textContent = message;
+                                                    notification.classList.remove('d-none');
+                                                    setTimeout(() => {
+                                                        notification.classList.add('d-none');
+                                                    }, 6000);
+                                                }
+                                            });
+                                        </script>
 
-<!-- footer -->
-<?php require base_path('views/partials/footer.php') ?>
+                                        <script src="/js/worker.js"></script>
+
+                                        <!-- footer -->
+                                        <?php require base_path('views/partials/footer.php') ?>
