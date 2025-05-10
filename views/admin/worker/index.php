@@ -28,21 +28,44 @@
                             </thead>
                             <tbody id="workerTableBody">
                                 <?php foreach ($workers as $worker) : ?>
+                                    <?php $deleteModalID = 'DeleteModal_' . $worker['id']; ?>
                                     <tr>
                                         <td><a class="text-decoration-none" href="/worker?id=<?= $worker['id']?>"><?= $worker['name'] ?></a></td>
                                         <td><?= $worker['email'] ?></td>
                                         <td><?= $worker['number'] ?></td>
                                         <td><?= $worker['password'] ?></td>
                                         <td>
-                                            <button name='btn_edit' class='btn edit-btn' data-bs-toggle='modal'
-                                                type='button' data-bs-target='#$editModalID'>
+                                            <button name='btn_edit' class='btn edit-btn'
+                                                type='button'>
                                                 <i class='fa-regular fa-pen-to-square'></i>
                                             </button>
                                         </td>
                                         <td>
-                                            <button class='btn delete-btn'><i class='fa-regular fa-trash-can' style='color: red;' data-bs-toggle='modal' type='button' data-bs-target='#$deleteModalID'></i></button>
+                                            <button class='btn delete-btn'><i class='fa-regular fa-trash-can' style='color: red;' data-bs-toggle='modal' type='button' data-bs-target='#<?= $deleteModalID ?>'></i></button>
                                         </td>
                                     </tr>
+
+                                    <div class='modal fade' id='<?=$deleteModalID?>' tabindex='-1' aria-labelledby='Delete_WorkerModal' aria-hidden='true'>
+                                        <div class='modal-dialog modal-lg modal-dialog-centered rounded d-flex justify-content-center'>
+                                            <div class='modal-content' style='border: 2px solid #2B2B2B; width: 450px; height: 180px;'>
+                                                <div class='modal-header border-dark border-2' style='background-color: #FCF4B9;'>
+                                                    <h5 class='modal-title fw-semibold mx-4' id='Delete_WorkerModal_<?= $deleteModalID ?>'>Are you sure you want to delete this cycle? </h5>
+                                                </div>
+                                                <div class='modal-body m-2 d-flex justify-content-center'>
+                                                    <form action='' method='POST' class='row mt-2 g-1'>
+                                                        <div class='col-md-4 me-5'>
+                                                            <button type='button' class='btn btn-dark' data-bs-dismiss='modal' aria-label='Close'>No</button>
+                                                        </div>
+                                                        <div class='col-md-4'>
+                                                            <button name='btn_delete' type='submit' class='btn btn-success'>Yes</button>
+                                                            <input type="hidden" name="_method" value="DELETE">
+                                                            <input type='hidden' name='id' value='<?= $worker['id'] ?>'>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 <?php endforeach; ?>
                             </tbody>
                         </table>
