@@ -15,7 +15,7 @@
                 <div class="d-flex justify-content-center">
                     <h4 class="mb-4 fw-bold text-dark border-bottom border-warning pb-2">Add Worker</h4>
                 </div>
-                <form action="" method="POST">
+                <form action="/worker/store" method="POST">
                     <!-- Name -->
                     <div class="mb-2">
                         <label for="name" class="form-label small text-muted">Full Name</label>

@@ -26,7 +26,7 @@ $router->get('/worker', 'controllers/worker/show.php');
 $router->get('/worker/create', 'controllers/worker/create.php');
 
 //POST METHOD
-$router->post('/worker/create', 'controllers/worker/create.php');
+$router->post('/worker/store', 'controllers/worker/store.php');
 
 //DELET METHOD
 $router->delete('/worker/delete', 'controllers/worker/destroy.php');

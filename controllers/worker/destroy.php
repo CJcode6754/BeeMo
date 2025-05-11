@@ -1,11 +1,12 @@
 <?php
 
+use Core\App;
 use Core\Database;
 
+$db = App::resolve(Database::class);
+$currentAdminID = 10;
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['btn_delete'])) {
-    $config = require base_path('config.php');
-    $db = new Database($config['database']);
-    $currentAdminID = 10;
 
     $worker = $db->query('SELECT * FROM user_table WHERE id = :id', [
         'id' => $_POST['id']
