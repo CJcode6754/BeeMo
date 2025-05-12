@@ -161,7 +161,7 @@ function resetDropdown(button, defaultText) {
 }
 
 // Admin cycles fetch and setup
-fetch("./src/getCycles.php")
+fetch("/getCycles.php")
   .then((response) => response.json())
   .then((data) => {
     let currentCycle = null;
@@ -212,7 +212,7 @@ fetch("./src/getCycles.php")
   .catch((error) => console.error("Error fetching harvest cycles:", error));
 
 // Worker cycles fetch and setup
-fetch("./src/getUserCycles.php")
+fetch("/getUserCycles.php")
   .then((response) => response.json())
   .then((data) => {
     data.forEach((cycle) => {
@@ -371,99 +371,6 @@ document.querySelectorAll(".btn-label").forEach((button) => {
   });
 });
   
-  // fetch("./src/getCycles.php")
-  // .then((response) => response.json())
-  // .then((data) => {
-  //   let currentCycle = null;
-  //   const currentDate = new Date();
-
-  //   // Find the current cycle
-  //   data.forEach((cycle) => {
-  //     const cycleEndDate = new Date(cycle.end_of_cycle);
-  //     if (currentCycle === null || cycleEndDate > new Date(currentCycle.end_of_cycle)) {
-  //       currentCycle = cycle;  // Set current cycle as the latest one
-  //     }
-
-  //     const li = document.createElement("li");
-  //     li.classList.add("dropdown-item");
-  //     li.textContent = `Cycle ${cycle.cycle_number}`;
-  //     li.dataset.id = cycle.id;
-  //     li.dataset.start = cycle.start_of_cycle;
-  //     li.dataset.end = cycle.end_of_cycle;
-  //     li.dataset.cycleId = cycle.id;
-  //     harvestDropdown.appendChild(li);
-  //   });
-
-  //   // Set the default cycle to the current cycle
-  //   if (currentCycle) {
-  //     const startDate = new Date(currentCycle.start_of_cycle);
-  //     const endDate = new Date(currentCycle.end_of_cycle);
-
-  //     harvestCycleButton.textContent = `Cycle ${currentCycle.cycle_number}`;
-  //     datePicker.prop("disabled", false);
-
-  //     // Set date picker range
-  //     datePicker.datepicker("option", "minDate", startDate);
-  //     datePicker.datepicker("option", "maxDate", endDate);
-
-  //     // Determine the current month based on the current cycle's range
-  //     const currentMonth = currentDate.getMonth(); // Current month (0-11)
-  //     const currentYear = currentDate.getFullYear(); // Current year
-
-  //     // Check if the cycle is completed or spans the current month
-  //     if (endDate < currentDate) {
-  //       // If cycle is completed, show data for the last month of the cycle
-  //       const lastMonth = new Date(endDate);
-  //       fetchDataForMonth(lastMonth.getMonth() + 1, lastMonth.getFullYear(), startDate, endDate, currentCycle.id);
-  //     } else {
-  //       // Show current month data
-  //       fetchDataForMonth(currentMonth + 1, currentYear, startDate, endDate, currentCycle.id);
-  //     }
-
-  //     // Populate the month dropdown based on the cycle's date range
-  //     populateMonthDropdown(startDate, endDate, currentCycle.id);
-  //   }
-  // })
-  // .catch((error) => console.error("Error fetching harvest cycles:", error));
-
-
-
-  // harvestDropdown.addEventListener("click", function (event) {
-  //   if (event.target && event.target.matches("li.dropdown-item")) {
-  //     const selectedCycle = event.target.textContent;
-  //     const startDate = new Date(event.target.dataset.start);
-  //     const endDate = new Date(event.target.dataset.end);
-  
-  //     // Set the selected cycle ID
-  //     selectedCycleID = event.target.dataset.id;
-  
-  //     // Update button text and enable the date picker
-  //     harvestCycleButton.textContent = selectedCycle;
-  //     datePicker.prop("disabled", false);
-  
-  //     // Set date picker range
-  //     datePicker.datepicker("option", "minDate", startDate);
-  //     datePicker.datepicker("option", "maxDate", endDate);
-  
-  //     // Populate the month dropdown based on the cycle's date range
-  //     populateMonthDropdown(startDate, endDate, selectedCycleID);
-  //     resetUserDropdown(userHarvestCycleButton, defaultUserText);
-  //     // Determine the current month based on the selected cycle's range
-  //     const currentDate = new Date();
-  //     const currentMonth = currentDate.getMonth();
-  //     const currentYear = currentDate.getFullYear();
-  
-  //     if (endDate < currentDate) {
-  //       // If cycle is completed, show data for the last month of the cycle
-  //       const lastMonth = new Date(endDate);
-  //       fetchDataForMonth(lastMonth.getMonth() + 1, lastMonth.getFullYear(), startDate, endDate, selectedCycleID);
-  //     } else {
-  //       // Show current month data
-  //       fetchDataForMonth(currentMonth + 1, currentYear, startDate, endDate, selectedCycleID);
-  //     }
-  //   }
-  // });
-
 // Function to populate month dropdown
 function populateMonthDropdown(startOfCycle, endOfCycle, cycleID) {
   const monthDropdown = document.getElementById("monthDropdown");
@@ -540,7 +447,7 @@ function fetchDataForMonth(month, year, cycleStartDate, cycleEndDate, selectedCy
     cycle_id: selectedCycleID,
   };
 
-  fetch("./src/reportsData.php", {
+  fetch("/reportsData.php", {
     method: "POST",
     body: JSON.stringify(requestData),
     headers: {
@@ -596,7 +503,7 @@ function fetchFullCycleData(cycleStartDate, cycleEndDate, selectedCycleID) {
     cycle_id: selectedCycleID,
   };
 
-  fetch("./src/reportsData.php", {
+  fetch("/reportsData.php", {
     method: "POST",
     body: JSON.stringify(requestData),
     headers: {
@@ -823,80 +730,6 @@ workerCycleDropdown.addEventListener("click", () => {
     myChart.update();
   }
   
-//   fetch("./src/getUserCycles.php")
-//   .then((response) => response.json())
-//   .then((data) => {
-//     let currentCycle = null;
-
-//     // Find the current cycle
-//     data.forEach((cycle) => {
-//       const cycleEndDate = new Date(cycle.user_end_of_cycle);
-//       if (currentCycle === null || cycleEndDate > new Date(currentCycle.user_end_of_cycle)) {
-//         currentCycle = cycle;  // Set current cycle as the latest one
-//       }
-
-//       const li = document.createElement("li");
-//       li.classList.add("dropdown-item");
-//       li.textContent = `${cycle.user_name} - Cycle ${cycle.userCycleNumber}`;
-//       li.dataset.id = cycle.userCycleID;
-//       li.dataset.start = cycle.user_start_of_cycle;
-//       li.dataset.end = cycle.user_end_of_cycle;
-//       li.dataset.cycleId = cycle.userCycleID;
-//       userHarvestDropdown.appendChild(li);
-//     });
-
-//     // Set the default cycle to the current cycle
-//     if (currentCycle) {
-//       userHarvestCycleButton.textContent = `Worker Cycle`;
-//     }
-//   })
-//   .catch((error) => console.error("Error fetching user cycles:", error));
-
-// // Event listener for cycle selection
-// userHarvestDropdown.addEventListener("click", function (event) {
-//   if (event.target && event.target.matches("li.dropdown-item")) {
-//     const selectedCycle = event.target.textContent;
-//     const startDate = new Date(event.target.dataset.start);
-//     const endDate = new Date(event.target.dataset.end);
-
-//     // Set the selected cycle ID
-//     userSelectedCycleID = event.target.dataset.id;
-
-//     // Update button text and enable the date picker
-//     userHarvestCycleButton.textContent = selectedCycle;
-
-//     // Populate the month dropdown based on the cycle's date range
-//     populateUserMonthDropdown(startDate, endDate, userSelectedCycleID);
-//     resetDropdown(harvestCycleButton, defaultAdminText);
-//     // Determine the current month based on the selected cycle's range
-//     const currentDate = new Date();
-//     const currentMonth = currentDate.getMonth();
-//     const currentYear = currentDate.getFullYear();
-
-//     if (endDate < currentDate) {
-//       // If cycle is completed, show data for the last month of the cycle
-//       const lastMonth = new Date(endDate);
-//       fetchUserDataForMonth(
-//         lastMonth.getMonth() + 1,
-//         lastMonth.getFullYear(),
-//         startDate,
-//         endDate,
-//         userSelectedCycleID
-//       );
-//     } else {
-//       // Show current month data
-//       fetchUserDataForMonth(
-//         currentMonth + 1,
-//         currentYear,
-//         startDate,
-//         endDate,
-//         userSelectedCycleID
-//       );
-//     }
-//   }
-// });
-
-
   function populateUserMonthDropdown(startOfCycle, endOfCycle, cycleID) {
     const userMonthDropdown = document.getElementById("userMonthDropdown");
     userMonthDropdown.innerHTML = ""; // Clear previous options
@@ -1191,90 +1024,6 @@ workerCycleDropdown.addEventListener("click", () => {
     }
 });
 
-  // Add event listeners for buttons to change data type
-// document.querySelectorAll(".btn-label").forEach((button) => {
-//   button.addEventListener("click", function (event) {
-//     event.preventDefault();
-//     selectedType = this.dataset.type;
-
-//     // Update button styles 
-//     document.querySelectorAll(".btn-label").forEach((btn) => {
-//       btn.classList.remove("label-current");
-//     });
-//     this.classList.add("label-current");
-
-//     myChart.options.scales.x.time.unit = "day";
-//     myChart.update();
-
-//     // Check which view is currently active by looking for active cycles
-//     const userCycleButton = document.getElementById("userHarvestCycleButton");
-//     const adminCycleButton = document.getElementById("harvestCycleButton");
-
-//     // First try worker view
-//     if (userCycleButton && userCycleButton.textContent) {
-//       const selectedUserCycle = Array.from(userHarvestDropdown.children)
-//         .find(item => item.textContent === userCycleButton.textContent);
-
-//       if (selectedUserCycle) {
-//         const startDate = new Date(selectedUserCycle.dataset.start);
-//         const endDate = new Date(selectedUserCycle.dataset.end);
-//         const cycleId = selectedUserCycle.dataset.id;
-
-//         const currentDate = new Date();
-//         if (endDate < currentDate) {
-//           const lastMonth = new Date(endDate);
-//           fetchUserDataForMonth(
-//             lastMonth.getMonth() + 1,
-//             lastMonth.getFullYear(),
-//             startDate,
-//             endDate,
-//             cycleId
-//           );
-//         } else {
-//           fetchUserDataForMonth(
-//             currentDate.getMonth() + 1,
-//             currentDate.getFullYear(),
-//             startDate,
-//             endDate,
-//             cycleId
-//           );
-//         }
-//       }
-//     } 
-//     // If not worker view, try admin view
-//     else if (adminCycleButton && adminCycleButton.textContent) {
-//       const selectedAdminCycle = Array.from(harvestDropdown.children)
-//         .find(item => item.textContent === adminCycleButton.textContent);
-
-//       if (selectedAdminCycle) {
-//         const startDate = new Date(selectedAdminCycle.dataset.start);
-//         const endDate = new Date(selectedAdminCycle.dataset.end);
-//         const cycleId = selectedAdminCycle.dataset.id;
-
-//         const currentDate = new Date();
-//         if (endDate < currentDate) {
-//           const lastMonth = new Date(endDate);
-//           fetchDataForMonth(
-//             lastMonth.getMonth() + 1,
-//             lastMonth.getFullYear(),
-//             startDate,
-//             endDate,
-//             cycleId
-//           );
-//         } else {
-//           fetchDataForMonth(
-//             currentDate.getMonth() + 1,
-//             currentDate.getFullYear(),
-//             startDate,
-//             endDate,
-//             cycleId
-//           );
-//         }
-//       }
-//     }
-//   });
-// });
-  
 function updateDescriptiveAnalytics(stats, isMonthly = false, isFullCycle = false, insights = null) {
     // Update the date range label based on the selected filter
     const dateRangeLabel = document.getElementById("date-range-label");
