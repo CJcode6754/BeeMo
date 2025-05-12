@@ -33,7 +33,7 @@
                 <div class="col-lg-4 bg1">
                     <div id="LoginLogo" class="container-fluid">
                         <main class="form-signin px4">
-                            <form action="/" method="post" id="loginForm" novalidate>
+                            <form action="/sessions" method="post" id="loginForm" novalidate>
                                 <div class="top px-2 pt-4">
                                     <a href="/"><img id="loginLogo" src="img/LOGO2.png" alt="Logo"></a>
                                     <a href="/aboutUs" class="text-decoration-none text-dark"><p class="about pt-1">ABOUT&nbsp;US</p></a>
@@ -46,18 +46,24 @@
                                         <a href="/signup" class="text-dark"><u>Register</u></a>
                                       </div> -->
                                     <div class="form-floating pb-3 position-relative">
-                                        <input name="email" type="email" class="form-control" id="floatingInput" placeholder="name@example.com" required>
+                                        <input name="email" type="email" class="form-control <?= isset($errors['email']) ? 'is-invalid' : '' ?>" id="floatingInput" placeholder="name@example.com" required>
                                         <label for="floatingInput"><i class="fa-solid fa-envelope"></i> Email address </label>
-                                        <div class="invalid-feedback">Please enter a valid email address.</div>
+                                        <?php if (isset($errors['email'])) : ?>
+                                            <div class="invalid-feedback d-block"><?= $errors['email'] ?></div>
+                                        <?php endif; ?>
                                     </div>
-                                    <div class="form-floating pb-3">
-                                        <input name="password" type="password" class="form-control" id="floatingPassword" placeholder="Password" required>
+
+                                    <div class="form-floating pb-3 position-relative">
+                                        <input name="password" type="password" class="form-control <?= isset($errors['password']) ? 'is-invalid' : '' ?>" id="floatingPassword" placeholder="Password" required>
                                         <label for="floatingPassword"><i class="fa-solid fa-lock"></i> Password </label>
                                         <div class="password-wrapper">
                                             <span id="togglePassword" class="toggle-password"><i class="fa-solid fa-eye-slash"></i></span>
                                         </div>
-                                        <div class="invalid-feedback">Please enter your password.</div>
+                                        <?php if (isset($errors['password'])) : ?>
+                                            <div class="invalid-feedback d-block"><?= $errors['password'] ?></div>
+                                        <?php endif; ?>
                                     </div>
+
                                     <a href="/forgotPassword" class="href text-dark">Forgot Password?</a>
                                     <button id="login" class="w-100 py-3" name="submit" type="submit"><b>ACCESS MY ACCOUNT</b></button>
                                 </div>

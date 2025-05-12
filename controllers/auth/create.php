@@ -1,0 +1,2 @@
+<?php
+login("login.php");
