@@ -1,10 +1,20 @@
 <?php
 
 use Core\App;
-use Core\Validator;
 use Core\Database;
+use Core\Validator;
 
 $db = App::resolve(Database::class);
+$currentAdminID = 10;
+
+$worker = $db->query(
+    'SELECT * FROM user_table where id = :id',
+    [
+        'id' => $_POST['id']
+    ]
+)->findOrFail();
+
+authorize($worker['admin_id'] == $currentAdminID);
 
 $errors = [];
 
@@ -25,18 +35,20 @@ if (!Validator::string($_POST['password'], 6)) {
 }
 
 if (count($errors)) {
-    return view("/worker/create.php", [
-        'heading' => 'Create Worker'
+    return view("/worker/edit.php", [
+        'heading' => 'Edit Worker',
+        'errors' => $errors,
+        'worker' => $worker
     ]);
 }
 
-$db->query('INSERT INTO users(name, email, number, password, admin_id) VALUES (:name, :email, :number, :password, :admin_id)', [
+$db->query('UPDATE user_table SET name = :name, email = :email, number = :number, password = :password WHERE id = :id',[
+    'id' => $_POST['id'],
     'name' => $_POST['name'],
     'email' => $_POST['email'],
     'number' => $_POST['number'],
-    'password' => password_hash($_POST['password'], PASSWORD_BCRYPT),
-    'admin_id' => 10,
+    'password' => password_hash($_POST['password'], PASSWORD_BCRYPT)
 ]);
 
-header('Location: /workers');
-exit();
+header('location: /workers');
+die();

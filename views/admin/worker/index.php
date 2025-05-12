@@ -35,10 +35,10 @@
                                         <td><?= $worker['number'] ?></td>
                                         <td><?= $worker['password'] ?></td>
                                         <td>
-                                            <button name='btn_edit' class='btn edit-btn'
+                                            <a href="/worker/edit?id=<?= $worker['id'] ?>" name='btn_edit' class='btn edit-btn'
                                                 type='button'>
                                                 <i class='fa-regular fa-pen-to-square'></i>
-                                            </button>
+                                            </a>
                                         </td>
                                         <td>
                                             <button class='btn delete-btn'><i class='fa-regular fa-trash-can' style='color: red;' data-bs-toggle='modal' type='button' data-bs-target='#<?= $deleteModalID ?>'></i></button>
