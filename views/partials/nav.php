@@ -40,8 +40,8 @@
                 </a>
             </li>
             <!-- Logout -->
-            <form id="logoutForm" action="/dashboard" method="post" style="display: none;">
-                <input type="hidden" name="logout_btn" value="true">
+            <form id="logoutForm" action="/session" method="POST" style="display: none;">
+                <input type="hidden" name="_method" value="DELETE">
             </form>
             <li class="dropdown-item" onclick="document.getElementById('logoutForm').submit();">
                 <i class="fa-solid fa-right-from-bracket"></i>

@@ -3,6 +3,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const nfCountElement = document.getElementById('nf-count');
     const nfCountBadgeElement = document.getElementById('nf-count-badge');
     const nfBtn = document.getElementById('nf-btn');
+    const notifDropdownMenu = document.querySelector('.notif-container');
 
     // Fetch notifications
     function showNotification() {
@@ -15,31 +16,21 @@ document.addEventListener('DOMContentLoaded', function () {
         })
             .then((response) => response.json())
             .then((data) => {
-                // Clear previous notifications
                 notificationsContainer.innerHTML = '';
 
                 if (data && data.length > 0) {
                     const totalNotifications = data[0].total;
 
-                    // Update notification count with the +99 condition
-                    if (totalNotifications > 99) {
-                        nfCountElement.textContent = '+99';
-                        nfCountBadgeElement.textContent = '+99';
-                    } else {
-                        nfCountElement.textContent = totalNotifications;
-                        nfCountBadgeElement.textContent = totalNotifications;
-                    }
+                    const countText = totalNotifications > 99 ? '+99' : totalNotifications;
+                    nfCountElement.textContent = countText;
+                    nfCountBadgeElement.textContent = countText;
 
-                    // Iterate over notifications
                     data.slice(1).forEach((noti) => {
                         const notiDate = new Date(noti.noti_date).toLocaleDateString();
                         const alertClass = noti.noti_seen === 'unseen' ? 'alert-success' : 'alert-dark';
-                        const notiImage = 'img/beemo-ico.ico'; // Default icon for all notifications
-
-                        // Use the pre-generated message
+                        const notiImage = 'img/beemo-ico.ico';
                         const notiMessage = noti.message;
 
-                        // Create notification item
                         const notificationItem = document.createElement('a');
                         notificationItem.innerHTML = `
                             <div class="notification-item alert ${alertClass}" role="alert" title="${notiDate}">
@@ -78,24 +69,26 @@ document.addEventListener('DOMContentLoaded', function () {
             .catch((error) => console.error('Fetch Error:', error));
     }
 
-    // Initialize notifications
+    // Load notifications initially and set up auto-refresh
     showNotification();
     setInterval(showNotification, 5000);
 
-    // Toggle notifications display
+    // Handle bell icon click
     nfBtn?.addEventListener('click', function (e) {
-        e.stopPropagation();
-        notificationsContainer.classList.toggle('show');
         seenNotification();
-    });
-
-    // Close notifications when clicking outside
-    document.addEventListener('click', function () {
-        notificationsContainer.classList.remove('show');
-    });
-
-    // Prevent closing when clicking inside notifications
-    notificationsContainer.addEventListener('click', function (e) {
+        // Don't hide dropdown on click
         e.stopPropagation();
+    });
+
+    // Prevent closing when clicking inside dropdown
+    notifDropdownMenu.addEventListener('click', function (e) {
+        e.stopPropagation();
+    });
+
+    // Hide dropdown only when clicking outside
+    document.addEventListener('click', function (e) {
+        if (!notifDropdownMenu.contains(e.target) && !nfBtn.contains(e.target)) {
+            notifDropdownMenu.classList.remove('show');
+        }
     });
 });
