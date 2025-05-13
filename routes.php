@@ -4,7 +4,7 @@ $router->get('/', 'controllers/dashboard.php');
 $router->get('/chooseHive','controllers/chooseHive.php');
 $router->get('/parameterMonitoring','controllers/parameterMonitoring.php');
 $router->get('/reports','controllers/reports.php');
-$router->get('/harvestCycle', 'controllers/harvestCycle.php');
+$router->get('/harvestCycle', 'controllers/cycle/index.php');
 $router->get('/beeguide','controllers/beeguide.php');
 $router->get('/about','controllers/about.php');
 $router->get('/workers', 'controllers/worker/index.php');
