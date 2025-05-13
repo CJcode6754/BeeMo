@@ -194,26 +194,27 @@
                                             </td>
                                             <td><?= $admin_cycle['hiveID'] ?></td>
                                             <td>
-                                                <button name='btn_edit' class='btn edit-btn' type='button'>
+                                                <a href="/harvestCycle/edit?id=<?= $admin_cycle['id'] ?>" name='btn_edit' class='btn edit-btn' type='button'>
                                                     <i class='fa-regular fa-pen-to-square'></i>
-                                                </button>
+                                                </a>
                                             </td>
                                             <td>
-                                                <button class='btn delete-btn' data-bs-toggle='modal' data-bs-target='#deleteModal_<?= $admin_cycle['cycle_number'] ?>'>
+                                                <button class='btn delete-btn' data-bs-toggle='modal' data-bs-target='#deleteModal_<?= $admin_cycle['id'] ?>'>
                                                     <i class='fa-regular fa-trash-can' style='color: red;'></i>
                                                 </button>
                                                 <!-- Delete Modal -->
-                                                <div class='modal fade' id='deleteModal_<?= $admin_cycle['cycle_number'] ?>' tabindex='-1' aria-labelledby='Delete_CycleLabel_<?= $admin_cycle['cycle_number'] ?>' aria-hidden='true'>
+                                                <div class='modal fade' id='deleteModal_<?= $admin_cycle['id'] ?>' tabindex='-1' aria-labelledby='Delete_CycleLabel_<?= $admin_cycle['id'] ?>' aria-hidden='true'>
                                                     <div class='modal-dialog modal-lg modal-dialog-centered rounded d-flex justify-content-center'>
                                                         <div class='modal-content' style='border: 2px solid #2B2B2B; width: 500px; height: 180px;'>
                                                             <div class='modal-header border-dark border-2' style='background-color: #FCF4B9;'>
-                                                                <h5 class='modal-title mx-5 d-flex justify-content-center' id='Delete_CycleLabel_<?= $admin_cycle['cycle_number'] ?>'>Are you sure you want to delete this cycle?</h5>
+                                                                <h5 class='modal-title mx-5 d-flex justify-content-center' id='Delete_CycleLabel_<?= $admin_cycle['id'] ?>'>Are you sure you want to delete this cycle?</h5>
                                                             </div>
                                                             <div class='modal-body m-2 d-flex justify-content-center'>
-                                                                <form action='harvestCycle.php' method='post' class='row mt-2 g-1'>
+                                                                <form action='/harvestCycle/delete' method='post' class='row mt-2 g-1'>
                                                                     <div class='col-md-4 me-5'>
                                                                         <button name='btn_delete' type="submit" class="btn-yes px-4 py-2">Yes</button>
-                                                                        <input type='hidden' name='CycleID' value='<?= $admin_cycle['cycle_number'] ?>'>
+                                                                        <input type="hidden" name="_method" value="DELETE">
+                                                                        <input type='hidden' name='id' value='<?= $admin_cycle['id'] ?>'>
                                                                     </div>
                                                                     <div class='col-md-4'>
                                                                         <button type="button" class="btn-no px-4 py-2" data-bs-dismiss='modal' aria-label='Close'>No</button>
@@ -411,7 +412,7 @@
         const autoToggle = document.getElementById('autoCycleToggle');
         const cycleStart = document.getElementById('cycleStart');
         const cycleEnd = document.getElementById('cycleEnd');
-        const cycleNumber = document.getElementById('cycleNumber'); // Added this line
+        const cycleNumber = document.getElementById('cycleNumber');
 
         autoToggle.addEventListener('change', async function() {
             if (this.checked) {
@@ -428,10 +429,18 @@
                         throw new Error(data.error);
                     }
 
-                    // Set all three fields
+                    // Set date fields
                     cycleStart.value = data.start_date || '';
                     cycleEnd.value = data.end_date || '';
-                    cycleNumber.value = data.cycle_number || '';
+
+                    // Increment the cycle number by 1 for the new cycle
+                    if (data.cycle_number !== null && data.cycle_number !== undefined && data.cycle_number !== '') {
+                        // Convert to number, add 1, then back to string
+                        cycleNumber.value = (parseInt(data.cycle_number) + 1).toString();
+                    } else {
+                        // If no previous cycle found, start with cycle 1
+                        cycleNumber.value = '1';
+                    }
 
                     if (data.start_date && data.end_date) {
                         // Make all fields readonly when auto-filled
@@ -444,7 +453,7 @@
                     }
                 } catch (error) {
                     console.error('Error fetching auto dates:', error);
-                    alert('Failed to load cycle dates. Please try again or enter dates manually.');
+                    alert('Failed to load cycle data. Please try again or enter data manually.');
                     this.checked = false;
                 }
             } else {
