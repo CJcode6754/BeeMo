@@ -18,7 +18,8 @@
                     <p class="fs-4 mb-5 fw-bold cycle-highlight">Harvest Cycle</p>
                     <div class="container-cycle">
                         <!-- FORM TO RECORD HARVEST CYCLE -->
-                        <form action="harvestCycle.php" method="post" class="row mt-2 g-3">
+                        <form action="/harvestCycle/create" method="POST" class="row mt-2 g-3">
+                            <input type="hidden" name="id" value="<?= $_SESSION['user']['id'] ?>">
                             <div class="col-md-12">
                                 <label for="autoCycleToggle" class="form-label d-flex justify-content-center" style="font-size: 13px;">Enable Auto Cycle Dates</label>
                                 <label class="switch">
@@ -410,24 +411,52 @@
         const autoToggle = document.getElementById('autoCycleToggle');
         const cycleStart = document.getElementById('cycleStart');
         const cycleEnd = document.getElementById('cycleEnd');
+        const cycleNumber = document.getElementById('cycleNumber'); // Added this line
 
         autoToggle.addEventListener('change', async function() {
             if (this.checked) {
                 try {
-                    const response = await fetch('getCycleDates.php');
+                    const response = await fetch('getCycles.php');
+
+                    if (!response.ok) {
+                        throw new Error(`Server responded with status: ${response.status}`);
+                    }
+
                     const data = await response.json();
-                    cycleStart.value = data.start_date;
-                    cycleEnd.value = data.end_date;
-                    cycleStart.setAttribute('readonly', true);
-                    cycleEnd.setAttribute('readonly', true);
+
+                    if (data.error) {
+                        throw new Error(data.error);
+                    }
+
+                    // Set all three fields
+                    cycleStart.value = data.start_date || '';
+                    cycleEnd.value = data.end_date || '';
+                    cycleNumber.value = data.cycle_number || '';
+
+                    if (data.start_date && data.end_date) {
+                        // Make all fields readonly when auto-filled
+                        cycleStart.setAttribute('readonly', true);
+                        cycleEnd.setAttribute('readonly', true);
+                        cycleNumber.setAttribute('readonly', true);
+                    } else {
+                        console.warn('No cycle dates returned from server');
+                        this.checked = false;
+                    }
                 } catch (error) {
                     console.error('Error fetching auto dates:', error);
+                    alert('Failed to load cycle dates. Please try again or enter dates manually.');
+                    this.checked = false;
                 }
             } else {
+                // Remove readonly when auto-toggle is unchecked
                 cycleStart.removeAttribute('readonly');
                 cycleEnd.removeAttribute('readonly');
+                cycleNumber.removeAttribute('readonly');
+
+                // Clear all values
                 cycleStart.value = '';
                 cycleEnd.value = '';
+                cycleNumber.value = '';
             }
         });
     </script>
