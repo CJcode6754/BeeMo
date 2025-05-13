@@ -25,3 +25,6 @@ $router->delete('/session', 'controllers/auth/destroy.php')->only('auth');
 
 $router->get('/harvestCycle', 'controllers/cycle/index.php');
 $router->post('/harvestCycle/create', 'controllers/cycle/create.php');
+$router->get('/harvestCycle/edit', 'controllers/cycle/edit.php');
+$router->patch('/harvestCycle/patch', 'controllers/cycle/update.php');
+$router->delete('/harvestCycle/delete', 'controllers/cycle/destroy.php');
