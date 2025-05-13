@@ -38,7 +38,7 @@ try {
     }
 
     // Prepare the query to fetch harvest cycles
-    $adminID = 10;
+    $adminID = $_SESSION['user']['id'];
     $hiveID = 1;
     
     // Use simpler query to test first
