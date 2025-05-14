@@ -13,7 +13,7 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 // Get the adminID and hiveID from the session
-$adminID = 10;
+  $adminID = $_SESSION['user']['id'];
 $hiveID = 1;
 // Query to fetch user names and their cycles
 $sql = "
@@ -27,7 +27,7 @@ $sql = "
     ON 
         u.userID = h.userID
     WHERE 
-        h.adminID = '$adminID' AND u.adminID = '$adminID' AND h.hiveID = '$hiveID'
+        h.admin_id = '$adminID' AND u.admin_id = '$adminID' AND h.hiveID = '$hiveID'
     ORDER BY 
         u.user_name, h.userCycleNumber";
 
