@@ -33,9 +33,9 @@
                 <div class="col-lg-4 bg1">
                     <div id="LoginLogo" class="container-fluid">
                         <main class="form-signin px4">
-                            <form action="/sessions" method="post" id="loginForm" novalidate>
+                            <form action="/sessions" method="POST" id="loginForm">
                                 <div class="top px-2 pt-4">
-                                    <a href="/"><img id="loginLogo" src="img/LOGO2.png" alt="Logo"></a>
+                                    <a href="/login"><img id="loginLogo" src="img/LOGO2.png" alt="Logo"></a>
                                     <a href="/aboutUs" class="text-decoration-none text-dark"><p class="about pt-1">ABOUT&nbsp;US</p></a>
                                 </div>
                                 <hr class="d-block d-lg-none w-100">
@@ -46,7 +46,7 @@
                                         <a href="/signup" class="text-dark"><u>Register</u></a>
                                       </div> -->
                                     <div class="form-floating pb-3 position-relative">
-                                        <input name="email" type="email" class="form-control <?= isset($errors['email']) ? 'is-invalid' : '' ?>" id="floatingInput" placeholder="name@example.com" required>
+                                        <input name="email" type="email" class="form-control <?= isset($errors['email']) ? 'is-invalid' : '' ?>" id="floatingInput" placeholder="name@example.com" required value="<?= old('emails') ?>">
                                         <label for="floatingInput"><i class="fa-solid fa-envelope"></i> Email address </label>
                                         <?php if (isset($errors['email'])) : ?>
                                             <div class="invalid-feedback d-block"><?= $errors['email'] ?></div>
@@ -91,15 +91,6 @@
                 notification.classList.remove('show');
             }, 6000);
         }
-
-        // Handle the notifications for status and error in the session
-        <?php if (isset($_SESSION['status'])): ?>
-            showNotification('<?php echo $_SESSION['status']; ?>');
-            <?php unset($_SESSION['status']); ?>
-        <?php elseif (isset($_SESSION['error'])): ?>
-            showNotification('<?php echo $_SESSION['error']; ?>');
-            <?php unset($_SESSION['error']); ?>
-        <?php endif; ?>
     });
 
     function handleBackNavigation() {

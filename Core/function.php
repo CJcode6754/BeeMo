@@ -1,6 +1,7 @@
 <?php
 
 use Core\Response;
+use Core\Session;
 
 function dd($value)
 {
@@ -49,36 +50,11 @@ function login($path, $attributes = [])
     require base_path('views/auth/' . $path);
 }
 
-function signin($user)
-{
-    $_SESSION['user'] = [
-        'email' => $user['email'],
-        'id' => $user['id']
-    ];
-
-    session_regenerate_id(true);
+function redirect($path){
+    header("location: {$path}");
+    exit();
 }
 
-function logout()
-{
-    // Clear session data
-    $_SESSION = [];
-
-    // Destroy the session
-    session_destroy();
-
-    // Get current session cookie parameters
-    $params = session_get_cookie_params();
-
-    // Expire the session cookie properly
-    setcookie(
-        'PHPSESSID',
-        '',
-        time() - 3600,
-        $params['path'],
-        $params['domain'],
-        $params['secure'],
-        $params['httponly']
-    );
+function old($key, $default = ''){
+    return Session::get('old')[$key] ?? $default;
 }
-
