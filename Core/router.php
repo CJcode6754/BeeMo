@@ -67,6 +67,10 @@ class Router
         $this->abort();
     }
 
+    public function previousUrl(){
+        return redirect($_SERVER['HTTP_REFERER']);
+    }
+
     public function abort($code = 404)
     {
         http_response_code($code);
