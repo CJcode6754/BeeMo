@@ -25,12 +25,12 @@ class Mailer {
             $this->mail->isSMTP();
             $this->mail->Host       = 'smtp.gmail.com';
             $this->mail->SMTPAuth   = true;
-            $this->mail->Username   = 'ceejayibabiosa@gmail.com';
-            $this->mail->Password   = 'oboc qlez prvp etfp'; // For security, store this securely
+            $this->mail->Username   = 'example@gmail.com';
+            $this->mail->Password   = 'password'; // For security, store this securely
             $this->mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
             $this->mail->Port       = 465;
 
-            $this->mail->setFrom('ceejayibabiosa@gmail.com', 'BeeMo');
+            $this->mail->setFrom('example@gmail.com', 'BeeMo');
         } catch (Exception $e) {
             echo "Mailer Error: " . $this->mail->ErrorInfo;
         }
