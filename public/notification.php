@@ -42,7 +42,7 @@ $conn = $db->getConnection();
 //     exit;
 // }
 
-$adminID = 10;
+$adminID = $_SESSION['user']['id'];
 
 // Handle POST actions
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
