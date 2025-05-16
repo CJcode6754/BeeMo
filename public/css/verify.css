@@ -7,7 +7,7 @@ html, body {
     font-style: normal;
 }
 
-.container-fluid, .row, .col-lg-4, .col-lg-8 {
+.container-fluid, .row{
     height: 100%;
 }
 
