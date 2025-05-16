@@ -15,6 +15,7 @@
     <link rel="stylesheet" href='/css/webTutorial.css'>
     <link rel="stylesheet" href='/css/hardwareTutorial.css'>
     <link rel="stylesheet" href='/css/add_worker.css'>
+    <link rel="stylesheet" href='/css/verify.css'>
     <link rel="icon" href="img/beemo-ico.ico">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <script src="https://kit.fontawesome.com/b4ce5ff90a.js" crossorigin="anonymous"></script>

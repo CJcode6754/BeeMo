@@ -52,7 +52,7 @@
                                                     <h5 class='modal-title fw-semibold mx-4' id='Delete_WorkerModal_<?= $deleteModalID ?>'>Are you sure you want to delete this cycle? </h5>
                                                 </div>
                                                 <div class='modal-body m-2 d-flex justify-content-center'>
-                                                    <form action='' method='POST' class='row mt-2 g-1'>
+                                                    <form action='/worker/delete' method='POST' class='row mt-2 g-1'>
                                                         <div class='col-md-4 me-5'>
                                                             <button type='button' class='btn btn-dark' data-bs-dismiss='modal' aria-label='Close'>No</button>
                                                         </div>
