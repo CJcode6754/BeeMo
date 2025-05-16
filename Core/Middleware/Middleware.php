@@ -6,7 +6,8 @@ class Middleware
 {
     public const MAP = [
         'guest' => Guest::class,
-        'auth' => Auth::class
+        'auth' => Auth::class,
+        'hiveID' => Hive::class
     ];
 
     public static function resolve($key)
