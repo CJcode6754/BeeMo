@@ -4,7 +4,7 @@ use Core\App;
 use Core\Database;
 
 $db = App::resolve(Database::class);
-$currentAdminID = 10;
+$currentAdminID = $_SESSION['user']['id'];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['btn_delete'])) {
 

@@ -4,7 +4,7 @@ use Core\App;
 use Core\Database;
 
 $db = App::resolve(Database::class);
-$currentAdminID = 10;
+$currentAdminID = $_SESSION['user']['id'];
 
 $worker = $db->query(
     'SELECT * FROM user_table where id = :id',
