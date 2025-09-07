@@ -114,12 +114,13 @@ BeeMo integrates IoT hardware with a web system to:
 ## ⚙️ Installation & Setup
 
 1. Clone the repository
-2. Set up MySQL and import the provided database schema
-3. Configure database credentials in `config/db.php`
-4. Upload the project to a web server (e.g., XAMPP, live host)
-5. Connect the IoT hardware (Arduino + ESP8266)
-6. Register users via the admin dashboard
-7. Start monitoring and managing your beehives!
+2. composer install
+3. Set up MySQL and import the provided database schema
+4. Configure database credentials in `config/db.php`
+5. Upload the project to a web server (e.g., XAMPP, live host)
+6 Connect the IoT hardware (Arduino + ESP8266)
+7. Register users via the provided admin credentials
+8. Start monitoring and managing your beehives!
 
 ---
 
