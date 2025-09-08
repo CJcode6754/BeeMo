@@ -13,23 +13,23 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 // Get the adminID and hiveID from the session
-  $adminID = $_SESSION['user']['id'];
+$adminID = $_SESSION['user']['id'];
 $hiveID = 1;
 // Query to fetch user names and their cycles
 $sql = "
     SELECT 
-        u.userID, u.user_name, 
+        u.id, u.name, 
         h.userCycleID, h.userCycleNumber, h.user_start_of_cycle, h.user_end_of_cycle 
     FROM 
         user_table u
     JOIN 
         user_harvest_cycle h 
     ON 
-        u.userID = h.userID
+        u.id = h.userID
     WHERE 
         h.admin_id = '$adminID' AND u.admin_id = '$adminID' AND h.hiveID = '$hiveID'
     ORDER BY 
-        u.user_name, h.userCycleNumber";
+        u.name, h.userCycleNumber";
 
 $result = $conn->query($sql);
 
@@ -44,4 +44,3 @@ $conn->close();
 
 // Return data as JSON
 echo json_encode($userCycles);
-?>

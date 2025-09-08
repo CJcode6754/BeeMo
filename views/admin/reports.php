@@ -19,21 +19,12 @@
                     <div class="col-12">
                         <div class="container1 p-1">
                             <div class="px-4 py-2 text-center content-wrapper">
-                                <!-- <p class="reports-text fs-4 mb-3 fw-bold reports-highlight">Reports</p> -->
                                 <div class="container-top">
-                                    <div class="date-parameter-container d-flex justify-content-between mb-3 mt-2">
+                                    <div class="date-parameter-container d-flex justify-content-center mb-3 mt-2">
                                         <div class="label-container btn-group d-flex justify-content-center">
                                             <a href="#/temperature" class="btn btn-label label-current" data-type="temperature">Temperature</a>
                                             <a href="#/humidity" class="btn btn-label label-not" data-type="humidity">Humidity</a>
                                             <a href="#/weight" class="btn btn-label label-not" data-type="weight">Weight</a>
-                                        </div>
-                                        <div class="date-pick-size">
-                                            <div class="input-group">
-                                                <input id="start-date-picker" type="date" class="form-control" placeholder="Select Date">
-                                                <span class="input-group-text" id="calendar-icon">
-                                                    <i class="fas fa-calendar-alt"></i>
-                                                </span>
-                                            </div>
                                         </div>
                                     </div>
 

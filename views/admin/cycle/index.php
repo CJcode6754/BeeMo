@@ -106,20 +106,21 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody id="viewAllTableBodyAdmin">
-                                                    <?php foreach ($admin_cycles as $admin_cycle) : ?>
+                                                    <?php foreach ($admin_cycles as $admin_cycle): ?>
+                                                        <?php $row = $admin_cycle['cycle']; ?>
                                                         <tr>
-                                                            <td><?= $admin_cycle['cycle_number'] ?></td>
-                                                            <td><?= $admin_cycle['start_of_cycle'] ?></td>
-                                                            <td><?= $admin_cycle['honey_kg'] ?></td>
-                                                            <td><?= $admin_cycle['end_of_cycle'] ?></td>
-                                                            <td>
-                                                                <div class='status_pending'>
-                                                                    <?= $admin_cycle['status'] ?>
-                                                                </div>
-                                                            </td>
-                                                            <td><?= $admin_cycle['hiveID'] ?></td>
+                                                            <td><?= $row['cycle_number'] ?? '' ?></td>
+                                                            <td><?= $row['start_of_cycle'] ?? '' ?></td>
+                                                            <td><?= number_format((float)($admin_cycle['honey'] ?? 0), 2) ?> kg</td>
+                                                            <td><?= $row['end_of_cycle'] ?? '' ?></td>
+                                                            <td><?= $row['status'] ?? '' ?></td>
+                                                            <td><?= $row['hiveID'] ?? '' ?></td>
+                                                            <!-- <td>
+                                                                <button type="button" class="btn edit-btn" data-id="<?= $row['id'] ?>">Edit</button>
+                                                            </td> -->
                                                         </tr>
                                                     <?php endforeach; ?>
+
                                                 </tbody>
                                             </table>
                                         </div>
@@ -182,39 +183,36 @@
                                 </thead>
                                 <tbody id="cycleTableBody">
                                     <?php foreach ($admin_cycles as $admin_cycle) : ?>
+                                        <?php $row = $admin_cycle['cycle']; ?>
                                         <tr>
-                                            <td><?= $admin_cycle['cycle_number'] ?></td>
-                                            <td><?= $admin_cycle['start_of_cycle'] ?></td>
-                                            <td><?= $admin_cycle['honey_kg'] ?></td>
-                                            <td><?= $admin_cycle['end_of_cycle'] ?></td>
+                                            <td><?= $row['cycle_number'] ?? '' ?></td>
+                                            <td><?= $row['start_of_cycle'] ?? '' ?></td>
+                                            <td><?= number_format((float)($admin_cycle['honey'] ?? 0), 2) ?> kg</td>
+                                            <td><?= $row['end_of_cycle'] ?? '' ?></td>
+                                            <td><?= $row['status'] ?? '' ?></td>
+                                            <td><?= $row['hiveID'] ?? '' ?></td>
                                             <td>
-                                                <div class='status_pending'>
-                                                    <?= $admin_cycle['status'] ?>
-                                                </div>
-                                            </td>
-                                            <td><?= $admin_cycle['hiveID'] ?></td>
-                                            <td>
-                                                <a href="/harvestCycle/edit?id=<?= $admin_cycle['id'] ?>" name='btn_edit' class='btn edit-btn' type='button'>
+                                                <a href="/harvestCycle/edit?id=<?= $HTTP_RAW_POST_DATA['id'] ?>" name='btn_edit' class='btn edit-btn' type='button'>
                                                     <i class='fa-regular fa-pen-to-square'></i>
                                                 </a>
                                             </td>
                                             <td>
-                                                <button class='btn delete-btn' data-bs-toggle='modal' data-bs-target='#deleteModal_<?= $admin_cycle['id'] ?>'>
+                                                <button class='btn delete-btn' data-bs-toggle='modal' data-bs-target='#deleteModal_<?= $row['id'] ?>'>
                                                     <i class='fa-regular fa-trash-can' style='color: red;'></i>
                                                 </button>
                                                 <!-- Delete Modal -->
-                                                <div class='modal fade' id='deleteModal_<?= $admin_cycle['id'] ?>' tabindex='-1' aria-labelledby='Delete_CycleLabel_<?= $admin_cycle['id'] ?>' aria-hidden='true'>
+                                                <div class='modal fade' id='deleteModal_<?= $row['id'] ?>' tabindex='-1' aria-labelledby='Delete_CycleLabel_<?= $row['id'] ?>' aria-hidden='true'>
                                                     <div class='modal-dialog modal-lg modal-dialog-centered rounded d-flex justify-content-center'>
                                                         <div class='modal-content' style='border: 2px solid #2B2B2B; width: 500px; height: 180px;'>
                                                             <div class='modal-header border-dark border-2' style='background-color: #FCF4B9;'>
-                                                                <h5 class='modal-title mx-5 d-flex justify-content-center' id='Delete_CycleLabel_<?= $admin_cycle['id'] ?>'>Are you sure you want to delete this cycle?</h5>
+                                                                <h5 class='modal-title mx-5 d-flex justify-content-center' id='Delete_CycleLabel_<?= $row['id'] ?>'>Are you sure you want to delete this cycle?</h5>
                                                             </div>
                                                             <div class='modal-body m-2 d-flex justify-content-center'>
                                                                 <form action='/harvestCycle/delete' method='post' class='row mt-2 g-1'>
                                                                     <div class='col-md-4 me-5'>
                                                                         <button name='btn_delete' type="submit" class="btn-yes px-4 py-2">Yes</button>
                                                                         <input type="hidden" name="_method" value="DELETE">
-                                                                        <input type='hidden' name='id' value='<?= $admin_cycle['id'] ?>'>
+                                                                        <input type='hidden' name='id' value='<?= $row['id'] ?>'>
                                                                     </div>
                                                                     <div class='col-md-4'>
                                                                         <button type="button" class="btn-no px-4 py-2" data-bs-dismiss='modal' aria-label='Close'>No</button>
@@ -237,10 +235,12 @@
                                                                 <h5 class='modal-title mx-5 d-flex justify-content-center' id='Complete_CycleLabel_<?= $admin_cycle['cycle_number'] ?>'>Are you sure you want to end this cycle?</h5>
                                                             </div>
                                                             <div class='modal-body m-2 d-flex justify-content-center'>
-                                                                <form action='harvestCycle.php' method='post' class='row mt-2 g-1'>
+                                                                <form action='/cycle/end' method='post' class='row mt-2 g-1'>
+                                                                    <input type="hidden" name="id" value="<?= $_SESSION['user']['id'] ?>">
                                                                     <div class='col-md-4 me-5'>
                                                                         <button name='btn_end' type="submit" class="btn-yes px-4 py-2">Yes</button>
-                                                                        <input type='hidden' name='CycleID' value='<?= $admin_cycle['cycle_number'] ?>'>
+                                                                        <!-- change to cycle id -->
+                                                                        <input type='hidden' name='CycleID' value='<?= $admin_cycle['id'] ?>'>
                                                                     </div>
                                                                     <div class='col-md-4'>
                                                                         <button type="button" class="btn-no px-4 py-2" data-bs-dismiss='modal' aria-label='Close'>No</button>
@@ -417,7 +417,7 @@
         autoToggle.addEventListener('change', async function() {
             if (this.checked) {
                 try {
-                    const response = await fetch('getCycles.php');
+                    const response = await fetch('/cycle/getLatest');
 
                     if (!response.ok) {
                         throw new Error(`Server responded with status: ${response.status}`);

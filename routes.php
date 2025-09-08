@@ -33,3 +33,5 @@ $router->post('/harvestCycle/create', 'cycle/create.php');
 $router->get('/harvestCycle/edit', 'cycle/edit.php');
 $router->patch('/harvestCycle/patch', 'cycle/update.php');
 $router->delete('/harvestCycle/delete', 'cycle/destroy.php');
+$router->get('/cycle/getLatest', '/cycle/getLatest.php');
+$router->get('/cycle/end', '/cycle/endCycle.php');

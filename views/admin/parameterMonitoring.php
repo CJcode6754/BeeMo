@@ -126,6 +126,6 @@
 
 <?php require base_path('views/partials/sidebarMobile.php') ?>
 
-<script src="/js/fetchdata.js"></script>
+<!-- <script src="/js/fetchdata.js"></script> -->
 <!-- footer -->
 <?php require base_path('views/partials/footer.php') ?>
